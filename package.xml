@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<package packagerversion="1.10.9" version="2.1" xmlns="http://pear.php.net/dtd/package-2.1" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0     http://pear.php.net/dtd/tasks-1.0.xsd     http://pear.php.net/dtd/package-2.1     http://pear.php.net/dtd/package-2.1.xsd">
+ <name>mynanoembedded</name>
+ <channel>pecl.php.net</channel>
+ <summary>Nano C portable library for PHP</summary>
+ <description>A simple, low-level PHP extension for myNanoEmbedded.</description>
+ <lead>
+  <name>Fabio Pereira da Silva</name>
+  <user>fabiosilva</user>
+  <email>fabioegel@gmail.com</email>
+  <active>yes</active>
+ </lead>
+ <date>2019-09-07</date>
+ <time>08:16:30</time>
+ <version>
+  <release>2.0.22</release>
+  <api>2.0.22</api>
+ </version>
+ <stability>
+  <release>stable</release>
+  <api>stable</api>
+ </stability>
+ <license uri="https://raw.githubusercontent.com/devfabiosilva/myNanoPHP/master/LICENSE">MIT</license>
+ <notes>
+- Notes
+ </notes>
+ <contents>
+  <dir name="/">
+   <file name="config.m4" role="src" />
+   <file name="libmynanoembedded.c" role="src" />
+   <file name="php_mynanoembedded.h" role="src" />
+  </dir>
+ </contents>
+ <dependencies>
+  <required>
+   <php>
+    <min>7.0.0</min>
+    <max>7.99.99</max>
+   </php>
+   <pearinstaller>
+    <min>1.4.8</min>
+   </pearinstaller>
+  </required>
+ </dependencies>
+ <providesextension>mynanoembedded</providesextension>
+ <extsrcrelease />
+</package>
