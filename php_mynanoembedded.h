@@ -20,6 +20,7 @@ PHP_RINIT_FUNCTION(mynanoembedded);
 PHP_RSHUTDOWN_FUNCTION(mynanoembedded);
 PHP_MINFO_FUNCTION(mynanoembedded);
 
+PHP_FUNCTION(php_c_generate_block);
 PHP_FUNCTION(php_c_from_multiplier);
 PHP_FUNCTION(php_c_to_multiplier);
 PHP_FUNCTION(php_c_license);

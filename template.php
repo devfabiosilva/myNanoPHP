@@ -29,6 +29,184 @@ if ($_SERVER['REQUEST_METHOD']==='POST') {
         exit(0);
     }
 
+    if ($cmd==="create_block") {
+
+        $account=$_POST['account'];
+
+        if (!isset($account)) {
+
+           http_response_code(404);
+           header($MIME_TYPE);
+           echo '{"error":"79","reason":"Missing account"}';
+
+           exit(0);
+
+        }
+
+        $previous=$_POST['previous'];
+
+        if (!isset($previous))
+            $previous="";
+
+        $representative=$_POST['representative'];
+
+        if (!isset($representative)) {
+
+           http_response_code(404);
+           header($MIME_TYPE);
+           echo '{"error":"81","reason":"Missing representative"}';
+
+           exit(0);
+
+        }
+
+        $balance=$_POST['balance'];
+
+        if (!isset($balance)) {
+
+           http_response_code(404);
+           header($MIME_TYPE);
+           echo '{"error":"82","reason":"Missing balance"}';
+
+           exit(0);
+
+        }
+
+        $balance_type=$_POST['balance_type'];
+
+        if (isset($balance_type)) {
+
+            switch ($balance_type) {
+
+                case "real":
+                    $balance_type=BALANCE_REAL_STRING;
+                    break;
+
+                case "raw":
+                    $balance_type=BALANCE_RAW_STRING;
+                    break;
+
+                case "hex":
+                    $balance_type=BALANCE_RAW_128;
+                    break;
+
+                default:
+                    http_response_code(404);
+                    header($MIME_TYPE);
+                    echo '{"error":"82","reason":"Missing balance type"}';
+
+                    exit(0);
+
+            }
+
+        } else
+           $balance_type=BALANCE_REAL_STRING;
+
+        $val_send_rec=$_POST['val_send_rec'];
+
+        if (!isset($val_send_rec)) {
+
+           http_response_code(404);
+           header($MIME_TYPE);
+           echo '{"error":"83","reason":"Missing value to send/receive"}';
+
+           exit(0);
+
+        }
+
+        $val_send_rec_type=$_POST['val_send_rec_type'];
+
+        if (isset($val_send_rec_type)) {
+
+            switch ($val_send_rec_type) {
+
+                case "real":
+                    $val_send_rec_type=VALUE_SEND_RECEIVE_REAL_STRING;
+                    break;
+
+                case "raw":
+                    $val_send_rec_type=VALUE_SEND_RECEIVE_RAW_STRING;
+                    break;
+
+                case "hex":
+                    $val_send_rec_type=VALUE_SEND_RECEIVE_RAW_128;
+                    break;
+
+                default:
+                    http_response_code(404);
+                    header($MIME_TYPE);
+                    echo '{"error":"86","reason":"Missing send/receive type"}';
+
+                    exit(0);
+
+            }
+
+        } else
+           $val_send_rec_type=VALUE_SEND_RECEIVE_REAL_STRING;
+
+        $link=$_POST['link'];
+
+        if (!isset($link)) {
+
+           http_response_code(404);
+           header($MIME_TYPE);
+           echo '{"error":"84","reason":"Missing link/sender Nano wallet"}';
+
+           exit(0);
+
+        }
+
+
+        $direction=$_POST['direction'];
+
+        if (isset($direction)) {
+
+            if ($direction==="send")
+                $direction=VALUE_TO_SEND;
+            else if ($direction==="receive")
+                $direction=VALUE_TO_RECEIVE;
+            else {
+
+               http_response_code(404);
+               header($MIME_TYPE);
+               echo '{"error":"86","reason":"Invalid direction. Set only send or receive"}';
+
+               exit(0);
+
+            }
+
+        } else {
+
+           http_response_code(404);
+           header($MIME_TYPE);
+           echo '{"error":"85","reason":"Missing direction"}';
+
+           exit(0);
+
+        }
+
+        try {
+
+            $block=php_c_generate_block($account, $previous, $representative, $balance, $balance_type, $val_send_rec, $val_send_rec_type, $link, $direction);
+
+            http_response_code(200);
+            header($MIME_TYPE);
+            echo '{"data":"'.bin2hex($block).'"}';
+
+        } catch (Exception $e) {
+
+            http_response_code(500);
+            header($MIME_TYPE);
+            echo '{"error":"500", "reason":"'.$e->getMessage().' Can not generate Nano block with error in php_c_generate_block function'.$e->getCode().'"}';
+
+            exit(0);
+
+        }
+
+        exit(0);
+
+    }
+
     if ($cmd==="verify_sig") {
 
         $sig=$_POST['sig'];

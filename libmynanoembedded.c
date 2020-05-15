@@ -144,6 +144,18 @@ ZEND_BEGIN_ARG_INFO_EX(My_NanoCEmbedded_FromMultiplier, 0, 0, 2)
     ZEND_ARG_INFO(0, base_difficulty)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_INFO_EX(My_NanoCEmbedded_GenerateBlock, 0, 0, 9)
+    ZEND_ARG_INFO(0, account)
+    ZEND_ARG_INFO(0, previous)
+    ZEND_ARG_INFO(0, representative)
+    ZEND_ARG_INFO(0, balance)
+    ZEND_ARG_INFO(0, balance_type)
+    ZEND_ARG_INFO(0, val_send_rec)
+    ZEND_ARG_INFO(0, val_send_rec_type)
+    ZEND_ARG_INFO(0, link)
+    ZEND_ARG_INFO(0, direction)
+ZEND_END_ARG_INFO()
+
 static zend_class_entry *f_exception_ce;
 
 static zend_object *f_exception_create_object(zend_class_entry *ce) {
@@ -182,6 +194,14 @@ static zend_object *f_exception_create_object(zend_class_entry *ce) {
 #define HEX_TO_REAL (int)(1<<10)
 #define RAW_TO_HEX (int)(1<<11)
 #define HEX_TO_RAW (int)(1<<12)
+#define VALUE_TO_SEND (zend_long)(1<<0)
+#define VALUE_TO_RECEIVE (zend_long)(1<<1)
+#define BALANCE_RAW_128 F_NANO_A_RAW_128
+#define BALANCE_REAL_STRING F_NANO_A_REAL_STRING
+#define BALANCE_RAW_STRING F_NANO_A_RAW_STRING
+#define VALUE_SEND_RECEIVE_RAW_128 F_NANO_B_RAW_128
+#define VALUE_SEND_RECEIVE_REAL_STRING F_NANO_B_REAL_STRING
+#define VALUE_SEND_RECEIVE_RAW_STRING F_NANO_B_RAW_STRING
 
 PHP_MINIT_FUNCTION(mynanoembedded)
 {
@@ -235,7 +255,14 @@ PHP_MINIT_FUNCTION(mynanoembedded)
    REGISTER_LONG_CONSTANT("BRAIN_WALLET_VERY_GOOD", F_BRAIN_WALLET_VERY_GOOD, CONST_CS|CONST_PERSISTENT);
    REGISTER_LONG_CONSTANT("BRAIN_WALLET_NICE", F_BRAIN_WALLET_NICE, CONST_CS|CONST_PERSISTENT);
    REGISTER_LONG_CONSTANT("BRAIN_WALLET_PERFECT", F_BRAIN_WALLET_PERFECT, CONST_CS|CONST_PERSISTENT);
-
+   REGISTER_LONG_CONSTANT("VALUE_TO_SEND", VALUE_TO_SEND, CONST_CS|CONST_PERSISTENT);
+   REGISTER_LONG_CONSTANT("VALUE_TO_RECEIVE", VALUE_TO_RECEIVE, CONST_CS|CONST_PERSISTENT);
+   REGISTER_LONG_CONSTANT("BALANCE_RAW_128", BALANCE_RAW_128, CONST_CS|CONST_PERSISTENT);
+   REGISTER_LONG_CONSTANT("BALANCE_REAL_STRING", BALANCE_REAL_STRING, CONST_CS|CONST_PERSISTENT);
+   REGISTER_LONG_CONSTANT("BALANCE_RAW_STRING", BALANCE_RAW_STRING, CONST_CS|CONST_PERSISTENT);
+   REGISTER_LONG_CONSTANT("VALUE_SEND_RECEIVE_RAW_128", VALUE_SEND_RECEIVE_RAW_128, CONST_CS|CONST_PERSISTENT);
+   REGISTER_LONG_CONSTANT("VALUE_SEND_RECEIVE_REAL_STRING", VALUE_SEND_RECEIVE_REAL_STRING, CONST_CS|CONST_PERSISTENT);
+   REGISTER_LONG_CONSTANT("VALUE_SEND_RECEIVE_RAW_STRING", VALUE_SEND_RECEIVE_RAW_STRING, CONST_CS|CONST_PERSISTENT);
    f_random_attach(gen_rand_no_entropy);
 
    return SUCCESS;
@@ -353,6 +380,7 @@ static const zend_function_entry mynanoembedded_functions[] = {
     PHP_FE(php_c_library_info, My_NanoCEmbedded_None)
     PHP_FE(php_c_to_multiplier, My_NanoCEmbedded_ToMultiplier)
     PHP_FE(php_c_from_multiplier, My_NanoCEmbedded_FromMultiplier)
+    PHP_FE(php_c_generate_block, My_NanoCEmbedded_GenerateBlock)
     PHP_FE_END
 
 };
@@ -367,6 +395,323 @@ PHP_FUNCTION(php_c_library_info)
    RETURN_STR(strpprintf(sizeof(LIBRARY_INFO_JSON), "%s", LIBRARY_INFO_JSON));
 }
 
+PHP_FUNCTION(php_c_generate_block)
+{
+
+   int err;
+   char msg[512];
+   unsigned char *account, *previous, *representative, *balance, *value_send_rec, *link;
+   size_t account_len, previous_len, representative_len, balance_len, value_send_rec_len, link_len;
+   uint32_t add_sub_type;
+   char *pA, *pB;
+   zend_long balance_type, value_send_rec_type, direction;
+   F_BLOCK_TRANSFER block;
+
+   if (zend_parse_parameters(ZEND_NUM_ARGS(), "sssslslsl", &account, &account_len, &previous, &previous_len, &representative,
+      &representative_len, &balance, &balance_len, &balance_type, &value_send_rec, &value_send_rec_len, &value_send_rec_type,
+      &link, &link_len, &direction)==FAILURE) return;
+
+   if (account_len==0) {
+
+      sprintf(msg, "Internal error in C function 'php_c_generate_block' 16100. Account can not be empty string");
+      zend_throw_exception(f_exception_ce, msg, 16100);
+
+      return;
+
+   }
+
+//php -r "echo bin2hex(php_c_generate_block('nano_14cuejfpr58epnpxenirusimsrbwxbecin7a3izq1injptecc31qsjwquoe6', '', 'nano_3jwrszth46rk1mu7rmb4rhm54us8yg1gw3ipodftqtikf5yqdyr7471nsg1k', '10', BALANCE_REAL_STRING, '3', VALUE_SEND_RECEIVE_REAL_STRING, 'nano_3x4ui45q1cw8hydmfdn4ec5ijsdqi4ryp14g4ayh71jcdkwmddrq7ca9xzn9', VALUE_TO_SEND));"
+
+   if (representative_len==0) {
+
+      sprintf(msg, "Internal error in C function 'php_c_generate_block' 16103. Representative account can not be empty string");
+      zend_throw_exception(f_exception_ce, msg, 16103);
+
+      return;
+
+   }
+
+   if (link_len==0) {
+
+      sprintf(msg, "Internal error in C function 'php_c_generate_block' 16104. Link or destination wallet can not be empty string");
+      zend_throw_exception(f_exception_ce, msg, 16104);
+
+      return;
+
+   }
+
+   if (balance_len==0) {
+
+      sprintf(msg, "Internal error in C function 'php_c_generate_block' 16110. Balance value can not be an empty string");
+
+      zend_throw_exception(f_exception_ce, msg, 16110);
+
+      return;
+
+   }
+
+   if (value_send_rec_len==0) {
+
+      sprintf(msg, "Internal error in C function 'php_c_generate_block' 16111. Value to send/receive can not be an empty string");
+
+      zend_throw_exception(f_exception_ce, msg, 16111);
+
+      return;
+
+   }
+
+   if (direction==VALUE_TO_SEND)
+      add_sub_type=F_NANO_SUB_A_B;
+   else if (direction==VALUE_TO_RECEIVE)
+      add_sub_type=F_NANO_ADD_A_B;
+   else {
+
+      sprintf(msg, "Internal error in C function 'php_c_generate_block' 16112. Invalid direction. Select send amout or receive amount");
+
+      zend_throw_exception(f_exception_ce, msg, 16112);
+
+      return;
+
+   }
+
+   if ((uint32_t)balance_type&BALANCE_RAW_128) {
+
+      if (balance_len!=32) {
+
+         sprintf(msg, "Internal error in C function 'php_c_generate_block' 16113. Big number in balance must be 16 bytes long. Wrong length: '%lu'",
+                 (unsigned long int)balance_len);
+
+         zend_throw_exception(f_exception_ce, msg, 16113);
+
+         return;
+
+      }
+
+      if ((err=f_str_to_hex((uint8_t *)(pA=msg), (char *)balance))) {
+
+         sprintf(msg, "Internal error in C function 'php_c_generate_block' %d. Can not parse balance '%s' raw Nano big number", err, (const char *)balance);
+
+         zend_throw_exception(f_exception_ce, msg, (zend_long)err);
+
+         return;
+
+      }
+
+   } else
+      pA=(char *)balance;
+
+   if ((uint32_t)value_send_rec_type&VALUE_SEND_RECEIVE_RAW_128) {
+
+      if (value_send_rec_len!=32) {
+
+         sprintf(msg, "Internal error in C function 'php_c_generate_block' 16114. Big number in value to send/receive must be 16 bytes long. Wrong length: '%lu'",
+                 (unsigned long int)value_send_rec_len);
+
+         zend_throw_exception(f_exception_ce, msg, 16114);
+
+         return;
+
+      }
+
+      if ((err=f_str_to_hex((uint8_t *)(pB=msg+32), (char *)value_send_rec))) {
+
+         sprintf(msg, "Internal error in C function 'php_c_generate_block' %d. Can not parse value to send/receive '%s' raw Nano big number",
+            err, (const char *)value_send_rec);
+
+         zend_throw_exception(f_exception_ce, msg, (zend_long)err);
+
+         return;
+
+      }
+
+   } else
+      pB=(char *)value_send_rec;
+
+   add_sub_type|=(F_NANO_RES_RAW_128|(uint32_t)balance_type|(uint32_t)value_send_rec_type);
+   memset(&block, 0, sizeof(block));
+//   block.prefixes=0;
+
+   if (((err=is_nano_prefix((const char *)account, NANO_PREFIX)))?(err<<=1):(err=is_nano_prefix((const char *)account, XRB_PREFIX))) {
+
+      if (account_len>(MAX_STR_NANO_CHAR-1)) {
+
+         sprintf(msg, "Internal error in C function 'php_c_generate_block' 16101. Account wallet length %lu exceeds maximum length", account_len);
+         zend_throw_exception(f_exception_ce, msg, 16101);
+
+         return;
+
+      }
+
+      if (err&1)
+         block.prefixes=SENDER_XRB;
+
+      if ((err=nano_base_32_2_hex(block.account, strncpy(msg, (const char *)account, MAX_STR_NANO_CHAR)))) {
+
+         sprintf(msg, "Internal error in C function 'php_c_generate_block' %d. Can not parse account wallet '%s' to public key", err, (const char *)account);
+
+         zend_throw_exception(f_exception_ce, msg, (zend_long)err);
+
+         return;
+
+      }
+
+   } else if (account_len==64) {
+
+      if ((err=f_str_to_hex(block.account, (char *)account))) {
+
+         sprintf(msg, "Internal error in C function 'php_c_generate_block' %d. Can not parse account '%s' Nano block", err, (const char *)account);
+
+         zend_throw_exception(f_exception_ce, msg, (zend_long)err);
+
+         return;
+
+      }
+
+   } else {
+
+      sprintf(msg, "Internal error in C function 'php_c_generate_block' 16102. Invalid length %lu in Nano account", account_len);
+
+      zend_throw_exception(f_exception_ce, msg, 16102);
+
+      return;
+
+   }
+
+   if (((err=is_nano_prefix((const char *)representative, NANO_PREFIX)))?(err<<=1):(err=is_nano_prefix((const char *)representative, XRB_PREFIX))) {
+
+      if (representative_len>(MAX_STR_NANO_CHAR-1)) {
+
+         sprintf(msg, "Internal error in C function 'php_c_generate_block' 16105. Representative wallet length %lu exceeds maximum length", representative_len);
+         zend_throw_exception(f_exception_ce, msg, 16105);
+
+         return;
+
+      }
+
+      if (err&1)
+         block.prefixes|=REP_XRB;
+
+      if ((err=nano_base_32_2_hex(block.representative, strncpy(msg, (const char *)representative, MAX_STR_NANO_CHAR)))) {
+
+         sprintf(msg, "Internal error in C function 'php_c_generate_block' %d. Can not parse representative wallet '%s' to public key", err,
+            (const char *)representative);
+
+         zend_throw_exception(f_exception_ce, msg, (zend_long)err);
+
+         return;
+
+      }
+
+   } else if (representative_len==64) {
+
+      if ((err=f_str_to_hex(block.representative, (char *)representative))) {
+
+         sprintf(msg, "Internal error in C function 'php_c_generate_block' %d. Can not parse representative '%s' to Nano block", err, 
+            (const char *)representative);
+
+         zend_throw_exception(f_exception_ce, msg, (zend_long)err);
+
+         return;
+
+      }
+
+   } else {
+
+      sprintf(msg, "Internal error in C function 'php_c_generate_block' 16106. Invalid length %lu in Nano representative", representative_len);
+
+      zend_throw_exception(f_exception_ce, msg, 16106);
+
+      return;
+
+   }
+
+   if (((err=is_nano_prefix((const char *)link, NANO_PREFIX)))?(err<<=1):(err=is_nano_prefix((const char *)link, XRB_PREFIX))) {
+
+      if (link_len>(MAX_STR_NANO_CHAR-1)) {
+
+         sprintf(msg, "Internal error in C function 'php_c_generate_block' 16107. Destination wallet length %lu exceeds maximum length", link_len);
+         zend_throw_exception(f_exception_ce, msg, 16107);
+
+         return;
+
+      }
+
+      if (err&1)
+         block.prefixes|=DEST_XRB;
+
+      if ((err=nano_base_32_2_hex(block.link, strncpy(msg, (const char *)link, MAX_STR_NANO_CHAR)))) {
+
+         sprintf(msg, "Internal error in C function 'php_c_generate_block' %d. Can not parse destination wallet '%s' to public key", err,
+            (const char *)link);
+
+         zend_throw_exception(f_exception_ce, msg, (zend_long)err);
+
+         return;
+
+      }
+
+   } else if (link_len==64) {
+
+      if ((err=f_str_to_hex(block.link, (char *)link))) {
+
+         sprintf(msg, "Internal error in C function 'php_c_generate_block' %d. Can not parse link '%s' to Nano block", err, (const char *)link);
+
+         zend_throw_exception(f_exception_ce, msg, (zend_long)err);
+
+         return;
+
+      }
+
+   } else {
+
+      sprintf(msg, "Internal error in C function 'php_c_generate_block' 16108. Invalid length %lu in link", link_len);
+
+      zend_throw_exception(f_exception_ce, msg, 16108);
+
+      return;
+
+   }
+
+   if (previous_len) {
+
+      if (previous_len!=64) {
+
+         sprintf(msg, "Internal error in C function 'php_c_generate_block' 16109. Invalid length %lu in previous", previous_len);
+
+         zend_throw_exception(f_exception_ce, msg, 16109);
+
+         return;
+
+      }
+
+      if ((err=f_str_to_hex(block.previous, (char *)previous))) {
+
+         sprintf(msg, "Internal error in C function 'php_c_generate_block' %d. Can not parse previous to Nano block", err);
+
+         zend_throw_exception(f_exception_ce, msg, (zend_long)err);
+
+         return;
+
+      }
+
+   } else
+      memset(block.previous, 0, sizeof(block.previous));
+
+   if ((err=f_nano_add_sub(block.balance, pA, pB, add_sub_type))) {
+
+      sprintf(msg, "Internal error in C function 'php_c_generate_block' %d. Can not ADD/SUB Nano big number. Error in 'f_nano_add_sub'", err);
+
+      zend_throw_exception(f_exception_ce, msg, (zend_long)err);
+
+      return;
+
+   }
+
+   block.work=0;
+
+   ZVAL_STRINGL(return_value, (char *)&block, sizeof(block));
+
+}
 
 PHP_FUNCTION(php_c_from_multiplier)
 {
