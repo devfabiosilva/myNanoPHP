@@ -134,6 +134,16 @@ ZEND_BEGIN_ARG_INFO_EX(My_NanoCEmbedded_VerifyToken, 0, 0, 3)
     ZEND_ARG_INFO(0, password)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_INFO_EX(My_NanoCEmbedded_ToMultiplier, 0, 0, 2)
+    ZEND_ARG_INFO(0, difficulty)
+    ZEND_ARG_INFO(0, base_difficulty)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(My_NanoCEmbedded_FromMultiplier, 0, 0, 2)
+    ZEND_ARG_INFO(0, multiplier)
+    ZEND_ARG_INFO(0, base_difficulty)
+ZEND_END_ARG_INFO()
+
 static zend_class_entry *f_exception_ce;
 
 static zend_object *f_exception_create_object(zend_class_entry *ce) {
@@ -341,6 +351,8 @@ static const zend_function_entry mynanoembedded_functions[] = {
     PHP_FE(php_c_verify_token, My_NanoCEmbedded_VerifyToken)
     PHP_FE(php_c_license, My_NanoCEmbedded_None)
     PHP_FE(php_c_library_info, My_NanoCEmbedded_None)
+    PHP_FE(php_c_to_multiplier, My_NanoCEmbedded_ToMultiplier)
+    PHP_FE(php_c_from_multiplier, My_NanoCEmbedded_FromMultiplier)
     PHP_FE_END
 
 };
@@ -353,6 +365,109 @@ PHP_FUNCTION(php_c_license)
 PHP_FUNCTION(php_c_library_info)
 {
    RETURN_STR(strpprintf(sizeof(LIBRARY_INFO_JSON), "%s", LIBRARY_INFO_JSON));
+}
+
+
+PHP_FUNCTION(php_c_from_multiplier)
+{
+
+   int err;
+   char msg[512];
+   unsigned char *base_difficulty;
+   size_t base_difficulty_len, double_len;
+   uint64_t base_diff;
+   double d;
+   zval *zv;
+
+   if (zend_parse_parameters(ZEND_NUM_ARGS(), "zs", &zv, &base_difficulty, &base_difficulty_len)==FAILURE)
+      return;
+
+   if ((err=f_convert_to_long_int_std(&base_diff, (char *)base_difficulty, 24))) {
+
+      sprintf(msg, "Internal error in C function 'php_c_from_multiplier' %d. Can not convert base difficulty with length %lu", err, base_difficulty_len);
+
+      zend_throw_exception(f_exception_ce, msg, (zend_long)err);
+
+      return;
+
+   }
+
+   switch (Z_TYPE_P(zv)) {
+
+      case IS_DOUBLE:
+
+         d=Z_DVAL_P(zv);
+
+         break;
+
+      case IS_LONG:
+
+         d=(double)Z_LVAL_P(zv);
+
+         break;
+
+      case IS_STRING:
+
+         if ((err=f_convert_to_double(&d, strncpy(msg, (const char *)Z_STRVAL_P(zv), double_len=(Z_STRLEN_P(zv)+1))))) {
+
+            sprintf(msg, "Internal error in C function 'php_c_from_multiplier' %d. Can not parse string with length %lu to double", err, double_len);
+
+            zend_throw_exception(f_exception_ce, msg, (zend_long)err);
+
+            return;
+
+         }
+
+         break;
+
+      default:
+
+         sprintf(msg, "Internal error in C function 'php_c_from_multiplier' %d. Unknown type. Multiplier must be double or real string value", err);
+
+         zend_throw_exception(f_exception_ce, msg, (zend_long)err);
+
+         return;
+
+   }
+
+   RETURN_STR(strpprintf(32, "0x%016llx", (unsigned long long int)from_multiplier(d, base_diff)));
+
+}
+
+PHP_FUNCTION(php_c_to_multiplier)
+{
+
+   int err;
+   char msg[512];
+   unsigned char *difficulty, *base_difficulty;
+   size_t difficulty_len, base_difficulty_len;
+   unsigned long int diff, base_diff;
+
+   if (zend_parse_parameters(ZEND_NUM_ARGS(), "ss", &difficulty, &difficulty_len, &base_difficulty, &base_difficulty_len)==FAILURE)
+      return;
+
+   if ((err=f_convert_to_long_int_std(&diff, (char *)difficulty, 24))) {
+
+      sprintf(msg, "Internal error in C function 'php_c_to_multiplier' %d. Can not convert difficulty with length %lu", err, difficulty_len);
+
+      zend_throw_exception(f_exception_ce, msg, (zend_long)err);
+
+      return;
+
+   }
+
+   if ((err=f_convert_to_long_int_std(&base_diff, (char *)base_difficulty, 24))) {
+
+      sprintf(msg, "Internal error in C function 'php_c_to_multiplier' %d. Can not convert base difficulty with length %lu", err, base_difficulty_len);
+
+      zend_throw_exception(f_exception_ce, msg, (zend_long)err);
+
+      return;
+
+   }
+
+   RETURN_DOUBLE(to_multiplier((uint64_t)diff, (uint64_t)base_diff));
+
 }
 
 PHP_FUNCTION(php_c_generate_token)

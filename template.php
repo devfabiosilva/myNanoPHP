@@ -1040,6 +1040,68 @@ if ($_SERVER['REQUEST_METHOD']==='POST') {
 
     }
 
+    if ($cmd==="to_multiplier") {
+
+        $difficulty=$_POST['difficulty'];
+
+        if (!isset($difficulty)) {
+
+            http_response_code(404);
+            header($MIME_TYPE);
+            echo '{"error":"77","reason":"Missing: Difficulty"}';
+            exit(0);
+
+        }
+
+        $base_difficulty=$_POST['base_difficulty'];
+
+        try {
+
+            $result=php_c_to_multiplier($difficulty, (isset($base_difficulty))?$base_difficulty:($base_difficulty=DEFAULT_NANO_POW_THRESHOLD));
+
+            echo '{"multiplier":"'.number_format($result, 15, '.', '').'","difficulty":"'.$difficulty.'","base_difficulty":"'.$base_difficulty.'"}';
+
+        } catch (Exception $e) {
+            http_response_code(500);
+            header($MIME_TYPE);
+            echo '{"error":"500", "reason":"'.$e->getMessage().' Can not calculate multiplier'.$e->getCode().'"}';
+        }
+
+        exit(0);
+
+    }
+
+    if ($cmd==="from_multiplier") {
+
+        $multiplier=$_POST['multiplier'];
+
+        if (!isset($multiplier)) {
+
+            http_response_code(404);
+            header($MIME_TYPE);
+            echo '{"error":"78","reason":"Missing: Multiplier"}';
+            exit(0);
+
+        }
+
+        $base_difficulty=$_POST['base_difficulty'];
+
+        try {
+
+            $result=php_c_from_multiplier($multiplier, (isset($base_difficulty))?$base_difficulty:($base_difficulty=DEFAULT_NANO_POW_THRESHOLD));
+
+            echo '{"difficulty":"'.$result.'","multiplier":"'.$multiplier.'","base_difficulty":"'.$base_difficulty.'"}';
+
+        } catch (Exception $e) {
+            http_response_code(500);
+            header($MIME_TYPE);
+            echo '{"error":"500", "reason":"'.$e->getMessage().' Can not get difficulty from multiplier '.$e->getCode().'"}';
+        }
+
+        exit(0);
+
+    }
+
     if ($cmd==="library_info") {
 
        header($MIME_TYPE);
