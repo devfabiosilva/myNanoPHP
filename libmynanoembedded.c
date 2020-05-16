@@ -162,6 +162,12 @@ ZEND_BEGIN_ARG_INFO_EX(My_NanoCEmbedded_SignBlock, 0, 0, 3)
     ZEND_ARG_INFO(0, private_key)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_INFO_EX(My_NanoCEmbedded_ExtractPkOrLinkFromBlock, 0, 0, 1)
+    ZEND_ARG_INFO(0, block)
+    ZEND_ARG_INFO(0, type)
+    ZEND_ARG_INFO(0, prefix)
+ZEND_END_ARG_INFO()
+
 static zend_class_entry *f_exception_ce;
 
 static zend_object *f_exception_create_object(zend_class_entry *ce) {
@@ -378,6 +384,9 @@ static const zend_function_entry mynanoembedded_functions[] = {
     PHP_FE(php_c_from_multiplier, My_NanoCEmbedded_FromMultiplier)
     PHP_FE(php_c_generate_block, My_NanoCEmbedded_GenerateBlock)
     PHP_FE(php_c_sign_block, My_NanoCEmbedded_SignBlock)
+    PHP_FE(php_c_get_account_from_block, My_NanoCEmbedded_ExtractPkOrLinkFromBlock)
+    PHP_FE(php_c_get_representative_from_block, My_NanoCEmbedded_ExtractPkOrLinkFromBlock)
+    PHP_FE(php_c_get_link_from_block, My_NanoCEmbedded_ExtractPkOrLinkFromBlock)
     PHP_FE_END
 
 };
@@ -390,6 +399,142 @@ PHP_FUNCTION(php_c_license)
 PHP_FUNCTION(php_c_library_info)
 {
    RETURN_STR(strpprintf(sizeof(LIBRARY_INFO_JSON), "%s", LIBRARY_INFO_JSON));
+}
+
+#define NANO_PARSE_FORMAT_UTIL_ACCOUNT (int)(1<<0)
+#define NANO_PARSE_FORMAT_UTIL_REPRESENTATIVE (int)(1<<1)
+#define NANO_PARSE_FORMAT_UTIL_LINK (int)(1<<2)
+int nano_wallet_parse_format_util(char *msg, zval *z_block, int extract, zend_long type, unsigned char *prefix, size_t prefix_len, const char *on_error_fn_name)
+{
+
+   int err;
+   uint8_t *p;
+//msg must be a buffer with 512 bytes !
+
+   if (Z_TYPE_P(z_block)!=IS_STRING) {
+
+      sprintf(msg, "Internal error in C function '%s' 16300. User block is not raw data", on_error_fn_name);
+
+      zend_throw_exception(f_exception_ce, msg, 16300);
+
+      return 1;
+
+   }
+
+   if (Z_STRLEN_P(z_block)!=sizeof(F_BLOCK_TRANSFER)) {
+
+      sprintf(msg, "Internal error in C function '%s' 16301. Invalid user block size", on_error_fn_name);
+
+      zend_throw_exception(f_exception_ce, msg, 16301);
+
+      return 2;
+
+   }
+
+   if (extract&NANO_PARSE_FORMAT_UTIL_LINK)
+      p=((F_BLOCK_TRANSFER *)Z_STRVAL_P(z_block))->link;
+   else if (extract&NANO_PARSE_FORMAT_UTIL_REPRESENTATIVE)
+      p=((F_BLOCK_TRANSFER *)Z_STRVAL_P(z_block))->representative;
+   else
+      p=((F_BLOCK_TRANSFER *)Z_STRVAL_P(z_block))->account;
+
+   if (type)
+      f_nano_key_to_str(msg, (unsigned char *)p);
+   else {
+
+      if (prefix_len>(sizeof(NANO_PREFIX)-1)) {
+
+         sprintf(msg, "Internal error in C function '%s' 16302. Prefix length size %lu", on_error_fn_name, (unsigned long int)prefix_len);
+
+         zend_throw_exception(f_exception_ce, msg, 16302);
+
+         return 3;
+
+      }
+
+      if (!is_nano_prefix((const char *)prefix, NANO_PREFIX))
+         if (!is_nano_prefix((const char *)prefix, XRB_PREFIX)) {
+
+            sprintf(msg, "Internal error in C function '%s' 16304. Invalid Nano prefix %s", on_error_fn_name, (const char *)prefix);
+
+            zend_throw_exception(f_exception_ce, msg, 16304);
+
+            return 4;
+
+         }
+
+      if ((err=pk_to_wallet(msg, (char *)prefix, (uint8_t *)memcpy(msg+256, p, 32)))) {
+
+         sprintf(msg, "Internal error in C function '%s' %d. Can not parse public key to Nano wallet with prefix %s", on_error_fn_name, err, 
+            (const char *)prefix);
+
+         zend_throw_exception(f_exception_ce, msg, (zend_long)err);
+
+         return err;
+
+      }
+
+   }
+
+   return 0;
+
+}
+
+PHP_FUNCTION(php_c_get_account_from_block)
+{
+
+   char msg[512];
+   zval *z_block;
+   zend_long type=0;
+   unsigned char *prefix=NANO_PREFIX;
+   size_t prefix_len=(sizeof(NANO_PREFIX)-1);
+
+   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z|l|s", &z_block, &type, &prefix, &prefix_len)==FAILURE)
+      return;
+
+   if (nano_wallet_parse_format_util(msg, z_block, NANO_PARSE_FORMAT_UTIL_ACCOUNT, type, prefix, prefix_len, "php_c_get_account_from_block"))
+      return;
+
+   RETURN_STR(strpprintf(MAX_STR_NANO_CHAR, "%s", msg));
+
+}
+
+PHP_FUNCTION(php_c_get_representative_from_block)
+{
+
+   char msg[512];
+   zval *z_block;
+   zend_long type=0;
+   unsigned char *prefix=NANO_PREFIX;
+   size_t prefix_len=(sizeof(NANO_PREFIX)-1);
+
+   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z|l|s", &z_block, &type, &prefix, &prefix_len)==FAILURE)
+      return;
+
+   if (nano_wallet_parse_format_util(msg, z_block, NANO_PARSE_FORMAT_UTIL_REPRESENTATIVE, type, prefix, prefix_len, "php_c_get_representative_from_block"))
+      return;
+
+   RETURN_STR(strpprintf(MAX_STR_NANO_CHAR, "%s", msg));
+
+}
+
+PHP_FUNCTION(php_c_get_link_from_block)
+{
+
+   char msg[512];
+   zval *z_block;
+   zend_long type=0;
+   unsigned char *prefix=NANO_PREFIX;
+   size_t prefix_len=(sizeof(NANO_PREFIX)-1);
+
+   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z|l|s", &z_block, &type, &prefix, &prefix_len)==FAILURE)
+      return;
+
+   if (nano_wallet_parse_format_util(msg, z_block, NANO_PARSE_FORMAT_UTIL_LINK, type, prefix, prefix_len, "php_c_get_link_from_block"))
+      return;
+
+   RETURN_STR(strpprintf(MAX_STR_NANO_CHAR, "%s", msg));
+
 }
 
 PHP_FUNCTION(php_c_generate_block)

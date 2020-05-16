@@ -1,5 +1,9 @@
 # Prerequisites
 *.d
+# My Nano config. Still in development
+*.m4
+mbedtls
+sodium
 
 # Object files
 *.o

@@ -20,6 +20,10 @@ PHP_RINIT_FUNCTION(mynanoembedded);
 PHP_RSHUTDOWN_FUNCTION(mynanoembedded);
 PHP_MINFO_FUNCTION(mynanoembedded);
 
+PHP_FUNCTION(php_c_get_account_from_block);
+PHP_FUNCTION(php_c_get_representative_from_block);
+PHP_FUNCTION(php_c_get_link_from_block);
+PHP_FUNCTION(php_c_sign_block);
 PHP_FUNCTION(php_c_generate_block);
 PHP_FUNCTION(php_c_from_multiplier);
 PHP_FUNCTION(php_c_to_multiplier);

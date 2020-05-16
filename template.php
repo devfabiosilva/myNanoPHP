@@ -524,6 +524,196 @@ if ($_SERVER['REQUEST_METHOD']==='POST') {
 
     }
 
+    if ($cmd==="get_account_from_block") {
+
+        $block=$_POST['block'];
+
+        if (!isset($block)) {
+            http_response_code(404);
+            header($MIME_TYPE);
+            echo '{"error":"89","reason":"Missing block"}';
+            exit(0);
+        }
+
+        $type=$_POST['type'];
+
+        if (isset($type)) {
+
+            if ($type==="raw") {
+
+                $number_type=1;
+                $prefix="";
+
+            } else if ($type==="wallet") {
+
+                $number_type=0;
+                $prefix=$_POST['prefix'];
+
+                if (!isset($prefix))
+                    $prefix=NANO_PREFIX;
+
+            }
+
+        } else {
+
+            $number_type=0;
+            $prefix=NANO_PREFIX;
+
+        }
+
+        try {
+
+            $block_bin=hex2bin($block);
+
+        } catch (Exception $e) {
+            http_response_code(500);
+            header($MIME_TYPE);
+            echo '{"error":"500", "reason":"'.$e->getMessage()." can't parse hex string block to binary block ". $e->getCode().'"}';
+        }
+
+        try {
+
+            $ret=php_c_get_account_from_block($block_bin, $number_type, $prefix);
+
+            echo ($number_type)?'{"public_key":"'.$ret.'"}':'{"wallet":"'.$ret.'"}';
+            
+        } catch (Exception $e) {
+            http_response_code(500);
+            header($MIME_TYPE);
+            echo '{"error":"500", "reason":"'.$e->getMessage()." can't extract account from block 'php_c_get_account_from_block' ". $e->getCode().'"}';
+        }
+
+        exit(0);
+
+    }
+
+    if ($cmd==="get_representative_from_block") {
+
+        $block=$_POST['block'];
+
+        if (!isset($block)) {
+            http_response_code(404);
+            header($MIME_TYPE);
+            echo '{"error":"89","reason":"Missing block"}';
+            exit(0);
+        }
+
+        $type=$_POST['type'];
+
+        if (isset($type)) {
+
+            if ($type==="raw") {
+
+                $number_type=1;
+                $prefix="";
+
+            } else if ($type==="wallet") {
+
+                $number_type=0;
+                $prefix=$_POST['prefix'];
+
+                if (!isset($prefix))
+                    $prefix=NANO_PREFIX;
+
+            }
+
+        } else {
+
+            $number_type=0;
+            $prefix=NANO_PREFIX;
+
+        }
+
+        try {
+
+            $block_bin=hex2bin($block);
+
+        } catch (Exception $e) {
+            http_response_code(500);
+            header($MIME_TYPE);
+            echo '{"error":"500", "reason":"'.$e->getMessage()." can't parse hex string block to binary block ". $e->getCode().'"}';
+        }
+
+        try {
+
+            $ret=php_c_get_representative_from_block($block_bin, $number_type, $prefix);
+
+            echo ($number_type)?'{"public_key":"'.$ret.'"}':'{"wallet":"'.$ret.'"}';
+            
+        } catch (Exception $e) {
+            http_response_code(500);
+            header($MIME_TYPE);
+            echo '{"error":"500", "reason":"'.$e->getMessage()." can't extract representative from block 'php_c_get_representative_from_block' ".
+                $e->getCode().'"}';
+        }
+
+        exit(0);
+
+    }
+
+    if ($cmd==="get_link_from_block") {
+
+        $block=$_POST['block'];
+
+        if (!isset($block)) {
+            http_response_code(404);
+            header($MIME_TYPE);
+            echo '{"error":"89","reason":"Missing block"}';
+            exit(0);
+        }
+
+        $type=$_POST['type'];
+
+        if (isset($type)) {
+
+            if ($type==="raw") {
+
+                $number_type=1;
+                $prefix="";
+
+            } else if ($type==="wallet") {
+
+                $number_type=0;
+                $prefix=$_POST['prefix'];
+
+                if (!isset($prefix))
+                    $prefix=NANO_PREFIX;
+
+            }
+
+        } else {
+
+            $number_type=0;
+            $prefix=NANO_PREFIX;
+
+        }
+
+        try {
+
+            $block_bin=hex2bin($block);
+
+        } catch (Exception $e) {
+            http_response_code(500);
+            header($MIME_TYPE);
+            echo '{"error":"500", "reason":"'.$e->getMessage()." can't parse hex string block to binary block ". $e->getCode().'"}';
+        }
+
+        try {
+
+            $ret=php_c_get_link_from_block($block_bin, $number_type, $prefix);
+
+            echo ($number_type)?'{"public_key":"'.$ret.'"}':'{"wallet":"'.$ret.'"}';
+            
+        } catch (Exception $e) {
+            http_response_code(500);
+            header($MIME_TYPE);
+            echo '{"error":"500", "reason":"'.$e->getMessage()." can't extract link from block 'php_c_get_link_from_block' ".$e->getCode().'"}';
+        }
+
+        exit(0);
+
+    }
+
     if ($cmd==="real2raw") {
 
         $balance=$_POST['balance'];
