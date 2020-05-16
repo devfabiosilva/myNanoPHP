@@ -189,10 +189,6 @@ if ($_SERVER['REQUEST_METHOD']==='POST') {
 
             $block=php_c_generate_block($account, $previous, $representative, $balance, $balance_type, $val_send_rec, $val_send_rec_type, $link, $direction);
 
-            http_response_code(200);
-            header($MIME_TYPE);
-            echo '{"data":"'.bin2hex($block).'"}';
-
         } catch (Exception $e) {
 
             http_response_code(500);
@@ -200,6 +196,121 @@ if ($_SERVER['REQUEST_METHOD']==='POST') {
             echo '{"error":"500", "reason":"'.$e->getMessage().' Can not generate Nano block with error in php_c_generate_block function'.$e->getCode().'"}';
 
             exit(0);
+
+        }
+
+        try {
+
+            $block_hex=bin2hex($block);
+
+            http_response_code(200);
+            header($MIME_TYPE);
+
+            echo '{"data":"'.$block_hex.'"}';
+
+        } catch (Exception $e) {
+
+            http_response_code(500);
+            header($MIME_TYPE);
+
+            echo '{"error":"500", "reason":"'.$e->getMessage().' Can not convert binary data to hex string '.$e->getCode().'"}';
+
+        }
+
+        exit(0);
+
+    }
+
+    if ($cmd==="sign_block") {
+
+        $private_key=$_POST['private_key'];
+
+        if (!isset($private_key)) {
+
+            http_response_code(404);
+            header($MIME_TYPE);
+            echo '{"error":"87","reason":"Missing private key"}';
+
+            exit(0);
+
+        }
+
+        $user_block=$_POST['block'];
+
+        if (!isset($user_block)) {
+
+            http_response_code(404);
+            header($MIME_TYPE);
+            echo '{"error":"88","reason":"Missing user Nano block"}';
+
+            exit(0);
+
+        }
+
+        try {
+
+           $user_block_bin=hex2bin($user_block);
+
+        } catch (Exception $e) {
+
+            http_response_code(500);
+            header($MIME_TYPE);
+            echo '{"error":"500", "reason":"'.$e->getMessage().' Can not convert user block hex string to bin '.$e->getCode().'"}';
+
+            exit(0);
+
+        }
+
+        $fee_block=$_POST['fee_block'];
+
+        if (isset($fee_block)) {
+
+            try {
+
+               $fee_block_bin=hex2bin($fee_block);
+
+            } catch (Exception $e) {
+
+                http_response_code(500);
+                header($MIME_TYPE);
+                echo '{"error":"500", "reason":"'.$e->getMessage().' Can not convert fee block hex string to bin '.$e->getCode().'"}';
+
+                exit(0);
+
+            }
+
+        } else
+            $fee_block=null;
+
+        try {
+
+            $block=php_c_sign_block($user_block_bin, $fee_block_bin, $private_key);
+
+        } catch (Exception $e) {
+
+            http_response_code(500);
+            header($MIME_TYPE);
+            echo '{"error":"500", "reason":"'.$e->getMessage().' Can not sign Nano block(s). Error '.$e->getCode().'"}';
+
+            exit(0);
+
+        }
+
+        try {
+
+            $block_hex=bin2hex($block);
+
+            http_response_code(200);
+            header($MIME_TYPE);
+
+            echo '{"data":"'.$block_hex.'"}';
+
+        } catch (Exception $e) {
+
+            http_response_code(500);
+            header($MIME_TYPE);
+
+            echo '{"error":"500", "reason":"'.$e->getMessage().' Can not convert binary data to hex string when signing block(s) '.$e->getCode().'"}';
 
         }
 

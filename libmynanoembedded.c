@@ -156,6 +156,12 @@ ZEND_BEGIN_ARG_INFO_EX(My_NanoCEmbedded_GenerateBlock, 0, 0, 9)
     ZEND_ARG_INFO(0, direction)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_INFO_EX(My_NanoCEmbedded_SignBlock, 0, 0, 3)
+    ZEND_ARG_INFO(0, user_block)
+    ZEND_ARG_INFO(0, fee_block)
+    ZEND_ARG_INFO(0, private_key)
+ZEND_END_ARG_INFO()
+
 static zend_class_entry *f_exception_ce;
 
 static zend_object *f_exception_create_object(zend_class_entry *ce) {
@@ -304,8 +310,6 @@ PHP_FUNCTION(php_c_nano_check_sig)
    size_t msg_len;
    size_t publickey_len;
    size_t signature_len;
-   unsigned char tmp[512];
-   unsigned char *pk, *sg, *m;
 
    if (zend_parse_parameters(ZEND_NUM_ARGS(), "sss", &signature, &signature_len, &msg, &msg_len, &publickey, &publickey_len)==FAILURE) return;
 
@@ -327,22 +331,14 @@ PHP_FUNCTION(php_c_nano_check_sig)
 
    }
 
-   memset(tmp, 0, sizeof(tmp));
-
-   memcpy(pk=tmp, publickey, publickey_len);
-
-   memcpy(m=tmp+MAX_STR_NANO_CHAR, msg, 64);
-
-   memcpy(sg=tmp+MAX_STR_NANO_CHAR+65, signature, 128);
-
-   ((is_nano_prefix((const char *)pk, NANO_PREFIX))||(is_nano_prefix((const char *)pk, XRB_PREFIX)))?
+   ((is_nano_prefix((const char *)publickey, NANO_PREFIX))||(is_nano_prefix((const char *)publickey, XRB_PREFIX)))?
       (type=F_VERIFY_SIG_NANO_WALLET):(type=F_VERIFY_SIG_ASCII_HEX);
 
    if ((err=(f_verify_signed_data(
-      (const unsigned char *)sg,
-      (const unsigned char *)m,
+      (const unsigned char *)signature,
+      (const unsigned char *)msg,
       64,
-      (const void *)pk,
+      (const void *)publickey,
       type|F_IS_SIGNATURE_RAW_HEX_STRING|F_MESSAGE_IS_HASH_STRING)))>0)
       RETURN_TRUE;
 
@@ -381,6 +377,7 @@ static const zend_function_entry mynanoembedded_functions[] = {
     PHP_FE(php_c_to_multiplier, My_NanoCEmbedded_ToMultiplier)
     PHP_FE(php_c_from_multiplier, My_NanoCEmbedded_FromMultiplier)
     PHP_FE(php_c_generate_block, My_NanoCEmbedded_GenerateBlock)
+    PHP_FE(php_c_sign_block, My_NanoCEmbedded_SignBlock)
     PHP_FE_END
 
 };
@@ -528,8 +525,9 @@ PHP_FUNCTION(php_c_generate_block)
       pB=(char *)value_send_rec;
 
    add_sub_type|=(F_NANO_RES_RAW_128|(uint32_t)balance_type|(uint32_t)value_send_rec_type);
-   memset(&block, 0, sizeof(block));
-//   block.prefixes=0;
+   memset(block.preamble, 0, (sizeof(block.preamble)-1));
+   block.preamble[31]=0x06;
+   block.prefixes=0;
 
    if (((err=is_nano_prefix((const char *)account, NANO_PREFIX)))?(err<<=1):(err=is_nano_prefix((const char *)account, XRB_PREFIX))) {
 
@@ -606,7 +604,7 @@ PHP_FUNCTION(php_c_generate_block)
 
       if ((err=f_str_to_hex(block.representative, (char *)representative))) {
 
-         sprintf(msg, "Internal error in C function 'php_c_generate_block' %d. Can not parse representative '%s' to Nano block", err, 
+         sprintf(msg, "Internal error in C function 'php_c_generate_block' %d. Can not parse representative '%s' to Nano block", err,
             (const char *)representative);
 
          zend_throw_exception(f_exception_ce, msg, (zend_long)err);
@@ -708,8 +706,119 @@ PHP_FUNCTION(php_c_generate_block)
    }
 
    block.work=0;
+   memset(block.signature, 0, sizeof(block.signature));
 
    ZVAL_STRINGL(return_value, (char *)&block, sizeof(block));
+
+}
+
+PHP_FUNCTION(php_c_sign_block)
+{
+
+   int err;
+   char msg[768];
+   zval *z_user_block, *z_fee_block;
+   F_BLOCK_TRANSFER *user_block, *fee_block;
+   unsigned char *private_key;
+   size_t private_key_len;
+   zend_uchar type;
+
+   if (zend_parse_parameters(ZEND_NUM_ARGS(), "zzs", &z_user_block, &z_fee_block, &private_key, &private_key_len)==FAILURE)
+      return;
+
+   if (private_key_len!=128) {
+
+      sprintf(msg, "Internal error in C function 'php_c_sign_block' 16200. Invalid private key size");
+
+      zend_throw_exception(f_exception_ce, msg, 16200);
+
+      return;
+
+   }
+
+   if (Z_TYPE_P(z_user_block)!=IS_STRING) {
+
+      sprintf(msg, "Internal error in C function 'php_c_sign_block' 16201. User block is not raw data");
+
+      zend_throw_exception(f_exception_ce, msg, 16201);
+
+      return;
+
+   }
+
+   if (Z_STRLEN_P(z_user_block)!=sizeof(F_BLOCK_TRANSFER)) {
+
+      sprintf(msg, "Internal error in C function 'php_c_sign_block' 16202. Invalid user block size");
+
+      zend_throw_exception(f_exception_ce, msg, 16202);
+
+      return;
+
+   }
+
+   user_block=(F_BLOCK_TRANSFER *)Z_STRVAL_P(z_user_block);
+
+   if ((type=Z_TYPE_P(z_fee_block))==IS_STRING) {
+
+      if (Z_STRLEN_P(z_user_block)!=sizeof(F_BLOCK_TRANSFER)) {
+
+         sprintf(msg, "Internal error in C function 'php_c_sign_block' 16203. Invalid fee block size");
+
+         zend_throw_exception(f_exception_ce, msg, 16203);
+
+         return;
+
+      }
+
+      fee_block=(F_BLOCK_TRANSFER *)Z_STRVAL_P(z_fee_block);
+
+   } else if ((type=Z_TYPE_P(z_fee_block))==IS_NULL) fee_block=NULL;
+   else {
+
+      sprintf(msg, "Internal error in C function 'php_c_sign_block' 16204. Invalid fee block type");
+
+      zend_throw_exception(f_exception_ce, msg, 16204);
+
+      return;
+
+   }
+
+   memcpy(msg, user_block, sizeof(F_BLOCK_TRANSFER));
+   user_block=(F_BLOCK_TRANSFER *)msg;
+
+   if (fee_block) {
+
+      memcpy(msg+sizeof(F_BLOCK_TRANSFER), fee_block, sizeof(F_BLOCK_TRANSFER));
+      fee_block=(F_BLOCK_TRANSFER *)(msg+sizeof(F_BLOCK_TRANSFER));
+
+   }
+
+   if ((err=f_str_to_hex((uint8_t *)(msg+2*sizeof(F_BLOCK_TRANSFER)), (char *)private_key))) {
+
+      sprintf(msg, "Internal error in C function 'php_c_sign_block' %d. Can not parse private key string to hex", err);
+
+      zend_throw_exception(f_exception_ce, msg, (zend_long)err);
+
+      memset(msg+2*sizeof(F_BLOCK_TRANSFER), 0, 64);
+
+      return;
+
+   }
+
+   if ((err=f_nano_sign_block(user_block, fee_block, (uint8_t *)(msg+2*sizeof(F_BLOCK_TRANSFER))))) {
+
+      sprintf(msg, "Internal error in C function 'php_c_sign_block' %d. Can not sign block(s)", err);
+
+      zend_throw_exception(f_exception_ce, msg, (zend_long)err);
+
+   }
+
+   memset(msg+2*sizeof(F_BLOCK_TRANSFER), 0, 64);
+
+   if (err)
+      return;
+
+   ZVAL_STRINGL(return_value, (char *)msg, (fee_block)?(2*sizeof(F_BLOCK_TRANSFER)):(sizeof(F_BLOCK_TRANSFER)));
 
 }
 
