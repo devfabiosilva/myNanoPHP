@@ -189,6 +189,21 @@ ZEND_BEGIN_ARG_INFO_EX(My_NanoCEmbedded_GetWork, 0, 0, 1)
     ZEND_ARG_INFO(0, block)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_INFO_EX(My_NanoCEmbedded_SetPkOrLinkToBlock, 0, 0, 2)
+    ZEND_ARG_INFO(1, block)
+    ZEND_ARG_INFO(0, wallet)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(My_NanoCEmbedded_SetRepresentativeToBlock, 0, 0, 2)
+    ZEND_ARG_INFO(1, block)
+    ZEND_ARG_INFO(0, representative)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(My_NanoCEmbedded_SetLinkToBlock, 0, 0, 2)
+    ZEND_ARG_INFO(1, block)
+    ZEND_ARG_INFO(0, link)
+ZEND_END_ARG_INFO()
+
 static zend_class_entry *f_exception_ce;
 
 static zend_object *f_exception_create_object(zend_class_entry *ce) {
@@ -324,6 +339,7 @@ PHP_MINFO_FUNCTION(mynanoembedded)
     php_info_print_table_row(2, CONTACT_STR_DESC, CONTACT_STR_STATUS);
     php_info_print_table_row(2, LICENSE_STR, LICENSE_STR_STATUS);
     php_info_print_table_row(2, AUTHOR_STR, AUTHOR_STR_STATUS);
+
     php_info_print_table_end();
 }
 
@@ -413,6 +429,9 @@ static const zend_function_entry mynanoembedded_functions[] = {
     PHP_FE(php_c_get_signature_from_block, My_NanoCEmbedded_GetSignature)
     PHP_FE(php_c_get_prefixes_from_block, My_NanoCEmbedded_GetPrefixes)
     PHP_FE(php_c_get_work_from_block, My_NanoCEmbedded_GetWork)
+    PHP_FE(php_c_set_account_to_block, My_NanoCEmbedded_SetPkOrLinkToBlock)
+    PHP_FE(php_c_set_representative_to_block, My_NanoCEmbedded_SetRepresentativeToBlock)
+    PHP_FE(php_c_set_link_to_block, My_NanoCEmbedded_SetLinkToBlock)
     PHP_FE_END
 
 };
@@ -503,6 +522,165 @@ int nano_wallet_parse_format_util(char *msg, zval *z_block, int extract, zend_lo
    }
 
    return 0;
+
+}
+
+#define NANO_WALLET_SET_FORMAT_ACCOUNT (int)(1<<0)
+#define NANO_WALLET_SET_FORMAT_REPRESENTATIVE (int)(1<<1)
+#define NANO_WALLET_SET_FORMAT_LINK (int)(1<<2)
+int nano_wallet_set_format_util(zval *z_block, unsigned char *str, size_t str_len, int destination, const char *on_error_fn_name)
+{
+
+   int err;
+   char msg[512], prefixes;
+   F_BLOCK_TRANSFER *block;
+   uint8_t *p;
+
+   if (Z_TYPE_P(z_block)!=IS_STRING) {
+
+      sprintf(msg, "Internal error in C function '%s' 16400. User block is not raw data", on_error_fn_name);
+
+      zend_throw_exception(f_exception_ce, msg, 16400);
+
+      return 1;
+
+   }
+
+   if (Z_STRLEN_P(z_block)!=sizeof(F_BLOCK_TRANSFER)) {
+
+      sprintf(msg, "Internal error in C function '%s' 16401. Invalid user block size", on_error_fn_name);
+
+      zend_throw_exception(f_exception_ce, msg, 16401);
+
+      return 2;
+
+   }
+
+   if (str_len>MAX_STR_NANO_CHAR) {
+
+      sprintf(msg, "Internal error in C function '%s' 16402. String value exceeds max size in length %lu", on_error_fn_name, (unsigned long int)str_len);
+
+      zend_throw_exception(f_exception_ce, msg, 16402);
+
+      return 3;
+
+   }
+
+   prefixes=0;
+
+   if (is_nano_prefix((const char *)str, XRB_PREFIX)) {
+
+      prefixes=(REP_XRB|SENDER_XRB|DEST_XRB);
+
+      goto nano_wallet_set_format_util_XRB_PREFIX;
+
+   } else if (is_nano_prefix((const char *)str, NANO_PREFIX)) {
+
+nano_wallet_set_format_util_XRB_PREFIX:
+
+      if ((err=nano_base_32_2_hex((uint8_t *)msg, (char *)str))) {
+
+         sprintf(msg, "Internal error in C function '%s' %d. Can't convert Nano wallet '%s' to raw binary", on_error_fn_name, err, (const char *)str);
+
+         zend_throw_exception(f_exception_ce, msg, (zend_long)err);
+
+         return err;
+
+      }
+
+   } else if ((err=f_str_to_hex((uint8_t *)msg, (char *)str))) {
+
+      sprintf(msg, "Internal error in C function '%s' %d. Can't convert hex string '%s' to binary", on_error_fn_name, err, (const char *)str);
+
+      zend_throw_exception(f_exception_ce, msg, (zend_long)err);
+
+      return err;
+
+   }
+
+   block=(F_BLOCK_TRANSFER *)Z_STRVAL_P(z_block);
+
+   if (destination&NANO_WALLET_SET_FORMAT_ACCOUNT) {
+
+      p=block->account;
+      prefixes&=SENDER_XRB;
+      block->prefixes&=(~SENDER_XRB);
+
+   } else if (destination&NANO_WALLET_SET_FORMAT_REPRESENTATIVE) {
+
+      p=block->representative;
+      prefixes&=REP_XRB;
+      block->prefixes&=(~REP_XRB);
+
+   } else {
+
+      p=block->link;
+      prefixes&=DEST_XRB;
+      block->prefixes&=(~DEST_XRB);
+
+   }
+
+   block->prefixes|=prefixes;
+   memcpy(p, msg, 32);
+
+   return 0;
+
+}
+
+PHP_FUNCTION(php_c_set_account_to_block)
+{
+
+   zval *z_block;
+   unsigned char *account;
+   size_t account_len;
+
+   if (zend_parse_parameters(ZEND_NUM_ARGS(), "zs", &z_block, &account, &account_len)==FAILURE)
+      return;
+
+   ZVAL_DEREF(z_block);
+
+   if (nano_wallet_set_format_util(z_block, account, account_len, NANO_WALLET_SET_FORMAT_ACCOUNT, "php_c_set_account_to_block"))
+      return;
+
+   ZVAL_STRINGL(z_block, Z_STRVAL_P(z_block), sizeof(F_BLOCK_TRANSFER));
+
+}
+
+PHP_FUNCTION(php_c_set_representative_to_block)
+{
+
+   zval *z_block;
+   unsigned char *representative;
+   size_t representative_len;
+
+   if (zend_parse_parameters(ZEND_NUM_ARGS(), "zs", &z_block, &representative, &representative_len)==FAILURE)
+      return;
+
+   ZVAL_DEREF(z_block);
+
+   if (nano_wallet_set_format_util(z_block, representative, representative_len, NANO_WALLET_SET_FORMAT_REPRESENTATIVE, "php_c_set_representative_to_block"))
+      return;
+
+   ZVAL_STRINGL(z_block, Z_STRVAL_P(z_block), sizeof(F_BLOCK_TRANSFER));
+
+}
+
+PHP_FUNCTION(php_c_set_link_to_block)
+{
+
+   zval *z_block;
+   unsigned char *link;
+   size_t link_len;
+
+   if (zend_parse_parameters(ZEND_NUM_ARGS(), "zs", &z_block, &link, &link_len)==FAILURE)
+      return;
+
+   ZVAL_DEREF(z_block);
+
+   if (nano_wallet_set_format_util(z_block, link, link_len, NANO_WALLET_SET_FORMAT_LINK, "php_c_set_link_to_block"))
+      return;
+
+   ZVAL_STRINGL(z_block, Z_STRVAL_P(z_block), sizeof(F_BLOCK_TRANSFER));
 
 }
 
@@ -2268,14 +2446,14 @@ zend_module_entry mynanoembedded_module_entry = {
 #if ZEND_MODULE_API_NO >= 20010901
     STANDARD_MODULE_HEADER,
 #endif
-    "mynanoembedded",
+    LIBRARY_MODULE_NAME,
     mynanoembedded_functions,
     PHP_MINIT(mynanoembedded),
     PHP_MSHUTDOWN(mynanoembedded),
     NULL,
     NULL,
     PHP_MINFO(mynanoembedded),
-    "1.0",
+    LIBRARY_VERSION_STR,
     STANDARD_MODULE_PROPERTIES
 };
 

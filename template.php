@@ -1813,6 +1813,204 @@ if ($_SERVER['REQUEST_METHOD']==='POST') {
 
     }
 
+    if ($cmd==="set_account_to_block") {
+
+        $block=$_POST['block'];
+
+        if (!isset($block)) {
+
+            http_response_code(404);
+            header($MIME_TYPE);
+            echo '{"error":"91","reason":"Missing: Block"}';
+            exit(0);
+
+        }
+
+        $account=$_POST['account'];
+
+        if (!isset($account)) {
+
+            http_response_code(404);
+            header($MIME_TYPE);
+            echo '{"error":"92","reason":"Missing: Account"}';
+            exit(0);
+
+        }
+
+        try {
+
+            $block_bin=hex2bin($block);
+
+        } catch (Exception $e) {
+
+            http_response_code(500);
+            header($MIME_TYPE);
+            echo '{"error":"500", "reason":"'.$e->getMessage().' Can not convert hex to bin '.$e->getCode().'"}';
+            exit(0);
+
+        }
+
+        try {
+
+            php_c_set_account_to_block($block_bin, $account);
+
+        } catch (Exception $e) {
+            http_response_code(500);
+            header($MIME_TYPE);
+            echo '{"error":"500", "reason":"'.$e->getMessage().' Can not set accont to block '.$e->getCode().'"}';
+            exit(0);
+        }
+
+        try {
+
+            $block=bin2hex($block_bin);
+
+            echo '{"block":"'.$block.'"}';
+
+        } catch (Exception $e) {
+
+            http_response_code(500);
+            header($MIME_TYPE);
+            echo '{"error":"500", "reason":"'.$e->getMessage().' Can not convert to bin to hex string'.$e->getCode().'"}';
+
+        }
+
+        exit(0);
+
+    }
+
+    if ($cmd==="set_representative_to_block") {
+
+        $block=$_POST['block'];
+
+        if (!isset($block)) {
+
+            http_response_code(404);
+            header($MIME_TYPE);
+            echo '{"error":"93","reason":"Missing: Block"}';
+            exit(0);
+
+        }
+
+        $representative=$_POST['representative'];
+
+        if (!isset($representative)) {
+
+            http_response_code(404);
+            header($MIME_TYPE);
+            echo '{"error":"94","reason":"Missing: Representative"}';
+            exit(0);
+
+        }
+
+        try {
+
+            $block_bin=hex2bin($block);
+
+        } catch (Exception $e) {
+
+            http_response_code(500);
+            header($MIME_TYPE);
+            echo '{"error":"500", "reason":"'.$e->getMessage().' Can not convert hex to bin '.$e->getCode().'"}';
+            exit(0);
+
+        }
+
+        try {
+
+            php_c_set_representative_to_block($block_bin, $representative);
+
+        } catch (Exception $e) {
+            http_response_code(500);
+            header($MIME_TYPE);
+            echo '{"error":"500", "reason":"'.$e->getMessage().' Can not set representative to block '.$e->getCode().'"}';
+            exit(0);
+        }
+
+        try {
+
+            $block=bin2hex($block_bin);
+
+            echo '{"block":"'.$block.'"}';
+
+        } catch (Exception $e) {
+
+            http_response_code(500);
+            header($MIME_TYPE);
+            echo '{"error":"500", "reason":"'.$e->getMessage().' Can not convert to bin to hex string'.$e->getCode().'"}';
+
+        }
+
+        exit(0);
+
+    }
+
+    if ($cmd==="set_link_to_block") {
+
+        $block=$_POST['block'];
+
+        if (!isset($block)) {
+
+            http_response_code(404);
+            header($MIME_TYPE);
+            echo '{"error":"95","reason":"Missing: Block"}';
+            exit(0);
+
+        }
+
+        $link=$_POST['link'];
+
+        if (!isset($link)) {
+
+            http_response_code(404);
+            header($MIME_TYPE);
+            echo '{"error":"96","reason":"Missing: Link"}';
+            exit(0);
+
+        }
+
+        try {
+
+            $block_bin=hex2bin($block);
+
+        } catch (Exception $e) {
+
+            http_response_code(500);
+            header($MIME_TYPE);
+            echo '{"error":"500", "reason":"'.$e->getMessage().' Can not convert hex to bin '.$e->getCode().'"}';
+            exit(0);
+
+        }
+
+        try {
+
+            php_c_set_link_to_block($block_bin, $link);
+
+        } catch (Exception $e) {
+            http_response_code(500);
+            header($MIME_TYPE);
+            echo '{"error":"500", "reason":"'.$e->getMessage().' Can not set link to block '.$e->getCode().'"}';
+            exit(0);
+        }
+
+        try {
+
+            $block=bin2hex($block_bin);
+
+            echo '{"block":"'.$block.'"}';
+
+        } catch (Exception $e) {
+
+            http_response_code(500);
+            header($MIME_TYPE);
+            echo '{"error":"500", "reason":"'.$e->getMessage().' Can not convert to bin to hex string'.$e->getCode().'"}';
+
+        }
+
+        exit(0);
+
+    }
+
     if ($cmd==="library_info") {
 
        header($MIME_TYPE);

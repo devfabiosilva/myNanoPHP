@@ -20,6 +20,9 @@ PHP_RINIT_FUNCTION(mynanoembedded);
 PHP_RSHUTDOWN_FUNCTION(mynanoembedded);
 PHP_MINFO_FUNCTION(mynanoembedded);
 
+PHP_FUNCTION(php_c_set_representative_to_block);
+PHP_FUNCTION(php_c_set_link_to_block);
+PHP_FUNCTION(php_c_set_account_to_block);
 PHP_FUNCTION(php_c_get_previous_from_block);
 PHP_FUNCTION(php_c_get_balance_from_block);
 PHP_FUNCTION(php_c_get_signature_from_block);
@@ -51,6 +54,7 @@ PHP_FUNCTION(php_c_get_entropy_name);
 PHP_FUNCTION(php_c_nano_seed_to_bip39);
 PHP_FUNCTION(php_c_bip39_to_nano_seed);
 
+#define LIBRARY_MODULE_NAME "mynanoembedded"
 #define LIBRARY_NAME "myNanoEmbedded C library for PHP"
 #define LIBRARY_VERSION_STR "1.0"
 
