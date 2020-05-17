@@ -1581,6 +1581,238 @@ if ($_SERVER['REQUEST_METHOD']==='POST') {
 
     }
 
+    if ($cmd==="get_previous_from_block") {
+
+        $block=$_POST['block'];
+
+        if (!isset($block)) {
+
+            http_response_code(404);
+            header($MIME_TYPE);
+            echo '{"error":"90","reason":"Missing: Block"}';
+            exit(0);
+
+        }
+
+        try {
+
+            $block_bin=hex2bin($block);
+
+        } catch (Exception $e) {
+            http_response_code(500);
+            header($MIME_TYPE);
+            echo '{"error":"500", "reason":"'.$e->getMessage().' Can not convert hex to bin '.$e->getCode().'"}';
+            exit(0);
+
+        }
+
+        try {
+
+            $result=php_c_get_previous_from_block($block_bin);
+
+            echo '{"previous":"'.$result.'"}';
+
+        } catch (Exception $e) {
+            http_response_code(500);
+            header($MIME_TYPE);
+            echo '{"error":"500", "reason":"'.$e->getMessage().' Can not get previos from block '.$e->getCode().'"}';
+        }
+
+        exit(0);
+
+    }
+
+    if ($cmd==="get_balance_from_block") {
+
+        $block=$_POST['block'];
+
+        if (!isset($block)) {
+
+            http_response_code(404);
+            header($MIME_TYPE);
+            echo '{"error":"91","reason":"Missing: Block"}';
+            exit(0);
+
+        }
+
+        $type=$_POST['type'];
+
+        if (isset($type)) {
+
+            if ($type==="real")
+                $type_sel=BALANCE_REAL_STRING;
+            else if ($type==="raw")
+                $type_sel=BALANCE_RAW_STRING;
+            else if ($type==="hex")
+                $type_sel=BALANCE_RAW_128;
+            else {
+
+                http_response_code(500);
+                header($MIME_TYPE);
+                echo '{"error":"92","reason":"Wrong type"}';
+                exit(0);
+
+            }
+
+        } else
+            $type_sel=BALANCE_REAL_STRING;
+
+        try {
+
+            $block_bin=hex2bin($block);
+
+        } catch (Exception $e) {
+
+            http_response_code(500);
+            header($MIME_TYPE);
+            echo '{"error":"500", "reason":"'.$e->getMessage().' Can not convert hex to bin '.$e->getCode().'"}';
+            exit(0);
+
+        }
+
+        try {
+
+            $result=php_c_get_balance_from_block($block_bin, $type_sel);
+
+            echo '{"balance":"'.$result.'"}';
+
+        } catch (Exception $e) {
+            http_response_code(500);
+            header($MIME_TYPE);
+            echo '{"error":"500", "reason":"'.$e->getMessage().' Can not get balance from block '.$e->getCode().'"}';
+        }
+
+        exit(0);
+
+
+    }
+
+    if ($cmd==="get_signature_from_block") {
+
+        $block=$_POST['block'];
+
+        if (!isset($block)) {
+
+            http_response_code(404);
+            header($MIME_TYPE);
+            echo '{"error":"90","reason":"Missing: Block"}';
+            exit(0);
+
+        }
+
+        try {
+
+            $block_bin=hex2bin($block);
+
+        } catch (Exception $e) {
+
+            http_response_code(500);
+            header($MIME_TYPE);
+            echo '{"error":"500", "reason":"'.$e->getMessage().' Can not convert hex to bin '.$e->getCode().'"}';
+            exit(0);
+
+        }
+
+        try {
+
+            $result=php_c_get_signature_from_block($block_bin);
+
+            echo '{"signature":"'.$result.'"}';
+
+        } catch (Exception $e) {
+            http_response_code(500);
+            header($MIME_TYPE);
+            echo '{"error":"500", "reason":"'.$e->getMessage().' Can not get signature from block '.$e->getCode().'"}';
+        }
+
+        exit(0);
+
+    }
+
+    if ($cmd==="get_prefixes_from_block") {
+
+        $block=$_POST['block'];
+
+        if (!isset($block)) {
+
+            http_response_code(404);
+            header($MIME_TYPE);
+            echo '{"error":"90","reason":"Missing: Block"}';
+            exit(0);
+
+        }
+
+        try {
+
+            $block_bin=hex2bin($block);
+
+        } catch (Exception $e) {
+
+            http_response_code(500);
+            header($MIME_TYPE);
+            echo '{"error":"500", "reason":"'.$e->getMessage().' Can not convert hex to bin '.$e->getCode().'"}';
+            exit(0);
+
+        }
+
+        try {
+
+            $result=php_c_get_prefixes_from_block($block_bin);
+
+            echo '{"prefixes":"'.$result.'"}';
+
+        } catch (Exception $e) {
+            http_response_code(500);
+            header($MIME_TYPE);
+            echo '{"error":"500", "reason":"'.$e->getMessage().' Can not get prefixes from block '.$e->getCode().'"}';
+        }
+
+        exit(0);
+
+    }
+
+    if ($cmd==="get_work_from_block") {
+
+        $block=$_POST['block'];
+
+        if (!isset($block)) {
+
+            http_response_code(404);
+            header($MIME_TYPE);
+            echo '{"error":"90","reason":"Missing: Block"}';
+            exit(0);
+
+        }
+
+        try {
+
+            $block_bin=hex2bin($block);
+
+        } catch (Exception $e) {
+
+            http_response_code(500);
+            header($MIME_TYPE);
+            echo '{"error":"500", "reason":"'.$e->getMessage().' Can not convert hex to bin '.$e->getCode().'"}';
+            exit(0);
+
+        }
+
+        try {
+
+            $result=php_c_get_work_from_block($block_bin);
+
+            echo '{"work":"'.$result.'"}';
+
+        } catch (Exception $e) {
+            http_response_code(500);
+            header($MIME_TYPE);
+            echo '{"error":"500", "reason":"'.$e->getMessage().' Can not get work from block '.$e->getCode().'"}';
+        }
+
+        exit(0);
+
+    }
+
     if ($cmd==="library_info") {
 
        header($MIME_TYPE);

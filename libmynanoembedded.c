@@ -168,6 +168,27 @@ ZEND_BEGIN_ARG_INFO_EX(My_NanoCEmbedded_ExtractPkOrLinkFromBlock, 0, 0, 1)
     ZEND_ARG_INFO(0, prefix)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_INFO_EX(My_NanoCEmbedded_GetPrevious, 0, 0, 1)
+    ZEND_ARG_INFO(0, block)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(My_NanoCEmbedded_GetBalance, 0, 0, 1)
+    ZEND_ARG_INFO(0, block)
+    ZEND_ARG_INFO(0, balance_type)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(My_NanoCEmbedded_GetSignature, 0, 0, 1)
+    ZEND_ARG_INFO(0, block)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(My_NanoCEmbedded_GetPrefixes, 0, 0, 1)
+    ZEND_ARG_INFO(0, block)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(My_NanoCEmbedded_GetWork, 0, 0, 1)
+    ZEND_ARG_INFO(0, block)
+ZEND_END_ARG_INFO()
+
 static zend_class_entry *f_exception_ce;
 
 static zend_object *f_exception_create_object(zend_class_entry *ce) {
@@ -387,6 +408,11 @@ static const zend_function_entry mynanoembedded_functions[] = {
     PHP_FE(php_c_get_account_from_block, My_NanoCEmbedded_ExtractPkOrLinkFromBlock)
     PHP_FE(php_c_get_representative_from_block, My_NanoCEmbedded_ExtractPkOrLinkFromBlock)
     PHP_FE(php_c_get_link_from_block, My_NanoCEmbedded_ExtractPkOrLinkFromBlock)
+    PHP_FE(php_c_get_previous_from_block, My_NanoCEmbedded_GetPrevious)
+    PHP_FE(php_c_get_balance_from_block, My_NanoCEmbedded_GetBalance)
+    PHP_FE(php_c_get_signature_from_block, My_NanoCEmbedded_GetSignature)
+    PHP_FE(php_c_get_prefixes_from_block, My_NanoCEmbedded_GetPrefixes)
+    PHP_FE(php_c_get_work_from_block, My_NanoCEmbedded_GetWork)
     PHP_FE_END
 
 };
@@ -534,6 +560,169 @@ PHP_FUNCTION(php_c_get_link_from_block)
       return;
 
    RETURN_STR(strpprintf(MAX_STR_NANO_CHAR, "%s", msg));
+
+}
+
+#define NANO_GET_UTIL_PREVIOUS (uint32_t)(1<<8)
+#define NANO_GET_UTIL_SIGNATURE (uint32_t)(1<<9)
+#define NANO_GET_UTIL_PREFIXES (uint32_t)(1<<10)
+#define NANO_GET_UTIL_WORK (uint32_t)(1<<11)
+#define MSG_BUF_SZ (size_t)512
+int nano_get_util(char *msg, zval *z_block, uint32_t extract, const char *on_error_fn_name)
+{
+
+   int err;
+   F_BLOCK_TRANSFER *block;
+
+   if (Z_TYPE_P(z_block)!=IS_STRING) {
+
+      sprintf(msg, "Internal error in C function '%s' 17000. User block is not raw data", on_error_fn_name);
+
+      zend_throw_exception(f_exception_ce, msg, 17000);
+
+      return 1;
+
+   }
+
+   if (Z_STRLEN_P(z_block)!=sizeof(F_BLOCK_TRANSFER)) {
+
+      sprintf(msg, "Internal error in C function '%s' 17001. Invalid user block size", on_error_fn_name);
+
+      zend_throw_exception(f_exception_ce, msg, 17001);
+
+      return 2;
+
+   }
+
+   block=(F_BLOCK_TRANSFER *)Z_STRVAL_P(z_block);
+
+   if (extract&NANO_GET_UTIL_PREVIOUS)
+      f_nano_key_to_str(msg, (unsigned char *)block->previous);
+   else if (extract&BALANCE_REAL_STRING) {
+
+      if ((err=f_nano_raw_to_string(msg, NULL, MSG_BUF_SZ, block->balance, F_RAW_TO_STR_UINT128))) {
+
+         sprintf(msg, "Internal error in C function '%s' %d. Can't parse raw 128 bit balance to real string 'f_nano_raw_to_string' ", on_error_fn_name, err);
+
+         zend_throw_exception(f_exception_ce, msg, (zend_long)err);
+
+         return err;
+
+      }
+
+   } else if (extract&BALANCE_RAW_STRING) {
+
+      if ((err=f_nano_balance_to_str(msg, MSG_BUF_SZ, NULL, block->balance))) {
+
+         sprintf(msg, "Internal error in C function '%s' %d. Can't parse raw 128 bit balance to raw string 'f_nano_balance_to_str' ", on_error_fn_name, err);
+
+         zend_throw_exception(f_exception_ce, msg, (zend_long)err);
+
+         return err;
+
+      }
+
+   } else if (extract&BALANCE_RAW_128)
+      fhex2strv2(msg, block->balance, 16, 0);
+   else if (extract&NANO_GET_UTIL_SIGNATURE)
+      fhex2strv2(msg, block->signature, 64, 1);
+   else if (extract&NANO_GET_UTIL_PREFIXES)
+      sprintf(msg, "%d", (int)block->prefixes);
+   else if (extract&NANO_GET_UTIL_WORK)
+      sprintf(msg, "0x%016llx", (unsigned long long int)block->work);
+
+   return 0;
+
+}
+
+PHP_FUNCTION(php_c_get_previous_from_block)
+{
+
+   char msg[MSG_BUF_SZ];
+   zval *z_block;
+
+   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &z_block)==FAILURE)
+      return;
+
+   if (nano_get_util(msg, z_block, NANO_GET_UTIL_PREVIOUS, "php_c_get_previous_from_block"))
+      return;
+
+   ZVAL_STRING(return_value, msg);
+
+}
+
+PHP_FUNCTION(php_c_get_balance_from_block)
+{
+
+   char msg[MSG_BUF_SZ];;
+   zval *z_block;
+   zend_long balance_type=BALANCE_REAL_STRING;
+
+   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z|l", &z_block, &balance_type)==FAILURE)
+      return;
+
+   if ((((uint32_t)balance_type)&(BALANCE_RAW_128|BALANCE_REAL_STRING|BALANCE_RAW_STRING))==0) {
+
+      sprintf(msg, "Internal error in C function 'php_c_get_balance_from_block' 17002. Invalid raw balance type %lu", (unsigned long int)balance_type);
+
+      zend_throw_exception(f_exception_ce, msg, 17002);
+
+      return;
+
+   }
+
+   if (nano_get_util(msg, z_block, (uint32_t)balance_type, "php_c_get_balance_from_block"))
+      return;
+
+   ZVAL_STRING(return_value, msg);
+
+}
+
+PHP_FUNCTION(php_c_get_signature_from_block)
+{
+
+   char msg[MSG_BUF_SZ];
+   zval *z_block;
+
+   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &z_block)==FAILURE)
+      return;
+
+   if (nano_get_util(msg, z_block, NANO_GET_UTIL_SIGNATURE, "php_c_get_signature_from_block"))
+      return;
+
+   ZVAL_STRING(return_value, msg);
+
+}
+
+PHP_FUNCTION(php_c_get_prefixes_from_block)
+{
+
+   char msg[MSG_BUF_SZ];
+   zval *z_block;
+
+   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &z_block)==FAILURE)
+      return;
+
+   if (nano_get_util(msg, z_block, NANO_GET_UTIL_PREFIXES, "php_c_get_prefixes_from_block"))
+      return;
+
+   ZVAL_STRING(return_value, msg);
+
+}
+
+PHP_FUNCTION(php_c_get_work_from_block)
+{
+
+   char msg[MSG_BUF_SZ];
+   zval *z_block;
+
+   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &z_block)==FAILURE)
+      return;
+
+   if (nano_get_util(msg, z_block, NANO_GET_UTIL_WORK, "php_c_get_work_from_block"))
+      return;
+
+   ZVAL_STRING(return_value, msg);
 
 }
 
@@ -940,11 +1129,11 @@ PHP_FUNCTION(php_c_sign_block)
 
    if ((err=f_str_to_hex((uint8_t *)(msg+2*sizeof(F_BLOCK_TRANSFER)), (char *)private_key))) {
 
+      memset(msg+2*sizeof(F_BLOCK_TRANSFER), 0, 64);
+
       sprintf(msg, "Internal error in C function 'php_c_sign_block' %d. Can not parse private key string to hex", err);
 
       zend_throw_exception(f_exception_ce, msg, (zend_long)err);
-
-      memset(msg+2*sizeof(F_BLOCK_TRANSFER), 0, 64);
 
       return;
 
