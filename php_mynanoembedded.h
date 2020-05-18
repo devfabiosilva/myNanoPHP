@@ -20,6 +20,11 @@ PHP_RINIT_FUNCTION(mynanoembedded);
 PHP_RSHUTDOWN_FUNCTION(mynanoembedded);
 PHP_MINFO_FUNCTION(mynanoembedded);
 
+PHP_FUNCTION(php_c_set_previous);
+PHP_FUNCTION(php_c_set_balance);
+PHP_FUNCTION(php_c_set_signature);
+PHP_FUNCTION(php_c_set_prefixes);
+PHP_FUNCTION(php_c_set_work);
 PHP_FUNCTION(php_c_set_representative_to_block);
 PHP_FUNCTION(php_c_set_link_to_block);
 PHP_FUNCTION(php_c_set_account_to_block);

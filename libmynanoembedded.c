@@ -204,6 +204,32 @@ ZEND_BEGIN_ARG_INFO_EX(My_NanoCEmbedded_SetLinkToBlock, 0, 0, 2)
     ZEND_ARG_INFO(0, link)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_INFO_EX(My_NanoCEmbedded_SetPreviousToBlock, 0, 0, 2)
+    ZEND_ARG_INFO(1, block)
+    ZEND_ARG_INFO(0, previous)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(My_NanoCEmbedded_SetBalanceToBlock, 0, 0, 3)
+    ZEND_ARG_INFO(1, block)
+    ZEND_ARG_INFO(0, balance)
+    ZEND_ARG_INFO(0, balance_type)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(My_NanoCEmbedded_SetSignatureToBlock, 0, 0, 2)
+    ZEND_ARG_INFO(1, block)
+    ZEND_ARG_INFO(0, signature)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(My_NanoCEmbedded_SetPrefixesToBlock, 0, 0, 2)
+    ZEND_ARG_INFO(1, block)
+    ZEND_ARG_INFO(0, signature)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(My_NanoCEmbedded_SetWorkToBlock, 0, 0, 2)
+    ZEND_ARG_INFO(1, block)
+    ZEND_ARG_INFO(0, signature)
+ZEND_END_ARG_INFO()
+
 static zend_class_entry *f_exception_ce;
 
 static zend_object *f_exception_create_object(zend_class_entry *ce) {
@@ -311,6 +337,10 @@ PHP_MINIT_FUNCTION(mynanoembedded)
    REGISTER_LONG_CONSTANT("VALUE_SEND_RECEIVE_RAW_128", VALUE_SEND_RECEIVE_RAW_128, CONST_CS|CONST_PERSISTENT);
    REGISTER_LONG_CONSTANT("VALUE_SEND_RECEIVE_REAL_STRING", VALUE_SEND_RECEIVE_REAL_STRING, CONST_CS|CONST_PERSISTENT);
    REGISTER_LONG_CONSTANT("VALUE_SEND_RECEIVE_RAW_STRING", VALUE_SEND_RECEIVE_RAW_STRING, CONST_CS|CONST_PERSISTENT);
+   REGISTER_LONG_CONSTANT("REP_XRB", REP_XRB, CONST_CS|CONST_PERSISTENT);
+   REGISTER_LONG_CONSTANT("SENDER_XRB", SENDER_XRB, CONST_CS|CONST_PERSISTENT);
+   REGISTER_LONG_CONSTANT("DEST_XRB", DEST_XRB, CONST_CS|CONST_PERSISTENT);
+
    f_random_attach(gen_rand_no_entropy);
 
    return SUCCESS;
@@ -432,6 +462,11 @@ static const zend_function_entry mynanoembedded_functions[] = {
     PHP_FE(php_c_set_account_to_block, My_NanoCEmbedded_SetPkOrLinkToBlock)
     PHP_FE(php_c_set_representative_to_block, My_NanoCEmbedded_SetRepresentativeToBlock)
     PHP_FE(php_c_set_link_to_block, My_NanoCEmbedded_SetLinkToBlock)
+    PHP_FE(php_c_set_previous, My_NanoCEmbedded_SetPreviousToBlock)
+    PHP_FE(php_c_set_balance, My_NanoCEmbedded_SetBalanceToBlock)
+    PHP_FE(php_c_set_signature, My_NanoCEmbedded_SetSignatureToBlock)
+    PHP_FE(php_c_set_prefixes, My_NanoCEmbedded_SetPrefixesToBlock)
+    PHP_FE(php_c_set_work, My_NanoCEmbedded_SetWorkToBlock)
     PHP_FE_END
 
 };
@@ -684,6 +719,316 @@ PHP_FUNCTION(php_c_set_link_to_block)
 
 }
 
+#define NANO_SET_UTIL_PREVIOUS (uint32_t)(1<<13)
+#define NANO_SET_UTIL_SIGNATURE (uint32_t)(1<<14)
+#define NANO_SET_UTIL_PREFIXES (uint32_t)(1<<15)
+#define NANO_SET_UTIL_WORK (uint32_t)(1<<16)
+int nano_set_util(zval *z_block, unsigned char *data, size_t data_len, uint32_t record_type, const char *on_error_fn_name)
+{
+
+   int err;
+   char msg[512];
+   F_BLOCK_TRANSFER *block;
+
+   if (Z_TYPE_P(z_block)!=IS_STRING) {
+
+      sprintf(msg, "Internal error in C function '%s' 18000. User block is not raw data", on_error_fn_name);
+
+      zend_throw_exception(f_exception_ce, msg, 18000);
+
+      return 1;
+
+   }
+
+   if (Z_STRLEN_P(z_block)!=sizeof(F_BLOCK_TRANSFER)) {
+
+      sprintf(msg, "Internal error in C function '%s' 18001. Invalid user block size", on_error_fn_name);
+
+      zend_throw_exception(f_exception_ce, msg, 18001);
+
+      return 2;
+
+   }
+
+   block=(F_BLOCK_TRANSFER *)Z_STRVAL_P(z_block);
+
+   if (record_type&NANO_SET_UTIL_PREVIOUS) {
+
+      if (data_len!=64) {
+
+         sprintf(msg, "Internal error in C function '%s' 18002. Invalid previous size %lu", on_error_fn_name, (unsigned long int)data_len);
+
+         zend_throw_exception(f_exception_ce, msg, 18002);
+
+         return 3;
+
+      }
+
+      if ((err=f_str_to_hex(block->previous, (char *)data))) {
+
+         sprintf(msg, "Internal error in C function '%s' %d. Can't parse '%s' to binary", on_error_fn_name, err, (const char *)data);
+
+         zend_throw_exception(f_exception_ce, msg, err);
+
+         return err;
+
+      }
+
+      return 0;
+
+   }
+
+   if (record_type&BALANCE_REAL_STRING) {
+
+      if (data_len>F_RAW_STR_MAX_SZ) {
+
+         sprintf(msg, "Internal error in C function '%s' 18003. Can't parse real string balance '%s' to raw binary. String length %lu ", on_error_fn_name,
+            (const char *)data, (unsigned long int)data_len);
+
+         zend_throw_exception(f_exception_ce, msg, 18003);
+
+         return 4;
+
+      }
+
+      if ((err=f_nano_parse_real_str_to_raw128_t((uint8_t *)block->balance, (const char *)data))) {
+
+         sprintf(msg, "Internal error in C function '%s' %d. Can't parse real string balance '%s' to raw binary ", on_error_fn_name, err, (const char *)data);
+
+         zend_throw_exception(f_exception_ce, msg, err);
+
+         return err;
+
+      }
+
+      return 0;
+
+   }
+
+   if (record_type&BALANCE_RAW_STRING) {
+
+      if (data_len>F_RAW_STR_MAX_SZ) {
+
+         sprintf(msg, "Internal error in C function '%s' 18004. Can't parse raw string balance '%s' to raw binary. String length %lu ", on_error_fn_name,
+            (const char *)data, (unsigned long int)data_len);
+
+         zend_throw_exception(f_exception_ce, msg, 18004);
+
+         return 5;
+
+      }
+
+      if ((err=f_nano_parse_raw_str_to_raw128_t((uint8_t *)block->balance, (const char *)data))) {
+
+         sprintf(msg, "Internal error in C function '%s' %d. Can't parse raw string balance '%s' to raw binary ", on_error_fn_name, err, (const char *)data);
+
+         zend_throw_exception(f_exception_ce, msg, err);
+
+         return err;
+
+      }
+
+      return 0;
+
+   }
+
+   if (record_type&BALANCE_RAW_128) {
+
+      if (data_len!=32) {
+
+         sprintf(msg, "Internal error in C function '%s' 18005. Can't parse raw hex string balance to raw binary. String length %lu ", on_error_fn_name,
+            (unsigned long int)data_len);
+
+         zend_throw_exception(f_exception_ce, msg, 18005);
+
+         return 6;
+
+      }
+
+      if ((err=f_str_to_hex(block->balance, (char *)data))) {
+
+         sprintf(msg, "Internal error in C function '%s' %d. Can't parse raw hex string balance '%s' to raw binary ", on_error_fn_name, err, (const char *)data);
+
+         zend_throw_exception(f_exception_ce, msg, err);
+
+         return err;
+
+      }
+
+      return 0;
+
+   }
+
+   if (record_type&NANO_SET_UTIL_SIGNATURE) {
+
+      if (data_len!=128) {
+
+         sprintf(msg, "Internal error in C function '%s' 18006. Can't parse raw hex string balance to raw binary. String length %lu ", on_error_fn_name,
+            (unsigned long int)data_len);
+
+         zend_throw_exception(f_exception_ce, msg, 18006);
+
+         return 7;
+
+      }
+
+      if ((err=f_str_to_hex(block->signature, (char *)data))) {
+
+         sprintf(msg, "Internal error in C function '%s' %d. Can't parse signature string '%s' to block ", on_error_fn_name, err, (const char *)data);
+
+         zend_throw_exception(f_exception_ce, msg, err);
+
+         return err;
+
+      }
+
+      return 0;
+
+   }
+
+   if (record_type&NANO_SET_UTIL_PREFIXES) {
+
+      if ((err=*((int *)data))&(~(REP_XRB|SENDER_XRB|DEST_XRB))) {
+
+         sprintf(msg, "Internal error in C function '%s' 18007. Unknonwn prefix %d ", on_error_fn_name, err);
+
+         zend_throw_exception(f_exception_ce, msg, 18007);
+
+         return 8;
+
+      }
+
+      block->prefixes=(uint8_t)err;
+
+      return 0;
+
+   }
+
+   if ((err=f_convert_to_long_int_std((unsigned long int *)(msg+64), data, 24))) {
+
+      sprintf(msg, "Internal error in C function '%s' %d. Can't parse string to unsigned long int.", on_error_fn_name, err);
+
+      zend_throw_exception(f_exception_ce, msg, err);
+
+      return err;
+
+   }
+
+   block->work=*((uint64_t *)(msg+64));
+
+   return 0;
+
+}
+
+PHP_FUNCTION(php_c_set_previous)
+{
+
+   zval *z_block;
+   unsigned char *previous;
+   size_t previous_len;
+
+   if (zend_parse_parameters(ZEND_NUM_ARGS(), "zs", &z_block, &previous, &previous_len)==FAILURE)
+      return;
+
+   ZVAL_DEREF(z_block);
+
+   if (nano_set_util(z_block, previous, previous_len, NANO_SET_UTIL_PREVIOUS, "php_c_set_previous"))
+      return;
+
+   ZVAL_STRINGL(z_block, Z_STRVAL_P(z_block), sizeof(F_BLOCK_TRANSFER));
+
+}
+
+PHP_FUNCTION(php_c_set_balance)
+{
+
+   zval *z_block;
+   char msg[512];
+   unsigned char *balance;
+   size_t balance_len;
+   zend_long balance_type;
+
+   if (zend_parse_parameters(ZEND_NUM_ARGS(), "zsl", &z_block, &balance, &balance_len, &balance_type)==FAILURE)
+      return;
+
+   if ((((uint32_t)balance_type)&(~(BALANCE_RAW_128|BALANCE_REAL_STRING|BALANCE_RAW_STRING)))) {
+
+      sprintf(msg, "Internal error in C function 'php_c_set_balance' 18100. Invalid raw balance type %lu", (unsigned long int)balance_type);
+
+      zend_throw_exception(f_exception_ce, msg, 18100);
+
+      return;
+
+   }
+
+   ZVAL_DEREF(z_block);
+
+   if (nano_set_util(z_block, balance, balance_len, (uint32_t)balance_type, "php_c_set_balance"))
+      return;
+
+   ZVAL_STRINGL(z_block, Z_STRVAL_P(z_block), sizeof(F_BLOCK_TRANSFER));
+
+}
+
+PHP_FUNCTION(php_c_set_signature)
+{
+
+   zval *z_block;
+   unsigned char *signature;
+   size_t signature_len;
+
+   if (zend_parse_parameters(ZEND_NUM_ARGS(), "zs", &z_block, &signature, &signature_len)==FAILURE)
+      return;
+
+   ZVAL_DEREF(z_block);
+
+   if (nano_set_util(z_block, signature, signature_len, NANO_SET_UTIL_SIGNATURE, "php_c_set_signature"))
+      return;
+
+   ZVAL_STRINGL(z_block, Z_STRVAL_P(z_block), sizeof(F_BLOCK_TRANSFER));
+
+}
+
+PHP_FUNCTION(php_c_set_prefixes)
+{
+
+   zval *z_block;
+   zend_long prefixes;
+   int err;
+
+   if (zend_parse_parameters(ZEND_NUM_ARGS(), "zl", &z_block, &prefixes)==FAILURE)
+      return;
+
+   ZVAL_DEREF(z_block);
+
+   err=(int)prefixes;
+
+   if (nano_set_util(z_block, (unsigned char *)&err, sizeof(int), NANO_SET_UTIL_PREFIXES, "php_c_set_prefixes"))
+      return;
+
+   ZVAL_STRINGL(z_block, Z_STRVAL_P(z_block), sizeof(F_BLOCK_TRANSFER));
+
+}
+
+PHP_FUNCTION(php_c_set_work)
+{
+
+   zval *z_block;
+   unsigned char *work;
+   size_t work_len;
+
+   if (zend_parse_parameters(ZEND_NUM_ARGS(), "zs", &z_block, &work, &work_len)==FAILURE)
+      return;
+
+   ZVAL_DEREF(z_block);
+
+   if (nano_set_util(z_block, work, work_len, NANO_SET_UTIL_WORK, "php_c_set_work"))
+      return;
+
+   ZVAL_STRINGL(z_block, Z_STRVAL_P(z_block), sizeof(F_BLOCK_TRANSFER));
+
+}
+
 PHP_FUNCTION(php_c_get_account_from_block)
 {
 
@@ -839,7 +1184,7 @@ PHP_FUNCTION(php_c_get_balance_from_block)
    if (zend_parse_parameters(ZEND_NUM_ARGS(), "z|l", &z_block, &balance_type)==FAILURE)
       return;
 
-   if ((((uint32_t)balance_type)&(BALANCE_RAW_128|BALANCE_REAL_STRING|BALANCE_RAW_STRING))==0) {
+   if ((((uint32_t)balance_type)&(~(BALANCE_RAW_128|BALANCE_REAL_STRING|BALANCE_RAW_STRING)))) {
 
       sprintf(msg, "Internal error in C function 'php_c_get_balance_from_block' 17002. Invalid raw balance type %lu", (unsigned long int)balance_type);
 
