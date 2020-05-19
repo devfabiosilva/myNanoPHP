@@ -25,6 +25,8 @@
 #include <stdint.h>
 #include <string.h>
 
+//int f_nano_block_to_JSON(char *, size_t *, size_t, F_BLOCK_TRANSFER *);
+
 void gen_rand_no_entropy(void *output, size_t output_len)
 {
    FILE *f;
@@ -189,6 +191,10 @@ ZEND_BEGIN_ARG_INFO_EX(My_NanoCEmbedded_GetWork, 0, 0, 1)
     ZEND_ARG_INFO(0, block)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_INFO_EX(My_NanoCEmbedded_BlockToJson, 0, 0, 1)
+    ZEND_ARG_INFO(0, block)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_INFO_EX(My_NanoCEmbedded_SetPkOrLinkToBlock, 0, 0, 2)
     ZEND_ARG_INFO(1, block)
     ZEND_ARG_INFO(0, wallet)
@@ -230,6 +236,12 @@ ZEND_BEGIN_ARG_INFO_EX(My_NanoCEmbedded_SetWorkToBlock, 0, 0, 2)
     ZEND_ARG_INFO(0, signature)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_INFO_EX(My_NanoCEmbedded_CalculateWorkFromBlock, 0, 0, 2)
+    ZEND_ARG_INFO(1, block)
+    ZEND_ARG_INFO(0, number_of_threads)
+    ZEND_ARG_INFO(0, threshold)
+ZEND_END_ARG_INFO()
+
 static zend_class_entry *f_exception_ce;
 
 static zend_object *f_exception_create_object(zend_class_entry *ce) {
@@ -238,18 +250,18 @@ static zend_object *f_exception_create_object(zend_class_entry *ce) {
 
     ZVAL_OBJ(&obj_zv, obj);
     trace=zend_read_property(zend_ce_exception, &obj_zv, "trace", sizeof("trace")-1, 0, &rv);
-    if (trace && Z_TYPE_P(trace) == IS_ARRAY) {
+    if (trace&&Z_TYPE_P(trace)==IS_ARRAY) {
         zval *frame=NULL;
         ZEND_HASH_FOREACH_VAL(Z_ARRVAL_P(trace), frame) {
             if (Z_TYPE_P(frame)==IS_ARRAY) {
                 zval *args=zend_hash_str_find(Z_ARRVAL_P(frame), "args", sizeof("args")-1);
 
-                if (args != NULL) {
+                if (args!=NULL) {
 #ifdef ZVAL_EMPTY_ARRAY
                     zval_ptr_dtor(args);
                     ZVAL_EMPTY_ARRAY(args);
 #else
-                    if (Z_TYPE_P(args) == IS_ARRAY) {
+                    if (Z_TYPE_P(args)==IS_ARRAY) {
                         zend_hash_clean(Z_ARRVAL_P(args));
                     }
 #endif
@@ -467,6 +479,8 @@ static const zend_function_entry mynanoembedded_functions[] = {
     PHP_FE(php_c_set_signature, My_NanoCEmbedded_SetSignatureToBlock)
     PHP_FE(php_c_set_prefixes, My_NanoCEmbedded_SetPrefixesToBlock)
     PHP_FE(php_c_set_work, My_NanoCEmbedded_SetWorkToBlock)
+    PHP_FE(php_c_calculate_work_from_block, My_NanoCEmbedded_CalculateWorkFromBlock)
+    PHP_FE(php_c_parse_block_to_json, My_NanoCEmbedded_BlockToJson)
     PHP_FE_END
 
 };
@@ -1024,6 +1038,126 @@ PHP_FUNCTION(php_c_set_work)
 
    if (nano_set_util(z_block, work, work_len, NANO_SET_UTIL_WORK, "php_c_set_work"))
       return;
+
+   ZVAL_STRINGL(z_block, Z_STRVAL_P(z_block), sizeof(F_BLOCK_TRANSFER));
+
+}
+
+PHP_FUNCTION(php_c_parse_block_to_json)
+{
+
+   int err;
+   char msg[768];
+   size_t sz_tmp;
+   zval *z_block;
+
+   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &z_block)==FAILURE)
+      return;
+
+   if (Z_TYPE_P(z_block)!=IS_STRING) {
+
+      sprintf(msg, "Internal error in C function 'php_c_block_to_JSON' 18300. User block is not raw data");
+
+      zend_throw_exception(f_exception_ce, msg, 18300);
+
+      return;
+
+   }
+
+   if (Z_STRLEN_P(z_block)!=sizeof(F_BLOCK_TRANSFER)) {
+
+      sprintf(msg, "Internal error in C function 'php_c_block_to_JSON' 18301. Invalid user block size");
+
+      zend_throw_exception(f_exception_ce, msg, 18301);
+
+      return;
+
+   }
+
+   if ((err=f_nano_block_to_json(msg, &sz_tmp, sizeof(msg), (F_BLOCK_TRANSFER *)Z_STRVAL_P(z_block)))) {
+
+      sprintf(msg, "Internal error in C function 'php_c_block_to_JSON' %d. Can't parse user block to JSON", err);
+
+      zend_throw_exception(f_exception_ce, msg, err);
+
+      return;
+
+   }
+
+   ZVAL_STRINGL(return_value, msg, sz_tmp);
+
+}
+
+PHP_FUNCTION(php_c_calculate_work_from_block)
+{
+
+   int err;
+   zval *z_block;
+   char msg[512];
+   zend_long n_thr;
+   unsigned char *threshold_str=F_DEFAULT_NANO_POW_THRESHOLD;
+   size_t threshold_str_len=(sizeof(F_DEFAULT_NANO_POW_THRESHOLD)-1);
+   uint64_t threshold;
+   F_BLOCK_TRANSFER *block;
+
+   if (zend_parse_parameters(ZEND_NUM_ARGS(), "zl|s", &z_block, &n_thr, &threshold_str, &threshold_str_len)==FAILURE)
+      return;
+
+   if (threshold_str_len>24) {
+
+      sprintf(msg, "Internal error in C function 'php_c_calculate_work_from_block' 18200. Invalid threshold len %lu", (unsigned long int)threshold_str_len);
+
+      zend_throw_exception(f_exception_ce, msg, 18200);
+
+      return;
+
+   }
+
+   if ((err=f_convert_to_long_int_std((unsigned long int *)&threshold, (char *)threshold_str, 24))) {
+
+      sprintf(msg, "Internal error in C function 'php_c_calculate_work_from_block' %d. Can't parse string '%s' with length '%lu' to unsigned long int", err,
+         (const char *)threshold, (unsigned long int)threshold_str_len);
+
+      zend_throw_exception(f_exception_ce, msg, (zend_long)err);
+
+      return;
+
+   }
+
+   ZVAL_DEREF(z_block);
+
+   if (Z_TYPE_P(z_block)!=IS_STRING) {
+
+      sprintf(msg, "Internal error in C function 'php_c_calculate_work_from_block' 18201. User block is not raw data");
+
+      zend_throw_exception(f_exception_ce, msg, 18201);
+
+      return;
+
+   }
+
+   if (Z_STRLEN_P(z_block)!=sizeof(F_BLOCK_TRANSFER)) {
+
+      sprintf(msg, "Internal error in C function 'php_c_calculate_work_from_block' 18202. Invalid user block size");
+
+      zend_throw_exception(f_exception_ce, msg, 18202);
+
+      return;
+
+   }
+
+   block=(F_BLOCK_TRANSFER *)Z_STRVAL_P(z_block);
+
+   if ((err=f_nano_pow(&block->work, (is_filled_with_value(block->previous, 32, 0))?block->account:block->previous, (const int64_t)threshold, (int)n_thr))) {
+
+      sprintf(msg, "Internal error in C function 'php_c_calculate_work_from_block' %d. Can't calculate work with threshold %s and number or threads %d", err,
+         (const char *)threshold, (int)n_thr);
+
+      zend_throw_exception(f_exception_ce, msg, (zend_long)err);
+
+      return;
+
+   }
 
    ZVAL_STRINGL(z_block, Z_STRVAL_P(z_block), sizeof(F_BLOCK_TRANSFER));
 
@@ -2789,17 +2923,17 @@ PHP_FUNCTION(php_c_nano_verify_work)
 
 zend_module_entry mynanoembedded_module_entry = {
 #if ZEND_MODULE_API_NO >= 20010901
-    STANDARD_MODULE_HEADER,
+   STANDARD_MODULE_HEADER,
 #endif
-    LIBRARY_MODULE_NAME,
-    mynanoembedded_functions,
-    PHP_MINIT(mynanoembedded),
-    PHP_MSHUTDOWN(mynanoembedded),
-    NULL,
-    NULL,
-    PHP_MINFO(mynanoembedded),
-    LIBRARY_VERSION_STR,
-    STANDARD_MODULE_PROPERTIES
+   LIBRARY_MODULE_NAME,
+   mynanoembedded_functions,
+   PHP_MINIT(mynanoembedded),
+   PHP_MSHUTDOWN(mynanoembedded),
+   NULL,
+   NULL,
+   PHP_MINFO(mynanoembedded),
+   LIBRARY_VERSION_STR,
+   STANDARD_MODULE_PROPERTIES
 };
 
 #ifdef COMPILE_DL_MYNANOEMBEDDED

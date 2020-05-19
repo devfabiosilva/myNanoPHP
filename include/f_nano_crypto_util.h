@@ -742,6 +742,8 @@ int pk_to_wallet(char *, char *, NANO_PUBLIC_KEY_EXTENDED);
  */
 int f_seed_to_nano_wallet(NANO_PRIVATE_KEY, NANO_PUBLIC_KEY, NANO_SEED, uint32_t);
 
+int f_nano_block_to_json(char *dest, size_t *olen, size_t dest_size, F_BLOCK_TRANSFER *user_block);
+
 /**
  * @fn char *f_nano_key_to_str(char *out, unsigned char *key)
  * @brief Parse a raw binary public key to string

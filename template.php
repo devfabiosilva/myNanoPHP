@@ -2011,6 +2011,50 @@ if ($_SERVER['REQUEST_METHOD']==='POST') {
 
     }
 
+    if ($cmd==="block_to_json") {
+
+        $block=$_POST['block'];
+
+        if (!isset($block)) {
+
+            http_response_code(404);
+            header($MIME_TYPE);
+            echo '{"error":"97","reason":"Missing: Block"}';
+            exit(0);
+
+        }
+
+        try {
+
+            $block_bin=hex2bin($block);
+
+        } catch (Exception $e) {
+
+            http_response_code(500);
+            header($MIME_TYPE);
+            echo '{"error":"500", "reason":"'.$e->getMessage().' Can not convert hex to bin '.$e->getCode().'"}';
+            exit(0);
+
+        }
+
+        try {
+
+            $res=php_c_parse_block_to_JSON($block_bin);
+
+            echo $res;
+
+        } catch (Exception $e) {
+
+            http_response_code(500);
+            header($MIME_TYPE);
+            echo '{"error":"500", "reason":"'.$e->getMessage().' Can not parse Nano hex block to JSON'.$e->getCode().'"}';
+
+        }
+
+        exit(0);
+
+    }
+
     if ($cmd==="library_info") {
 
        header($MIME_TYPE);
