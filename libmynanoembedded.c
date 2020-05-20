@@ -4,7 +4,7 @@
  * LICENSE: MIT
  * EMAIL: fabioegel@gmail.com or fabioegel@protonmail.com
  *
- * Main file that integrates Nano cryptocurrency P2PoW/DPoW support with myNanoEmbedded C library for PHP library
+ * Main file that integrates Nano cryptocurrency P2PoW/DPoW support with myNanoEmbedded C library for PHP server
  *
  */
 
@@ -210,7 +210,7 @@ ZEND_BEGIN_ARG_INFO_EX(My_NanoCEmbedded_SetLinkToBlock, 0, 0, 2)
     ZEND_ARG_INFO(0, link)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(My_NanoCEmbedded_SetPreviousToBlock, 0, 0, 2)
+ZEND_BEGIN_ARG_INFO_EX(My_NanoCEmbedded_SetPreviousToBlock, 0, 0, 1)
     ZEND_ARG_INFO(1, block)
     ZEND_ARG_INFO(0, previous)
 ZEND_END_ARG_INFO()
@@ -770,15 +770,21 @@ int nano_set_util(zval *z_block, unsigned char *data, size_t data_len, uint32_t 
 
       if (data_len!=64) {
 
-         sprintf(msg, "Internal error in C function '%s' 18002. Invalid previous size %lu", on_error_fn_name, (unsigned long int)data_len);
+         if (data_len) {
 
-         zend_throw_exception(f_exception_ce, msg, 18002);
+            sprintf(msg, "Internal error in C function '%s' 18002. Invalid previous size %lu", on_error_fn_name, (unsigned long int)data_len);
 
-         return 3;
+            zend_throw_exception(f_exception_ce, msg, 18002);
 
-      }
+            return 3;
 
-      if ((err=f_str_to_hex(block->previous, (char *)data))) {
+         }
+
+         memset(block->previous, 0, 32);
+
+      } else if ((err=f_str_to_hex(block->previous, (char *)data))) {
+
+      //if ((err=f_str_to_hex(block->previous, (char *)data))) {
 
          sprintf(msg, "Internal error in C function '%s' %d. Can't parse '%s' to binary", on_error_fn_name, err, (const char *)data);
 
@@ -938,10 +944,10 @@ PHP_FUNCTION(php_c_set_previous)
 {
 
    zval *z_block;
-   unsigned char *previous;
-   size_t previous_len;
+   unsigned char *previous="";
+   size_t previous_len=0;
 
-   if (zend_parse_parameters(ZEND_NUM_ARGS(), "zs", &z_block, &previous, &previous_len)==FAILURE)
+   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z|s", &z_block, &previous, &previous_len)==FAILURE)
       return;
 
    ZVAL_DEREF(z_block);

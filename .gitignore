@@ -4,6 +4,7 @@
 *.m4
 mbedtls
 sodium
+POC
 
 # Object files
 *.o
