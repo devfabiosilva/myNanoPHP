@@ -254,6 +254,10 @@ ZEND_BEGIN_ARG_INFO_EX(My_NanoCEmbedded_P2PoW_Fee, 0, 0, 4)
     ZEND_ARG_INFO(0, worker_fee_type)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_INFO_EX(My_NanoCEmbedded_P2PoW_ToJson, 0, 0, 1)
+    ZEND_ARG_INFO(0, block)
+ZEND_END_ARG_INFO()
+
 static zend_class_entry *f_exception_ce;
 
 static zend_object *f_exception_create_object(zend_class_entry *ce) {
@@ -498,6 +502,7 @@ static const zend_function_entry mynanoembedded_functions[] = {
     PHP_FE(php_c_parse_block_to_json, My_NanoCEmbedded_BlockToJson)
     PHP_FE(php_c_get_block_hash, My_NanoCEmbedded_Block)
     PHP_FE(php_c_block_to_p2pow, My_NanoCEmbedded_P2PoW_Fee)
+    PHP_FE(php_c_p2pow_to_json, My_NanoCEmbedded_P2PoW_ToJson)
     PHP_FE_END
 
 };
@@ -787,6 +792,82 @@ php_c_block_to_p2pow_EXIT2:
    }
 
    ZVAL_STRINGL(return_value, msg, 2*sizeof(F_BLOCK_TRANSFER));
+
+}
+
+PHP_FUNCTION(php_c_p2pow_to_json)
+{
+
+   int err;
+   char buffer[2048];
+   zval *z_block;
+   size_t buf_sz;
+   F_BLOCK_TRANSFER *blk;
+
+   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &z_block)==FAILURE)
+      return;
+
+   if (Z_TYPE_P(z_block)!=IS_STRING) {
+
+      sprintf(buffer, "Internal error in C function 'php_c_p2pow_to_json' 18900. User block is not raw data");
+
+      zend_throw_exception(f_exception_ce, buffer, 18900);
+
+      return;
+
+   }
+
+   if (Z_STRLEN_P(z_block)!=2*sizeof(F_BLOCK_TRANSFER)) {
+
+      sprintf(buffer, "Internal error in C function 'php_c_p2pow_to_json' 18901. Invalid user block size");
+
+      zend_throw_exception(f_exception_ce, buffer, 18901);
+
+      return;
+
+   }
+
+   if (Z_STRLEN_P(z_block)!=2*sizeof(F_BLOCK_TRANSFER)) {
+
+      sprintf(buffer, "Internal error in C function 'php_c_p2pow_to_json' 18901. Invalid user block size");
+
+      zend_throw_exception(f_exception_ce, buffer, 18901);
+
+      return;
+
+   }
+
+   if (!f_nano_is_valid_block(blk=(F_BLOCK_TRANSFER *)Z_STRVAL_P(z_block))) {
+
+      sprintf(buffer, "Internal error in C function 'php_c_p2pow_to_json' 18902. Invalid user block");
+
+      zend_throw_exception(f_exception_ce, buffer, 18902);
+
+      return;
+
+   }
+
+   if (!f_nano_is_valid_block(&blk[1])) {
+
+      sprintf(buffer, "Internal error in C function 'php_c_p2pow_to_json' 18903. Invalid worker fee block");
+
+      zend_throw_exception(f_exception_ce, buffer, 18903);
+
+      return;
+
+   }
+
+   if ((err=f_nano_p2pow_to_JSON(buffer, &buf_sz, sizeof(buffer), blk))) {
+
+      sprintf(buffer, "Internal error in C function 'php_c_p2pow_to_json' %d. Can't parse P2PoW block to JSON", err);
+
+      zend_throw_exception(f_exception_ce, buffer, (zend_long)err);
+
+      return;
+
+   }
+
+   ZVAL_STRINGL(return_value, buffer, buf_sz);
 
 }
 

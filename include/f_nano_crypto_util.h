@@ -746,6 +746,7 @@ int f_nano_is_valid_block(F_BLOCK_TRANSFER *);
 int f_nano_block_to_json(char *dest, size_t *olen, size_t dest_size, F_BLOCK_TRANSFER *user_block);
 int f_nano_get_block_hash(uint8_t *, F_BLOCK_TRANSFER *);
 int f_nano_get_p2pow_block_hash(uint8_t *, uint8_t *, F_BLOCK_TRANSFER *);
+int f_nano_p2pow_to_JSON(char *, size_t *, size_t, F_BLOCK_TRANSFER *);
 
 /**
  * @fn char *f_nano_key_to_str(char *out, unsigned char *key)
