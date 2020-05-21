@@ -2556,6 +2556,199 @@ if ($_SERVER['REQUEST_METHOD']==='POST') {
 
     }
 
+    if ($cmd==="sign_p2pow_block") {
+
+        $block=$_POST['block'];
+
+        if (!isset($block)) {
+
+            http_response_code(404);
+            header($MIME_TYPE);
+            echo '{"error":"113","reason":"Missing: Block"}';
+            exit(0);
+
+        }
+
+        $private_key=$_POST['private_key'];
+
+        if (!isset($private_key)) {
+
+            http_response_code(404);
+            header($MIME_TYPE);
+            echo '{"error":"114","reason":"Missing: Private Key"}';
+            exit(0);
+
+        }
+
+        try {
+
+            $block_bin=hex2bin($block);
+
+        } catch (Exception $e) {
+
+            http_response_code(500);
+            header($MIME_TYPE);
+            echo '{"error":"500", "reason":"'.$e->getMessage().' Can not convert hex to bin '.$e->getCode().'"}';
+            exit(0);
+
+        }
+
+        try {
+
+            php_c_sign_p2pow_block($block_bin, $private_key);
+
+        } catch (Exception $e) {
+            http_response_code(500);
+            header($MIME_TYPE);
+            echo '{"error":"500", "reason":"'.$e->getMessage().' Can not assign block with P2PoW '.$e->getCode().'"}';
+            exit(0);
+        }
+
+        try {
+
+            $block_hex=bin2hex($block_bin);
+
+            header($MIME_TYPE);
+            echo '{"block":"'.$block_hex.'"}';
+
+        } catch (Exception $e) {
+
+            http_response_code(500);
+            header($MIME_TYPE);
+            echo '{"error":"500", "reason":"'.$e->getMessage().' Can not convert bin to hex string '.$e->getCode().'"}';
+
+        }
+
+        exit(0);
+
+    }
+
+    if ($cmd==="calculate_work_from_block") {
+
+        $block=$_POST['block'];
+
+        if (!isset($block)) {
+
+            http_response_code(404);
+            header($MIME_TYPE);
+            echo '{"error":"116","reason":"Missing: Block"}';
+            exit(0);
+
+        }
+
+        $n_thr=$_POST['n_thr'];
+
+        if (isset($n_thr)) {
+
+           if (is_numeric($n_thr))
+               $number_of_threads=intval($n_thr);
+           else {
+
+                http_response_code(500);
+                header($MIME_TYPE);
+                echo '{"error":"118","reason":"Is not a number"}';
+                exit(0);
+
+           }
+
+        } else {
+
+            http_response_code(404);
+            header($MIME_TYPE);
+            echo '{"error":"117","reason":"Missing: Number of threads"}';
+            exit(0);
+
+        }
+
+        $threshold=$_POST['threshold'];
+
+        try {
+
+            $block_bin=hex2bin($block);
+
+        } catch (Exception $e) {
+
+            http_response_code(500);
+            header($MIME_TYPE);
+            echo '{"error":"500", "reason":"'.$e->getMessage().' Can not convert hex to bin '.$e->getCode().'"}';
+            exit(0);
+
+        }
+
+        try {
+
+            php_c_calculate_work_from_block($block_bin, $number_of_threads, isset($threshold)?$threshold:DEFAULT_NANO_POW_THRESHOLD);
+
+        } catch (Exception $e) {
+            http_response_code(500);
+            header($MIME_TYPE);
+            echo '{"error":"500", "reason":"'.$e->getMessage().' Can not calculate Proof of work of this block '.$e->getCode().'"}';
+            exit(0);
+        }
+
+        try {
+
+            $block_hex=bin2hex($block_bin);
+
+            header($MIME_TYPE);
+            echo '{"block":"'.$block_hex.'"}';
+
+        } catch (Exception $e) {
+
+            http_response_code(500);
+            header($MIME_TYPE);
+            echo '{"error":"500", "reason":"'.$e->getMessage().' Can not convert bin to hex string '.$e->getCode().'"}';
+
+        }
+
+        exit(0);
+
+    }
+
+    if ($cmd==="get_difficulty") {
+
+        $hash=$_POST['hash'];
+
+        if (!isset($hash)) {
+
+            http_response_code(404);
+            header($MIME_TYPE);
+            echo '{"error":"120","reason":"Missing: Hash"}';
+            exit(0);
+
+        }
+
+        $work=$_POST['work'];
+
+        if (!isset($work)) {
+
+            http_response_code(404);
+            header($MIME_TYPE);
+            echo '{"error":"120","reason":"Missing: Work"}';
+            exit(0);
+
+        }
+
+        $threshold=$_POST['threshold'];
+
+
+        try {
+
+            $res=php_c_get_difficulty($hash, $work, isset($threshold)?$threshold:DEFAULT_NANO_POW_THRESHOLD);
+
+            header($MIME_TYPE);
+            echo $res;
+
+        } catch (Exception $e) {
+            http_response_code(500);
+            header($MIME_TYPE);
+            echo '{"error":"500", "reason":"'.$e->getMessage().' Can not calculate difficulty '.$e->getCode().'"}';
+        }
+
+        exit(0);
+
+    }
+
     if ($cmd==="p2pow_to_json") {
 
         $block=$_POST['block'];

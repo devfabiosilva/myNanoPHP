@@ -258,6 +258,17 @@ ZEND_BEGIN_ARG_INFO_EX(My_NanoCEmbedded_P2PoW_ToJson, 0, 0, 1)
     ZEND_ARG_INFO(0, block)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_INFO_EX(My_NanoCEmbedded_SignP2PoWBlock, 0, 0, 2)
+    ZEND_ARG_INFO(1, p2pow_block)
+    ZEND_ARG_INFO(0, private_key)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(My_NanoCEmbedded_GetDifficulty, 0, 0, 2)
+    ZEND_ARG_INFO(0, hash)
+    ZEND_ARG_INFO(0, work)
+    ZEND_ARG_INFO(0, threshold)
+ZEND_END_ARG_INFO()
+
 static zend_class_entry *f_exception_ce;
 
 static zend_object *f_exception_create_object(zend_class_entry *ce) {
@@ -503,6 +514,8 @@ static const zend_function_entry mynanoembedded_functions[] = {
     PHP_FE(php_c_get_block_hash, My_NanoCEmbedded_Block)
     PHP_FE(php_c_block_to_p2pow, My_NanoCEmbedded_P2PoW_Fee)
     PHP_FE(php_c_p2pow_to_json, My_NanoCEmbedded_P2PoW_ToJson)
+    PHP_FE(php_c_sign_p2pow_block, My_NanoCEmbedded_SignP2PoWBlock)
+    PHP_FE(php_c_get_difficulty, My_NanoCEmbedded_GetDifficulty)
     PHP_FE_END
 
 };
@@ -3271,6 +3284,195 @@ PHP_FUNCTION(php_c_nano_verify_work)
    }
 
    RETURN_FALSE;
+
+}
+
+PHP_FUNCTION(php_c_sign_p2pow_block)
+{
+
+   int err;
+   char msg[768];
+   zval *z_block;
+   unsigned char *private_key;
+   size_t private_key_len;
+   F_BLOCK_TRANSFER *block;
+
+   if (zend_parse_parameters(ZEND_NUM_ARGS(), "zs", &z_block, &private_key, &private_key_len)==FAILURE)
+      return;
+
+   if (private_key_len!=128) {
+
+      sprintf(msg, "Internal error in C function 'php_c_sign_p2pow_block' 18599. Invalid private key length '%lu'", (unsigned long int)private_key_len);
+
+      zend_throw_exception(f_exception_ce, msg, 18599);
+
+      return;
+
+   }
+
+   ZVAL_DEREF(z_block);
+
+   if (Z_TYPE_P(z_block)!=IS_STRING) {
+
+      sprintf(msg, "Internal error in C function 'php_c_sign_p2pow_block' 18600. User block is not raw data");
+
+      zend_throw_exception(f_exception_ce, msg, 18600);
+
+      return;
+
+   }
+
+   if (Z_STRLEN_P(z_block)!=2*sizeof(F_BLOCK_TRANSFER)) {
+
+      sprintf(msg, "Internal error in C function 'php_c_sign_p2pow_block' 18601. Invalid user block size");
+
+      zend_throw_exception(f_exception_ce, msg, 18601);
+
+      return;
+
+   }
+
+   if (!f_nano_is_valid_block(block=(F_BLOCK_TRANSFER *)memcpy(msg, Z_STRVAL_P(z_block), 2*sizeof(F_BLOCK_TRANSFER)))) {
+
+      sprintf(msg, "Internal error in C function 'php_c_sign_p2pow_block' 18602. Invalid user block");
+
+      zend_throw_exception(f_exception_ce, msg, 18602);
+
+      return;
+
+   }
+
+   if (!f_nano_is_valid_block(&block[1])) {
+
+      sprintf(msg, "Internal error in C function 'php_c_sign_p2pow_block' 18603. Invalid worker block");
+
+      zend_throw_exception(f_exception_ce, msg, 18603);
+
+      return;
+
+   }
+
+   if ((err=f_str_to_hex((uint8_t *)(msg+2*sizeof(F_BLOCK_TRANSFER)), (char *)private_key))) {
+
+      sprintf(msg, "Internal error in C function 'php_c_sign_p2pow_block' %d. Can't parse private key hex string to binary", err);
+
+      zend_throw_exception(f_exception_ce, msg, (zend_long)err);
+
+      goto php_c_sign_p2pow_block_EXIT;
+
+   }
+
+   if ((err=f_nano_sign_block(block, NULL, (uint8_t *)private_key))) {
+
+      sprintf(msg, "Internal error in C function 'php_c_sign_p2pow_block' %d. Can't sign user block", err);
+
+      zend_throw_exception(f_exception_ce, msg, (zend_long)err);
+
+      goto php_c_sign_p2pow_block_EXIT;
+
+   }
+
+   if ((err=f_nano_sign_block(&block[1], NULL, (uint8_t *)private_key))) {
+
+      sprintf(msg, "Internal error in C function 'php_c_sign_p2pow_block' %d. Can't sign worker fee block", err);
+
+      zend_throw_exception(f_exception_ce, msg, (zend_long)err);
+
+   }
+
+php_c_sign_p2pow_block_EXIT:
+   memset(msg+2*sizeof(F_BLOCK_TRANSFER), 0, 64);
+
+   if (err) return;
+
+   ZVAL_STRINGL(z_block, msg, 2*sizeof(F_BLOCK_TRANSFER));
+
+}
+
+PHP_FUNCTION(php_c_get_difficulty)
+{
+
+   int err;
+   char msg[512];
+   unsigned char *hash, *work, *threshold=F_DEFAULT_NANO_POW_THRESHOLD;
+   size_t hash_len, work_len, threshold_len=(sizeof(F_DEFAULT_NANO_POW_THRESHOLD)-1);
+
+   if (zend_parse_parameters(ZEND_NUM_ARGS(), "ss|s", &hash, &hash_len, &work, &work_len, &threshold, &threshold_len)==FAILURE)
+      return;
+
+   if (hash_len!=64) {
+
+      sprintf(msg, "Internal error in C function 'php_c_get_difficulty' 18800. Invalid hash length '%lu'", (unsigned long int)hash_len);
+
+      zend_throw_exception(f_exception_ce, msg, 18800);
+
+      return;
+
+   }
+
+   if (work_len>24) {
+
+      sprintf(msg, "Internal error in C function 'php_c_get_difficulty' 18801. Invalid worker length '%lu'", (unsigned long int)work_len);
+
+      zend_throw_exception(f_exception_ce, msg, 18801);
+
+      return;
+
+   }
+
+   if (threshold_len>24) {
+
+      sprintf(msg, "Internal error in C function 'php_c_get_difficulty' 18802. Invalid threshold length '%lu'", (unsigned long int)threshold_len);
+
+      zend_throw_exception(f_exception_ce, msg, 18802);
+
+      return;
+
+   }
+
+   if ((err=f_str_to_hex((uint8_t *)msg, (char *)hash))) {
+
+      sprintf(msg, "Internal error in C function 'php_c_get_difficulty' %d. Can't convert hex string to binary", err);
+
+      zend_throw_exception(f_exception_ce, msg, (zend_long)err);
+
+      return;
+
+   }
+
+   if ((err=f_convert_to_long_int_std((unsigned long int *)(msg+64), (char *)work, 24))) {
+
+      sprintf(msg, "Internal error in C function 'php_c_get_difficulty' %d. Can't convert work string '%s' to unsigned long int", err, (char *)work);
+
+      zend_throw_exception(f_exception_ce, msg, (zend_long)err);
+
+      return;
+
+   }
+
+   if ((err=f_convert_to_long_int_std((unsigned long int *)(msg+128), (char *)threshold, 24))) {
+
+      sprintf(msg, "Internal error in C function 'php_c_get_difficulty' %d. Can't convert threshold string '%s' to unsigned long int", err, (char *)threshold);
+
+      zend_throw_exception(f_exception_ce, msg, (zend_long)err);
+
+      return;
+
+   }
+
+   if ((err=f_verify_work((uint64_t *)(msg+256), (const unsigned char *)msg, (uint64_t *)(msg+64), *(uint64_t *)(msg+128)))<0) {
+
+      sprintf(msg, "Internal error in C function 'php_c_get_difficulty' %d. Can't verify hash work", err);
+
+      zend_throw_exception(f_exception_ce, msg, (zend_long)err);
+
+      return;
+
+   }
+
+   RETURN_STR(strpprintf(384, "{\"hash\":\"%s\",\"work\":\"0x%016llx\",\"difficulty\":\"0x%016llx\",\"base_difficulty\":\"0x%016llx\",\"multiplier\":\
+\"%0.014f\",\"valid\":\"%d\"}", (const char *)hash, *(unsigned long int *)(msg+64), *(unsigned long long int *)(msg+256), *(unsigned long long int *)(msg+128), 
+      to_multiplier(*(uint64_t *)(msg+256), *(uint64_t *)(msg+128)), err));
 
 }
 

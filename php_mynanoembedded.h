@@ -20,6 +20,8 @@ PHP_RINIT_FUNCTION(mynanoembedded);
 PHP_RSHUTDOWN_FUNCTION(mynanoembedded);
 PHP_MINFO_FUNCTION(mynanoembedded);
 
+PHP_FUNCTION(php_c_get_difficulty);
+PHP_FUNCTION(php_c_sign_p2pow_block);
 PHP_FUNCTION(php_c_p2pow_to_json);
 PHP_FUNCTION(php_c_get_block_hash);
 PHP_FUNCTION(php_c_block_to_p2pow);
