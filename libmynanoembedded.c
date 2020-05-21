@@ -802,7 +802,6 @@ PHP_FUNCTION(php_c_p2pow_to_json)
    char buffer[2048];
    zval *z_block;
    size_t buf_sz;
-   F_BLOCK_TRANSFER *blk;
 
    if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &z_block)==FAILURE)
       return;
@@ -827,37 +826,7 @@ PHP_FUNCTION(php_c_p2pow_to_json)
 
    }
 
-   if (Z_STRLEN_P(z_block)!=2*sizeof(F_BLOCK_TRANSFER)) {
-
-      sprintf(buffer, "Internal error in C function 'php_c_p2pow_to_json' 18901. Invalid user block size");
-
-      zend_throw_exception(f_exception_ce, buffer, 18901);
-
-      return;
-
-   }
-
-   if (!f_nano_is_valid_block(blk=(F_BLOCK_TRANSFER *)Z_STRVAL_P(z_block))) {
-
-      sprintf(buffer, "Internal error in C function 'php_c_p2pow_to_json' 18902. Invalid user block");
-
-      zend_throw_exception(f_exception_ce, buffer, 18902);
-
-      return;
-
-   }
-
-   if (!f_nano_is_valid_block(&blk[1])) {
-
-      sprintf(buffer, "Internal error in C function 'php_c_p2pow_to_json' 18903. Invalid worker fee block");
-
-      zend_throw_exception(f_exception_ce, buffer, 18903);
-
-      return;
-
-   }
-
-   if ((err=f_nano_p2pow_to_JSON(buffer, &buf_sz, sizeof(buffer), blk))) {
+   if ((err=f_nano_p2pow_to_JSON(buffer, &buf_sz, sizeof(buffer), (F_BLOCK_TRANSFER *)Z_STRVAL_P(z_block)))) {
 
       sprintf(buffer, "Internal error in C function 'php_c_p2pow_to_json' %d. Can't parse P2PoW block to JSON", err);
 
