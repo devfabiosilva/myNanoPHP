@@ -242,6 +242,18 @@ ZEND_BEGIN_ARG_INFO_EX(My_NanoCEmbedded_CalculateWorkFromBlock, 0, 0, 2)
     ZEND_ARG_INFO(0, threshold)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_INFO_EX(My_NanoCEmbedded_Block, 0, 0, 1)
+    ZEND_ARG_INFO(0, block)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(My_NanoCEmbedded_P2PoW_Fee, 0, 0, 4)
+    ZEND_ARG_INFO(0, block)
+    ZEND_ARG_INFO(0, worker_wallet)
+    ZEND_ARG_INFO(0, worker_representative)
+    ZEND_ARG_INFO(0, worker_fee)
+    ZEND_ARG_INFO(0, worker_fee_type)
+ZEND_END_ARG_INFO()
+
 static zend_class_entry *f_exception_ce;
 
 static zend_object *f_exception_create_object(zend_class_entry *ce) {
@@ -352,6 +364,9 @@ PHP_MINIT_FUNCTION(mynanoembedded)
    REGISTER_LONG_CONSTANT("REP_XRB", REP_XRB, CONST_CS|CONST_PERSISTENT);
    REGISTER_LONG_CONSTANT("SENDER_XRB", SENDER_XRB, CONST_CS|CONST_PERSISTENT);
    REGISTER_LONG_CONSTANT("DEST_XRB", DEST_XRB, CONST_CS|CONST_PERSISTENT);
+   REGISTER_LONG_CONSTANT("WORKER_FEE_HEX", F_NANO_B_RAW_128, CONST_CS|CONST_PERSISTENT);
+   REGISTER_LONG_CONSTANT("WORKER_FEE_REAL", F_NANO_B_REAL_STRING, CONST_CS|CONST_PERSISTENT);
+   REGISTER_LONG_CONSTANT("WORKER_FEE_RAW", F_NANO_B_RAW_STRING, CONST_CS|CONST_PERSISTENT);
 
    f_random_attach(gen_rand_no_entropy);
 
@@ -481,6 +496,8 @@ static const zend_function_entry mynanoembedded_functions[] = {
     PHP_FE(php_c_set_work, My_NanoCEmbedded_SetWorkToBlock)
     PHP_FE(php_c_calculate_work_from_block, My_NanoCEmbedded_CalculateWorkFromBlock)
     PHP_FE(php_c_parse_block_to_json, My_NanoCEmbedded_BlockToJson)
+    PHP_FE(php_c_get_block_hash, My_NanoCEmbedded_Block)
+    PHP_FE(php_c_block_to_p2pow, My_NanoCEmbedded_P2PoW_Fee)
     PHP_FE_END
 
 };
@@ -493,6 +510,284 @@ PHP_FUNCTION(php_c_license)
 PHP_FUNCTION(php_c_library_info)
 {
    RETURN_STR(strpprintf(sizeof(LIBRARY_INFO_JSON), "%s", LIBRARY_INFO_JSON));
+}
+
+PHP_FUNCTION(php_c_get_block_hash)
+{
+
+   int err;
+   char msg[512];
+   zval *z_block;
+   F_BLOCK_TRANSFER *block;
+
+   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &z_block)==FAILURE)
+      return;
+
+   if (Z_TYPE_P(z_block)!=IS_STRING) {
+
+      sprintf(msg, "Internal error in C function 'php_c_get_block_hash' 18400. User block is not raw data");
+
+      zend_throw_exception(f_exception_ce, msg, 18400);
+
+      return;
+
+   }
+
+   if (Z_STRLEN_P(z_block)!=sizeof(F_BLOCK_TRANSFER)) {
+
+      sprintf(msg, "Internal error in C function 'php_c_get_block_hash' 18401. Invalid user block size");
+
+      zend_throw_exception(f_exception_ce, msg, 18401);
+
+      return;
+
+   }
+
+   if (!f_nano_is_valid_block(block=(F_BLOCK_TRANSFER *)Z_STRVAL_P(z_block))) {
+
+      sprintf(msg, "Internal error in C function 'php_c_get_block_hash' 18402. Invalid block", err);
+
+      zend_throw_exception(f_exception_ce, msg, 18402);
+
+      return;
+
+   }
+
+   if ((err=f_nano_get_block_hash((uint8_t *)(msg+128), block))) {
+
+      sprintf(msg, "Internal error in C function 'php_c_get_block_hash' %d. Can't calculate block hash", err);
+
+      zend_throw_exception(f_exception_ce, msg, (zend_long)err);
+
+      return;
+
+   }
+
+   ZVAL_STRING(return_value, fhex2strv2(msg, msg+128, 32, 1));
+
+}
+
+PHP_FUNCTION(php_c_block_to_p2pow)
+{
+
+   int err;
+   char msg[768], *p;
+   zval *z_block;
+   unsigned char *worker_wallet, *worker_representative, *worker_fee;
+   size_t worker_wallet_len, worker_representative_len, worker_fee_len;
+   zend_long worker_fee_type=F_NANO_B_REAL_STRING;
+   F_BLOCK_TRANSFER *block;
+
+   if (zend_parse_parameters(ZEND_NUM_ARGS(), "zsss|l", &z_block, &worker_wallet, &worker_wallet_len, &worker_representative, &worker_representative_len,
+      &worker_fee, &worker_fee_len, &worker_fee_type)==FAILURE) return;
+
+   if (Z_TYPE_P(z_block)!=IS_STRING) {
+
+      sprintf(msg, "Internal error in C function 'php_c_block_to_p2pow' 18500. User block is not raw data");
+
+      zend_throw_exception(f_exception_ce, msg, 18500);
+
+      return;
+
+   }
+
+   if (Z_STRLEN_P(z_block)!=sizeof(F_BLOCK_TRANSFER)) {
+
+      sprintf(msg, "Internal error in C function 'php_c_block_to_p2pow' 18501. Invalid user block size");
+
+      zend_throw_exception(f_exception_ce, msg, 18501);
+
+      return;
+
+   }
+
+   if (worker_wallet_len>MAX_STR_NANO_CHAR) {
+
+      sprintf(msg, "Internal error in C function 'php_c_block_to_p2pow' 18502. Invalid worker wallet with length '%lu'", (unsigned long int)worker_wallet_len);
+
+      zend_throw_exception(f_exception_ce, msg, 18502);
+
+      return;
+
+   }
+
+   if (worker_representative_len>MAX_STR_NANO_CHAR) {
+
+      sprintf(msg, "Internal error in C function 'php_c_block_to_p2pow' 18502. Invalid worker representative wallet with length '%lu'",
+         (unsigned long int)worker_representative_len);
+
+      zend_throw_exception(f_exception_ce, msg, 18502);
+
+      return;
+
+   }
+
+   if ((uint32_t)worker_fee_type&(~(F_NANO_B_RAW_128|F_NANO_B_REAL_STRING|F_NANO_B_RAW_STRING))) {
+
+      sprintf(msg, "Internal error in C function 'php_c_block_to_p2pow' 18503. Invalid worker fee type '%lu'", (unsigned long int)worker_fee_type);
+
+      zend_throw_exception(f_exception_ce, msg, 18503);
+
+      return;
+
+   }
+
+   if (!f_nano_is_valid_block((F_BLOCK_TRANSFER *)memcpy(msg, Z_STRVAL_P(z_block), sizeof(F_BLOCK_TRANSFER)))) {
+
+      sprintf(msg, "Internal error in C function 'php_c_block_to_p2pow' 16507. Invalid Nano block");
+
+      zend_throw_exception(f_exception_ce, msg, 16507);
+
+      return;
+
+   }
+
+   memset(block=(F_BLOCK_TRANSFER *)(msg+sizeof(F_BLOCK_TRANSFER)), 0, sizeof(msg)-sizeof(F_BLOCK_TRANSFER));
+   block->preamble[31]=0x06;
+   memcpy(block->account, ((F_BLOCK_TRANSFER *)msg)->account, 32);
+   block->prefixes=((F_BLOCK_TRANSFER *)msg)->prefixes&SENDER_XRB;
+
+   if (is_nano_prefix((const char *)worker_wallet, XRB_PREFIX)) {
+
+      block->prefixes|=DEST_XRB;
+
+      goto php_c_block_to_p2pow_EXIT1;
+
+   } else if (is_nano_prefix((const char *)worker_wallet, NANO_PREFIX)) {
+
+php_c_block_to_p2pow_EXIT1:
+      if ((err=nano_base_32_2_hex((uint8_t *)(msg+2*sizeof(F_BLOCK_TRANSFER)), worker_wallet))) {
+
+         sprintf(msg, "Internal error in C function 'php_c_block_to_p2pow' %d. Invalid worker wallet '%s'", err, worker_wallet);
+
+         zend_throw_exception(f_exception_ce, msg, (zend_long)err);
+
+         return;
+
+      }
+
+   } else if (worker_wallet_len==64) {
+
+      if ((err=f_str_to_hex((uint8_t *)(msg+2*sizeof(F_BLOCK_TRANSFER)), (char *)worker_wallet))) {
+
+         sprintf(msg, "Internal error in C function 'php_c_block_to_p2pow' %d. Invalid worker public key wallet '%s'", err, worker_wallet);
+
+         zend_throw_exception(f_exception_ce, msg, (zend_long)err);
+
+         return;
+
+      }
+
+   } else {
+
+      sprintf(msg, "Internal error in C function 'php_c_block_to_p2pow' 16504. Can't parse hex string to binary. Invalid length %lu", 
+         (unsigned long int)worker_wallet_len);
+
+      zend_throw_exception(f_exception_ce, msg, 16504);
+
+      return;
+
+   }
+
+   memcpy(block->link, p=(msg+2*sizeof(F_BLOCK_TRANSFER)), 32);
+
+   if (worker_representative_len==0) {
+
+      p=(char *)((F_BLOCK_TRANSFER *)msg)->representative;
+      block->prefixes|=((F_BLOCK_TRANSFER *)msg)->prefixes&REP_XRB;
+
+   } else if (is_nano_prefix((const char *)worker_representative, XRB_PREFIX)) {
+
+      block->prefixes|=REP_XRB;
+
+      goto php_c_block_to_p2pow_EXIT2;
+
+   } else if (is_nano_prefix((const char *)worker_representative, NANO_PREFIX)) {
+
+php_c_block_to_p2pow_EXIT2:
+      if ((err=nano_base_32_2_hex((uint8_t *)p, worker_representative))) {
+
+         sprintf(msg, "Internal error in C function 'php_c_block_to_p2pow' %d. Invalid worker representative wallet '%s'", err, worker_representative);
+
+         zend_throw_exception(f_exception_ce, msg, (zend_long)err);
+
+         return;
+
+      }
+
+   } else if (worker_representative_len==64) {
+
+      if ((err=f_str_to_hex((uint8_t *)p, (char *)worker_representative))) {
+
+         sprintf(msg, "Internal error in C function 'php_c_block_to_p2pow' %d. Invalid worker reprensentative public key '%s'", err, worker_representative);
+
+         zend_throw_exception(f_exception_ce, msg, (zend_long)err);
+
+         return;
+
+      }
+
+   } else {
+
+      sprintf(msg, "Internal error in C function 'php_c_block_to_p2pow' 16506. Can't parse hex string to binary. Invalid length %lu", 
+         (unsigned long int)worker_representative_len);
+
+      zend_throw_exception(f_exception_ce, msg, 16505);
+
+      return;
+
+   }
+
+   memcpy(block->representative, p, 32);
+
+   if ((err=f_nano_get_block_hash(block->previous, (F_BLOCK_TRANSFER *)msg))) {
+
+      sprintf(msg, "Internal error in C function 'php_c_block_to_p2pow' %d. Can't calculate previous in P2PoW block", err);
+
+      zend_throw_exception(f_exception_ce, msg, (zend_long)err);
+
+      return;
+
+   }
+
+   if ((uint32_t)worker_fee_type&F_NANO_B_RAW_128) {
+
+      if (worker_fee_len!=32) {
+
+         sprintf(msg, "Internal error in C function 'php_c_block_to_p2pow' 16507. Invalid fee hex length '%lu'", err, worker_fee_len);
+
+         zend_throw_exception(f_exception_ce, msg, 16507);
+
+         return;
+
+      }
+
+      if ((err=f_str_to_hex((uint8_t *)(p=(msg+2*sizeof(F_BLOCK_TRANSFER))), (char *)worker_fee))) {
+
+         sprintf(msg, "Internal error in C function 'php_c_block_to_p2pow' %d. Can't convert hex string in worker fee", err);
+
+         zend_throw_exception(f_exception_ce, msg, (zend_long)err);
+
+         return;
+
+      }
+
+   } else 
+      p=(char *)worker_fee;
+
+   if ((err=f_nano_add_sub(block->balance, ((F_BLOCK_TRANSFER *)msg)->balance, p, 
+      (F_NANO_SUB_A_B|F_NANO_RES_RAW_128|F_NANO_A_RAW_128|(uint32_t)worker_fee_type)))) {
+
+      sprintf(msg, "Internal error in C function 'php_c_block_to_p2pow' %d. Can't calculate (balance - fee). Maybe insuficient balance", err);
+
+      zend_throw_exception(f_exception_ce, msg, (zend_long)err);
+
+      return;
+
+   }
+
+   ZVAL_STRINGL(return_value, msg, 2*sizeof(F_BLOCK_TRANSFER));
+
 }
 
 #define NANO_PARSE_FORMAT_UTIL_ACCOUNT (int)(1<<0)
@@ -637,13 +932,25 @@ nano_wallet_set_format_util_XRB_PREFIX:
 
       }
 
-   } else if ((err=f_str_to_hex((uint8_t *)msg, (char *)str))) {
+   } else if (str_len==64) {
 
-      sprintf(msg, "Internal error in C function '%s' %d. Can't convert hex string '%s' to binary", on_error_fn_name, err, (const char *)str);
+      if ((err=f_str_to_hex((uint8_t *)msg, (char *)str))) {
 
-      zend_throw_exception(f_exception_ce, msg, (zend_long)err);
+         sprintf(msg, "Internal error in C function '%s' %d. Can't convert hex string '%s' to binary", on_error_fn_name, err, (const char *)str);
 
-      return err;
+         zend_throw_exception(f_exception_ce, msg, (zend_long)err);
+
+         return err;
+
+      }
+
+   } else {
+
+      sprintf(msg, "Internal error in C function '%s' 16403. Can't parse hex string to binary. Invalid length %lu", on_error_fn_name, (unsigned long int)str_len);
+
+      zend_throw_exception(f_exception_ce, msg, 16403);
+
+      return 4;
 
    }
 
@@ -1715,7 +2022,7 @@ PHP_FUNCTION(php_c_sign_block)
    int err;
    char msg[768];
    zval *z_user_block, *z_fee_block;
-   F_BLOCK_TRANSFER *user_block, *fee_block;
+   F_BLOCK_TRANSFER *fee_block;
    unsigned char *private_key;
    size_t private_key_len;
    zend_uchar type;
@@ -1753,8 +2060,6 @@ PHP_FUNCTION(php_c_sign_block)
 
    }
 
-   user_block=(F_BLOCK_TRANSFER *)Z_STRVAL_P(z_user_block);
-
    if ((type=Z_TYPE_P(z_fee_block))==IS_STRING) {
 
       if (Z_STRLEN_P(z_user_block)!=sizeof(F_BLOCK_TRANSFER)) {
@@ -1767,9 +2072,9 @@ PHP_FUNCTION(php_c_sign_block)
 
       }
 
-      fee_block=(F_BLOCK_TRANSFER *)Z_STRVAL_P(z_fee_block);
+      memcpy(fee_block=(F_BLOCK_TRANSFER *)(msg+sizeof(F_BLOCK_TRANSFER)), Z_STRVAL_P(z_fee_block), sizeof(F_BLOCK_TRANSFER));
 
-   } else if ((type=Z_TYPE_P(z_fee_block))==IS_NULL) fee_block=NULL;
+   } else if (type==IS_NULL) fee_block=NULL;
    else {
 
       sprintf(msg, "Internal error in C function 'php_c_sign_block' 16204. Invalid fee block type");
@@ -1780,15 +2085,7 @@ PHP_FUNCTION(php_c_sign_block)
 
    }
 
-   memcpy(msg, user_block, sizeof(F_BLOCK_TRANSFER));
-   user_block=(F_BLOCK_TRANSFER *)msg;
-
-   if (fee_block) {
-
-      memcpy(msg+sizeof(F_BLOCK_TRANSFER), fee_block, sizeof(F_BLOCK_TRANSFER));
-      fee_block=(F_BLOCK_TRANSFER *)(msg+sizeof(F_BLOCK_TRANSFER));
-
-   }
+   memcpy(msg, Z_STRVAL_P(z_user_block), sizeof(F_BLOCK_TRANSFER));
 
    if ((err=f_str_to_hex((uint8_t *)(msg+2*sizeof(F_BLOCK_TRANSFER)), (char *)private_key))) {
 
@@ -1802,7 +2099,7 @@ PHP_FUNCTION(php_c_sign_block)
 
    }
 
-   if ((err=f_nano_sign_block(user_block, fee_block, (uint8_t *)(msg+2*sizeof(F_BLOCK_TRANSFER))))) {
+   if ((err=f_nano_sign_block((F_BLOCK_TRANSFER *)msg, fee_block, (uint8_t *)(msg+2*sizeof(F_BLOCK_TRANSFER))))) {
 
       sprintf(msg, "Internal error in C function 'php_c_sign_block' %d. Can not sign block(s)", err);
 

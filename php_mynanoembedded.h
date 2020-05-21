@@ -20,6 +20,8 @@ PHP_RINIT_FUNCTION(mynanoembedded);
 PHP_RSHUTDOWN_FUNCTION(mynanoembedded);
 PHP_MINFO_FUNCTION(mynanoembedded);
 
+PHP_FUNCTION(php_c_get_block_hash);
+PHP_FUNCTION(php_c_block_to_p2pow);
 PHP_FUNCTION(php_c_parse_block_to_json);
 PHP_FUNCTION(php_c_calculate_work_from_block);
 PHP_FUNCTION(php_c_set_previous);

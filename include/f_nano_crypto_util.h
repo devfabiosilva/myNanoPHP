@@ -742,7 +742,10 @@ int pk_to_wallet(char *, char *, NANO_PUBLIC_KEY_EXTENDED);
  */
 int f_seed_to_nano_wallet(NANO_PRIVATE_KEY, NANO_PUBLIC_KEY, NANO_SEED, uint32_t);
 
+int f_nano_is_valid_block(F_BLOCK_TRANSFER *);
 int f_nano_block_to_json(char *dest, size_t *olen, size_t dest_size, F_BLOCK_TRANSFER *user_block);
+int f_nano_get_block_hash(uint8_t *, F_BLOCK_TRANSFER *);
+int f_nano_get_p2pow_block_hash(uint8_t *, uint8_t *, F_BLOCK_TRANSFER *);
 
 /**
  * @fn char *f_nano_key_to_str(char *out, unsigned char *key)

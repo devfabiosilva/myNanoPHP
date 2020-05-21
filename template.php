@@ -2408,6 +2408,154 @@ if ($_SERVER['REQUEST_METHOD']==='POST') {
 
     }
 
+    if ($cmd==="block_to_p2pow") {
+
+        $block=$_POST['block'];
+
+        if (!isset($block)) {
+
+            http_response_code(404);
+            header($MIME_TYPE);
+            echo '{"error":"108","reason":"Missing: Block"}';
+            exit(0);
+
+        }
+
+        $worker_wallet=$_POST['wallet'];
+
+        if (!isset($worker_wallet)) {
+
+            http_response_code(404);
+            header($MIME_TYPE);
+            echo '{"error":"109","reason":"Missing: Worker wallet"}';
+            exit(0);
+
+        }
+
+        $worker_representative=$_POST['representative'];
+
+        if (!isset($worker_representative))
+            $worker_representative="";
+
+        $worker_fee=$_POST['fee'];
+
+        if (!isset($worker_fee)) {
+
+            http_response_code(404);
+            header($MIME_TYPE);
+            echo '{"error":"110","reason":"Missing: Worker fee value"}';
+            exit(0);
+
+        }
+
+        $worker_fee_type=$_POST['fee_type'];
+
+        if (isset($worker_fee_type)) {
+
+            if ($worker_fee_type==="real")
+                $worker_fee_tp=WORKER_FEE_REAL;
+            else if ($worker_fee_type==="raw")
+                $worker_fee_tp=WORKER_FEE_RAW;
+            else if ($worker_fee_type==="hex")
+                $worker_fee_tp=WORKER_FEE_HEX;
+            else {
+
+                http_response_code(404);
+                header($MIME_TYPE);
+                echo '{"error":"111","reason":"Missing: Value type must be real|raw|hex"}';
+                exit(0);
+
+            }
+
+        } else
+            $worker_fee_tp=WORKER_FEE_REAL;
+
+        try {
+
+            $block_bin=hex2bin($block);
+
+        } catch (Exception $e) {
+
+            http_response_code(500);
+            header($MIME_TYPE);
+            echo '{"error":"500", "reason":"'.$e->getMessage().' Can not convert hex to bin '.$e->getCode().'"}';
+            exit(0);
+
+        }
+
+        try {
+
+            $p2pow_block=php_c_block_to_p2pow($block_bin, $worker_wallet, $worker_representative, $worker_fee, $worker_fee_tp);
+
+        } catch (Exception $e) {
+            http_response_code(500);
+            header($MIME_TYPE);
+            echo '{"error":"500", "reason":"'.$e->getMessage().' Can not create P2PoW block '.$e->getCode().'"}';
+            exit(0);
+        }
+
+        try {
+
+            $p2pow_block_hex=bin2hex($p2pow_block);
+
+            echo '{"block":"'.$p2pow_block_hex.'"}';
+
+        } catch (Exception $e) {
+
+            http_response_code(500);
+            header($MIME_TYPE);
+            echo '{"error":"500", "reason":"'.$e->getMessage().' Can not convert to bin to hex string'.$e->getCode().'"}';
+
+        }
+
+        exit(0);
+
+    }
+
+    if ($cmd==="get_block_hash") {
+
+        $block=$_POST['block'];
+
+        if (!isset($block)) {
+
+            http_response_code(404);
+            header($MIME_TYPE);
+            echo '{"error":"108","reason":"Missing: Block"}';
+            exit(0);
+
+        }
+
+        try {
+
+            $block_bin=hex2bin($block);
+
+        } catch (Exception $e) {
+
+            http_response_code(500);
+            header($MIME_TYPE);
+            echo '{"error":"500", "reason":"'.$e->getMessage().' Can not convert hex to bin '.$e->getCode().'"}';
+            exit(0);
+
+        }
+
+        try {
+
+            $res=php_c_get_block_hash($block_bin);
+
+            header($MIME_TYPE);
+            echo '{"hash":"'.$res.'"}';
+
+        } catch (Exception $e) {
+            http_response_code(500);
+            header($MIME_TYPE);
+            echo '{"error":"500", "reason":"'.$e->getMessage().' Can not calculate block hash '.$e->getCode().'"}';
+            exit(0);
+        }
+
+        exit(0);
+
+    }
+
     if ($cmd==="library_info") {
 
        header($MIME_TYPE);
