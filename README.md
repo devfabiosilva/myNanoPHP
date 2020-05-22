@@ -34,6 +34,7 @@ php --re mynanoembedded
 
 ### **Result**
 
+```sh
 Extension [ <persistent> extension #15 mynanoembedded version 1.0 ] {
 
   - Constants [64] {
