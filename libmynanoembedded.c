@@ -269,6 +269,14 @@ ZEND_BEGIN_ARG_INFO_EX(My_NanoCEmbedded_GetDifficulty, 0, 0, 2)
     ZEND_ARG_INFO(0, threshold)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_INFO_EX(My_NanoCEmbedded_SeedToEncryptedStream, 0, 0, 4)
+    ZEND_ARG_INFO(0, entropy)
+    ZEND_ARG_INFO(0, password)
+    ZEND_ARG_INFO(0, password_min_len)
+    ZEND_ARG_INFO(0, password_max_len)
+    ZEND_ARG_INFO(0, password_type)
+ZEND_END_ARG_INFO()
+
 static zend_class_entry *f_exception_ce;
 
 static zend_object *f_exception_create_object(zend_class_entry *ce) {
@@ -382,6 +390,14 @@ PHP_MINIT_FUNCTION(mynanoembedded)
    REGISTER_LONG_CONSTANT("WORKER_FEE_HEX", F_NANO_B_RAW_128, CONST_CS|CONST_PERSISTENT);
    REGISTER_LONG_CONSTANT("WORKER_FEE_REAL", F_NANO_B_REAL_STRING, CONST_CS|CONST_PERSISTENT);
    REGISTER_LONG_CONSTANT("WORKER_FEE_RAW", F_NANO_B_RAW_STRING, CONST_CS|CONST_PERSISTENT);
+   REGISTER_LONG_CONSTANT("PASS_MUST_HAVE_AT_LEAST_NONE", F_PASS_MUST_HAVE_AT_LEAST_NONE, CONST_CS|CONST_PERSISTENT);
+   REGISTER_LONG_CONSTANT("PASS_MUST_HAVE_AT_LEAST_ONE_NUMBER", F_PASS_MUST_HAVE_AT_LEAST_ONE_NUMBER, CONST_CS|CONST_PERSISTENT);
+   REGISTER_LONG_CONSTANT("PASS_MUST_HAVE_AT_LEAST_ONE_SYMBOL", F_PASS_MUST_HAVE_AT_LEAST_ONE_SYMBOL, CONST_CS|CONST_PERSISTENT);
+   REGISTER_LONG_CONSTANT("PASS_MUST_HAVE_AT_LEAST_ONE_UPPER_CASE", F_PASS_MUST_HAVE_AT_LEAST_ONE_UPPER_CASE, CONST_CS|CONST_PERSISTENT);
+   REGISTER_LONG_CONSTANT("PASS_MUST_HAVE_AT_LEAST_ONE_LOWER_CASE", F_PASS_MUST_HAVE_AT_LEAST_ONE_LOWER_CASE, CONST_CS|CONST_PERSISTENT);
+   REGISTER_LONG_CONSTANT("PASS_IS_OUT_OVF", F_PASS_IS_OUT_OVF, CONST_CS|CONST_PERSISTENT);
+   REGISTER_LONG_CONSTANT("PASS_IS_TOO_SHORT", F_PASS_IS_TOO_SHORT, CONST_CS|CONST_PERSISTENT);
+   REGISTER_LONG_CONSTANT("PASS_IS_TOO_LONG", F_PASS_IS_TOO_LONG, CONST_CS|CONST_PERSISTENT);
 
    f_random_attach(gen_rand_no_entropy);
 
@@ -516,6 +532,7 @@ static const zend_function_entry mynanoembedded_functions[] = {
     PHP_FE(php_c_p2pow_to_json, My_NanoCEmbedded_P2PoW_ToJson)
     PHP_FE(php_c_sign_p2pow_block, My_NanoCEmbedded_SignP2PoWBlock)
     PHP_FE(php_c_get_difficulty, My_NanoCEmbedded_GetDifficulty)
+    PHP_FE(php_c_gen_seed_to_encrypted_stream, My_NanoCEmbedded_SeedToEncryptedStream)
     PHP_FE_END
 
 };
@@ -3473,6 +3490,101 @@ PHP_FUNCTION(php_c_get_difficulty)
    RETURN_STR(strpprintf(384, "{\"hash\":\"%s\",\"work\":\"0x%016llx\",\"difficulty\":\"0x%016llx\",\"base_difficulty\":\"0x%016llx\",\"multiplier\":\
 \"%0.014f\",\"valid\":\"%d\"}", (const char *)hash, *(unsigned long int *)(msg+64), *(unsigned long long int *)(msg+256), *(unsigned long long int *)(msg+128), 
       to_multiplier(*(uint64_t *)(msg+256), *(uint64_t *)(msg+128)), err));
+
+}
+
+PHP_FUNCTION(php_c_gen_seed_to_encrypted_stream)
+{
+
+   int err;
+   char msg[512];
+   unsigned char *password;
+   size_t password_len;
+   zend_long entropy, password_min_len, password_max_len, password_type=(F_PASS_MUST_HAVE_AT_LEAST_ONE_NUMBER|F_PASS_MUST_HAVE_AT_LEAST_ONE_SYMBOL|
+      F_PASS_MUST_HAVE_AT_LEAST_ONE_UPPER_CASE|F_PASS_MUST_HAVE_AT_LEAST_ONE_LOWER_CASE);
+
+   if (zend_parse_parameters(ZEND_NUM_ARGS(), "lsll|l", &entropy, &password, &password_len, &password_min_len, &password_max_len, &password_type)==FAILURE)
+      return;
+
+   if (password_min_len<1) {
+
+      sprintf(msg, "Internal error in C function 'php_c_gen_seed_to_encrypted_stream' -18900. 'password_min_len' should be greather than 0");
+
+      zend_throw_exception(f_exception_ce, msg, -18900);
+
+      return;
+
+   }
+
+   if (password_max_len<1) {
+
+      sprintf(msg, "Internal error in C function 'php_c_gen_seed_to_encrypted_stream' -18901. 'password_max_len' should be greather than 0");
+
+      zend_throw_exception(f_exception_ce, msg, -18901);
+
+      return;
+
+   }
+
+   if (password_min_len>password_max_len) {
+
+      sprintf(msg, "Internal error in C function 'php_c_gen_seed_to_encrypted_stream' -18902. Incoherent password configuration");
+
+      zend_throw_exception(f_exception_ce, msg, -18902);
+
+      return;
+
+   }
+
+   if ((int)password_type&(~(F_PASS_MUST_HAVE_AT_LEAST_ONE_NUMBER|F_PASS_MUST_HAVE_AT_LEAST_ONE_SYMBOL|F_PASS_MUST_HAVE_AT_LEAST_ONE_UPPER_CASE|
+      F_PASS_MUST_HAVE_AT_LEAST_ONE_LOWER_CASE))) {
+
+      sprintf(msg, "Internal error in C function 'php_c_gen_seed_to_encrypted_stream' -18903. Invalid password type");
+
+      zend_throw_exception(f_exception_ce, msg, -18903);
+
+      return;
+
+   }
+
+   if ((err=f_pass_must_have_at_least((char *)password, (size_t)password_max_len+1, (size_t)password_min_len, (size_t)password_max_len, (int)password_type))) {
+
+      sprintf(msg, "Internal error in C function 'php_c_gen_seed_to_encrypted_stream' %d. Password does not pass in requirements", err);
+
+      zend_throw_exception(f_exception_ce, msg, err);
+
+      return;
+
+   }
+
+   if ((err=f_generate_nano_seed((uint8_t *)(msg+(sizeof(msg)-32)), (uint32_t)entropy))) {
+
+      err*=-1;
+
+      sprintf(msg, "Internal error in C function 'php_c_gen_seed_to_encrypted_stream' %d. Cannot generate NANO SEED", err);
+
+      zend_throw_exception(f_exception_ce, msg, err);
+
+      return;
+
+   }
+
+   if ((err=f_write_seed(msg, WRITE_SEED_TO_STREAM, (uint8_t *)(msg+(sizeof(msg)-32)), (char *)password))) {
+
+      err*=-1;
+
+      sprintf(msg, "Internal error in C function 'php_c_gen_seed_to_encrypted_stream' %d. Cannot cypher NANO SEED in memory", err);
+
+      zend_throw_exception(f_exception_ce, msg, err);
+
+   }
+
+   memset((msg+(sizeof(msg)-32)), 0, 32);
+
+   if (err)
+      return;
+
+   ZVAL_STRINGL(return_value, msg, sizeof(F_NANO_CRYPTOWALLET));
 
 }
 

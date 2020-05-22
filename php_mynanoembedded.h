@@ -20,6 +20,7 @@ PHP_RINIT_FUNCTION(mynanoembedded);
 PHP_RSHUTDOWN_FUNCTION(mynanoembedded);
 PHP_MINFO_FUNCTION(mynanoembedded);
 
+PHP_FUNCTION(php_c_gen_seed_to_encrypted_stream);
 PHP_FUNCTION(php_c_get_difficulty);
 PHP_FUNCTION(php_c_sign_p2pow_block);
 PHP_FUNCTION(php_c_p2pow_to_json);
