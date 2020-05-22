@@ -277,6 +277,11 @@ ZEND_BEGIN_ARG_INFO_EX(My_NanoCEmbedded_SeedToEncryptedStream, 0, 0, 4)
     ZEND_ARG_INFO(0, password_type)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_INFO_EX(My_NanoCEmbedded_EncryptedStringToSeedAndBip39, 0, 0, 2)
+    ZEND_ARG_INFO(0, encrypted_stream)
+    ZEND_ARG_INFO(0, password)
+ZEND_END_ARG_INFO()
+
 static zend_class_entry *f_exception_ce;
 
 static zend_object *f_exception_create_object(zend_class_entry *ce) {
@@ -533,6 +538,7 @@ static const zend_function_entry mynanoembedded_functions[] = {
     PHP_FE(php_c_sign_p2pow_block, My_NanoCEmbedded_SignP2PoWBlock)
     PHP_FE(php_c_get_difficulty, My_NanoCEmbedded_GetDifficulty)
     PHP_FE(php_c_gen_seed_to_encrypted_stream, My_NanoCEmbedded_SeedToEncryptedStream)
+    PHP_FE(php_c_gen_encrypted_stream_to_seed, My_NanoCEmbedded_EncryptedStringToSeedAndBip39)
     PHP_FE_END
 
 };
@@ -3585,6 +3591,55 @@ PHP_FUNCTION(php_c_gen_seed_to_encrypted_stream)
       return;
 
    ZVAL_STRINGL(return_value, msg, sizeof(F_NANO_CRYPTOWALLET));
+
+}
+
+PHP_FUNCTION(php_c_gen_encrypted_stream_to_seed)
+{
+
+   int err;
+   char msg[512];
+   zval *z_encrypted_stream;
+   unsigned char *password;
+   size_t sz_tmp;
+
+   if (zend_parse_parameters(ZEND_NUM_ARGS(), "zs", &z_encrypted_stream, &password, &sz_tmp)==FAILURE)
+      return;
+
+   ZVAL_DEREF(z_encrypted_stream);
+
+   if (Z_TYPE_P(z_encrypted_stream)!=IS_STRING) {
+
+      sprintf(msg, "Internal error in C function 'php_c_gen_seed_to_encrypted_stream' 18700. Encrypted Nano SEED has an invalid type");
+
+      zend_throw_exception(f_exception_ce, msg, 18700);
+
+      return;
+
+   }
+
+   if (Z_STRLEN_P(z_encrypted_stream)!=sizeof(F_NANO_CRYPTOWALLET)) {
+
+      sprintf(msg, "Internal error in C function 'php_c_gen_seed_to_encrypted_stream' 18701. Encrypted Nano SEED invalid size");
+
+      zend_throw_exception(f_exception_ce, msg, 18701);
+
+      return;
+
+   }
+
+   if ((err=f_parse_nano_seed_and_bip39_to_JSON(msg, sizeof(msg), &sz_tmp, (void *)Z_STRVAL_P(z_encrypted_stream), READ_SEED_FROM_STREAM,
+      (const char *)password))) {
+
+      sprintf(msg, "Internal error in C function 'php_c_gen_seed_to_encrypted_stream' %d. Can't extract encrypted seed and Bip39", err);
+
+      zend_throw_exception(f_exception_ce, msg, (zend_long)err);
+
+      return;
+
+   }
+
+   ZVAL_STRINGL(return_value, msg, sz_tmp);
 
 }
 

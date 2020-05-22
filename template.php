@@ -2895,6 +2895,61 @@ if ($_SERVER['REQUEST_METHOD']==='POST') {
 
     }
 
+    if ($cmd==="encrypted_stream_to_seed") {
+
+        $block=$_POST['block'];
+
+        if (!isset($block)) {
+
+            http_response_code(404);
+            header($MIME_TYPE);
+            echo '{"error":"115","reason":"Missing: Block"}';
+            exit(0);
+
+        }
+
+        try {
+
+            $block_bin=hex2bin($block);
+
+        } catch (Exception $e) {
+
+            http_response_code(500);
+            header($MIME_TYPE);
+            echo '{"error":"500", "reason":"'.$e->getMessage().' Can not convert hex to bin '.$e->getCode().'"}';
+            exit(0);
+
+        }
+
+        $password=$_POST['password'];
+
+        if (!isset($password)) {
+
+            http_response_code(404);
+            header($MIME_TYPE);
+            echo '{"error":"116","reason":"Missing: Password"}';
+            exit(0);
+
+        }
+
+        try {
+
+            $res=php_c_gen_encrypted_stream_to_seed($block_bin, $password);
+
+            header($MIME_TYPE);
+            echo $res;
+
+        } catch (Exception $e) {
+            http_response_code(500);
+            header($MIME_TYPE);
+            echo '{"error":"500", "reason":"'.$e->getMessage().' Can not convert encrypted stream to Nano SEED '.$e->getCode().'"}';
+            exit(0);
+        }
+
+        exit(0);
+
+    }
+
     if ($cmd==="library_info") {
 
        header($MIME_TYPE);
