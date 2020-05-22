@@ -18,10 +18,21 @@ myNanoPHP is a C library that integrates Nano Cryptocurrency tools to PHP
 
 In development ...
 
-## Constants, Functions and Classes
+## Installing
+
+In Development ...
+
+## Hello World Demo API
+
+## SUMMARY: Constants, Functions and Classes
+
+### In console type:
 
 ```sh
 php --re mynanoembedded
+```
+
+### **Result**
 
 Extension [ <persistent> extension #15 mynanoembedded version 1.0 ] {
 
