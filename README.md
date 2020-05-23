@@ -40,13 +40,11 @@ Where:
 
 $res = $valueA + $valueB **or** $res = $valueA - $valueB
 
-<p align="center">
 params|description
 ------|-----------
 $valueA|A value
 $valueB|B value
 $type| Big numbers types
-</p>
 
 $type|Type description
 -----|----------------
@@ -152,6 +150,180 @@ php -r "echo php_c_bip39_to_nano_seed('mesh clap laptop idea vocal stadium spoil
 **On error**
 
 Throws _MyNanoCEmbeddedException_
+
+<h1>- php_c_block_to_p2pow()</h1>
+
+### Description
+
+Converts a Nano binary block to P2PoW binary format adding fee for Proof of Work computation
+
+```php
+$res = php_c_block_to_p2pow($block, $worker_wallet, $worker_representative, $worker_fee, $worker_fee_type)
+```
+
+params|type|description
+------|----|-----------
+$block|binary|Binary Nano Block
+$worker_wallet|string|Worker wallet
+$worker_representative|string|Worker representative. If empty string then function clones user representative to worker representative
+$worker_fee|string|Fee to computate Proof of Work
+$worker_type|integer|(Optional) Fee type. If ommited **fee type** is real string
+
+type|description
+----|-----------
+WORKER_FEE_HEX|Fee value is hex string big number
+WORKER_FEE_REAL|Fee value is a real string
+WORKER_FEE_RAW|Fee value is Nano Raw
+
+#### Return value
+
+In development
+
+##### Example
+
+Create a file "create_p2pow_block.php" and type:
+
+```php
+<?php
+//sat May 23 2020 14:50:23 -03 
+
+   /*
+    * EXAMPLE: Creates a Nano block and add fee to P2PoW block
+    */
+
+   echo "STEP1: Create Nano Block to send 150 Nanos to nano_3mh51ybmmedzp99shs7x6ajfcx87sqpp3mt37ohqtz6hccsxh9ufaf3a1stw\n";
+
+   $account            = 'nano_1ru5kyg89aerkby6fbwndxchk7ksr3de1bafkz1r4k1796pbubjujrypwsdu';
+   $previous           = '7F8E7DFE181544848FCC28CD969CC5539816B49CE17FCA03B7006CFADDA5C687';
+   $representative     = 'nano_3naq5joid48991pxj95tu9z117bghwk3ndum1o4i85jb6gdkerj9rdj6p816';
+   $balance            = '1050.37189';
+   $balance_type       = BALANCE_REAL_STRING;
+   $value_to_send      = '150';
+   $value_to_send_type = VALUE_SEND_RECEIVE_REAL_STRING;
+   $destination        = 'nano_3mh51ybmmedzp99shs7x6ajfcx87sqpp3mt37ohqtz6hccsxh9ufaf3a1stw';
+   $direction          = VALUE_TO_SEND;
+
+   try {
+
+      $nano_block = php_c_generate_block(
+
+                       $account,
+                       $previous,
+                       $representative,
+                       $balance,
+                       $balance_type,
+                       $value_to_send,
+                       $value_to_send_type,
+                       $destination,
+                       $direction
+
+                    );
+
+   } catch (Exception $e) {
+
+      echo 'Error code: '.$e->getCode()."\nError message: ".$e->getMessage();
+      exit(1);
+
+   }
+
+   echo "SUCCESS: Nano block created. Now adding fee to Nano block ...\n";
+
+   $worker_wallet         = 'nano_3oj16m1u5h3m9buboxynbwndxyksiy4rjet5cy5nj8fhgjw5h7msrhxud3sz';
+   $worker_representative = '';              /* if '' $worker_representative = $representative */
+   $worker_fee            = '0.0001';
+   $worker_fee_type       = WORKER_FEE_REAL; /* worker fee is represented in real value. It could be ommited in this case (real value)*/
+
+   try {
+
+      $worker_fee_block = php_c_block_to_p2pow(
+
+                       $nano_block,
+                       $worker_wallet,
+                       $worker_representative,
+                       $worker_fee,
+                       $worker_fee_type
+
+                    );
+
+   } catch (Exception $e) {
+
+      echo "Error code in 'php_c_block_to_p2pow' ".$e->getCode()."Error message: ".$e->getMessage();
+      exit(1);
+
+   }
+
+   echo "SUCCESS\nP2PoW Fee block =>\n";
+   echo bin2hex($worker_fee_block);
+   echo "\nFinally Hello World\n";
+
+?>
+```
+
+```sh
+php create_p2pow_block.php
+```
+
+**Return value (stored in $worker_fee_block variable)**
+
+```sh
+# Binary P2PoW block result representation in Memory (498 Bytes long)
+
+0000000000000000000000000000000000000000000000000000000000000006
+6363979c63a198927c46a7945f54f91659c056c0250d97c1814805392c9da63b
+7f8e7dfe181544848fcc28cd969cc5539816b49ce17fca03b7006cfadda5c687
+d1171c6b0588c7382dd89c7ad9fe00152e7f241a2f730545030e292397266227
+00002c644a7b7ee7fb32b5eef2000000
+cde3079339b17fb1cf97e4bd2222d574c5cded60cf412d5f7d7c8f52b3d79f6d
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+00
+0000000000000000
+0000000000000000000000000000000000000000000000000000000000000006
+6363979c63a198927c46a7945f54f91659c056c0250d97c1814805392c9da63b
+5452f287f5c1f8fbd70da606050c851127912f9c86b408e39d557c05177b0c49
+d1171c6b0588c7382dd89c7ad9fe00152e7f241a2f730545030e292397266227
+00002c644a28c7151e6aa91c0e000000
+d62024c1b1bc333a769af7d44f28befa59878588b34357874899af7478379679
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+00
+0000000000000000
+
+#Human readable result (JSON Equivalent)
+{
+  "user_transaction": {
+    "block_type": "state",
+    "account": "nano_1ru5kyg89aerkby6fbwndxchk7ksr3de1bafkz1r4k1796pbubjujrypwsdu",
+    "previous": "7F8E7DFE181544848FCC28CD969CC5539816B49CE17FCA03B7006CFADDA5C687",
+    "representative": "nano_3naq5joid48991pxj95tu9z117bghwk3ndum1o4i85jb6gdkerj9rdj6p816",
+    "balance": "900371890000000000000000000000000",
+    "link": "CDE3079339B17FB1CF97E4BD2222D574C5CDED60CF412D5F7D7C8F52B3D79F6D",
+    "link_as_account": "nano_3mh51ybmmedzp99shs7x6ajfcx87sqpp3mt37ohqtz6hccsxh9ufaf3a1stw",
+    "signature": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+  },
+  "worker_transaction": {
+    "block_type": "state",
+    "account": "nano_1ru5kyg89aerkby6fbwndxchk7ksr3de1bafkz1r4k1796pbubjujrypwsdu",
+    "previous": "5452F287F5C1F8FBD70DA606050C851127912F9C86B408E39D557C05177B0C49",
+    "representative": "nano_3naq5joid48991pxj95tu9z117bghwk3ndum1o4i85jb6gdkerj9rdj6p816",
+    "balance": "900371790000000000000000000000000",
+    "link": "D62024C1B1BC333A769AF7D44F28BEFA59878588B34357874899AF7478379679",
+    "link_as_account": "nano_3oj16m1u5h3m9buboxynbwndxyksiy4rjet5cy5nj8fhgjw5h7msrhxud3sz",
+    "signature": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+  }
+}
+# This block is not yet signed. To sign this block see php_c_sign_p2pow_block()
+# To parse this block to JSON see php_c_parse_block_to_json()
+```
+
+**On error**
+
+Throws _MyNanoCEmbeddedException_
+
+**See also**
+
+- _php_c_p2pow_to_json()_
+- _php_c_generate_block()_
+- _php_c_parse_block_to_json()_
+- _php_c_sign_p2pow_block()_
 
 ## SUMMARY: Constants, Functions and Classes
 
