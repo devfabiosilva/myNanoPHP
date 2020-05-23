@@ -40,11 +40,13 @@ Where:
 
 $res = $valueA + $valueB **or** $res = $valueA - $valueB
 
+<p align="center">
 params|description
 ------|-----------
 $valueA|A value
 $valueB|B value
 $type| Big numbers types
+</p>
 
 $type|Type description
 -----|----------------
@@ -112,7 +114,7 @@ php -r "echo php_c_add_sub_balance('6389710900000000000000000000000000', '000023
 
 Throws _MyNanoCEmbeddedException_
 
-<h1 align="center">- php_c_bip39_to_nano_seed()</h1>
+<h1>- php_c_bip39_to_nano_seed()</h1>
 
 ### Description
 
