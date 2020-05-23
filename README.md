@@ -33,7 +33,7 @@ In Development ...
 Adds or Subtracts two Nano big numbers
 
 ```php
-$res = php_c_add_sub_balance($valueA, $valueB, $type)
+$res = php_c_add_sub_balance($valueA, $valueB, $type);
 ```
 
 Where:
@@ -80,7 +80,7 @@ php -r "echo php_c_add_sub_balance('1.3', '2.5', NANO_ADD_A_B|NANO_RES_REAL_STRI
 
 ##### Example 2
 
-Subtract one real value "10.31791" minus Nano raw value 3671790000000000000000000000000 and return a real value
+Subtract one real value "10.31791" minus Nano raw value "3671790000000000000000000000000" and return a real value
 
 ```sh
 php -r "echo php_c_add_sub_balance('10.31791', '3671790000000000000000000000000', NANO_SUB_A_B|NANO_RES_REAL_STRING|NANO_A_REAL_STRING|NANO_B_RAW_STRING);"
@@ -119,7 +119,7 @@ Throws _MyNanoCEmbeddedException_
 Extract Nano SEED from Bip39 menemonic
 
 ```php
-$res = php_c_bip39_to_nano_seed($bip39, $dictionary_path)
+$res = php_c_bip39_to_nano_seed($bip39, $dictionary_path);
 ```
 
 params|type|description
@@ -158,7 +158,7 @@ Throws _MyNanoCEmbeddedException_
 Converts a Nano binary block to P2PoW binary format adding fee for Proof of Work computation
 
 ```php
-$res = php_c_block_to_p2pow($block, $worker_wallet, $worker_representative, $worker_fee, $worker_fee_type)
+$res = php_c_block_to_p2pow($block, $worker_wallet, $worker_representative, $worker_fee, $worker_fee_type);
 ```
 
 params|type|description
@@ -166,7 +166,7 @@ params|type|description
 **_$block_**|binary|Binary Nano Block
 **_$worker_wallet_**|string|Worker wallet
 **_$worker_representative_**|string|Worker representative. If empty string then function clones user representative to worker representative
-**_$worker_fee**_|string|Fee to computate Proof of Work
+**_$worker_fee_**|string|Fee to computate Proof of Work
 **_$worker_type_**|integer|(Optional) Fee type. If ommited **fee type** is real string
 
 type|description
@@ -229,7 +229,7 @@ Create a file "create_p2pow_block.php" and type:
    echo "SUCCESS: Nano block created. Now adding fee to Nano block ...\n";
 
    $worker_wallet         = 'nano_3oj16m1u5h3m9buboxynbwndxyksiy4rjet5cy5nj8fhgjw5h7msrhxud3sz';
-   $worker_representative = '';              /* if '' $worker_representative = $representative */
+   $worker_representative = '';              /* if '' then $worker_representative = $representative */
    $worker_fee            = '0.0001';
    $worker_fee_type       = WORKER_FEE_REAL; /* worker fee is represented in real value. It could be ommited in this case (real value)*/
 
@@ -310,8 +310,8 @@ d62024c1b1bc333a769af7d44f28befa59878588b34357874899af7478379679
     "signature": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
   }
 }
-# This block is not yet signed. To sign this block see php_c_sign_p2pow_block()
-# To parse binary block to JSON see php_c_p2pow_to_json()
+# This block is not signed yet. To sign this block see php_c_sign_p2pow_block()
+# To parse P2PoW binary block to JSON see php_c_p2pow_to_json()
 ```
 
 **On error**
@@ -325,6 +325,65 @@ Throws _MyNanoCEmbeddedException_
 - _php_c_parse_block_to_json()_
 - _php_c_sign_p2pow_block()_
 - _php_c_p2pow_to_json()_
+
+
+<h1>- php_c_brainwallet_generate()</h1>
+
+### Description
+
+Extract a Nano SEED given a phrase or word list and salt
+
+```php
+$res = php_c_brainwallet_generate($brainwallet, $salt, $mode, $dictionary_path);
+```
+
+params|type|description
+------|----|-----------
+**_$brainwallet_**|string|Brainwallet text input
+**_$salt_**|string|Salt text input
+**_$mode_**|integer|Brainwallet mode (see table below) to allow only generate custom Nano SEED anti-crack strength
+**_$dictionary_path_**|string|Path and filename to dictionary file *.dic
+
+**_$mode_** type|description
+----------------|-----------
+**BRAIN_WALLET_VERY_POOR**|Allows generate a very poor Brainwallet (Crack within seconds or less)
+**BRAIN_WALLET_POOR**|Allows generate a poor Brainwallet (Crack within minutes)
+**BRAIN_WALLET_VERY_BAD**|Allows generate a very bad Brainwallet (Crack within one hours)
+**BRAIN_WALLET_BAD**|Allows generate a bad Brainwallet (Crack within one day)
+**BRAIN_WALLET_VERY_WEAK**|Allows generate a very weak Brainwallet (Crack within one week)
+**BRAIN_WALLET_WEAK**|Allows generate a weak Brainwallet (Crack within one year)
+**BRAIN_WALLET_STILL_WEAK**|Allows generate a still weak Brainwallet (Crack within one month)
+**BRAIN_WALLET_MAYBE_GOOD**|Allows generate a maybe good for you Brainwallet (Crack within one century)
+**BRAIN_WALLET_GOOD**|Allows generate a good Brainwallet (Crack within one thousand year)
+**BRAIN_WALLET_VERY_GOOD**|Allows generate a very good Brainwallet (Crack within ten thousand year)
+**BRAIN_WALLET_NICE**|Allows generate a very nice Brainwallet (Crack withing one hundred thousand year)
+**BRAIN_WALLET_PERFECT**|Allows generate a perfect Brainwallet (3.34x10^53 Years to crack)
+
+#### Return value
+
+Bip39 and Nano SEED extracted from your Brainwallet and Salt in JSON string format
+
+##### Example
+
+```sh
+php -r "echo php_c_brainwallet_generate('The state is that great fiction by which everyone tries to live at the expense of everyone else (Fréderic Bastiat 1801-1850)', 'youremail@example.com+phoneNumber:01234567890+AnyOtherTextHere', BRAIN_WALLET_PERFECT,'/var/www/html/dictionary.dic');"
+```
+
+**Return value**
+
+```sh
+{
+    "result": {
+      "seed": "D59BF169DECEF50CE2A61E4850F0D284DD2C7621DE913F214610B14F0FC23522",
+      "bip39": "stereo test foil rural urban major melody sense embark maple cruise answer spot deposit manual split dish any loud glad valley three stand fork"
+    },
+    "warning_msg": "[Perfect!] 3.34x10^53 Years to crack"
+}
+```
+
+**On error**
+
+Throws _MyNanoCEmbeddedException_
 
 ## SUMMARY: Constants, Functions and Classes
 

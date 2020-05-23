@@ -2411,7 +2411,7 @@ PHP_FUNCTION(php_c_brainwallet_generate)
 
    if ((err=f_extract_seed_from_brainwallet((uint8_t *)(msg+sizeof(msg)-32), &wrn_msg, (uint32_t)mode, (const char *)brainwallet, (const char *)salt))) {
 
-      sprintf(msg, "Internal error in C function 'php_c_brainwallet_generate' %d. In function 'f_extract_seed_from_brainwallet'", err);
+      sprintf(msg, "Internal error in C function 'php_c_brainwallet_generate' %d. In function 'f_extract_seed_from_brainwallet' warning_msg = %s", err, wrn_msg);
 
       zend_throw_exception(f_exception_ce, msg, (zend_long)err);
 
