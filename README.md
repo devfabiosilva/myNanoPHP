@@ -26,7 +26,10 @@ In Development ...
 
 ## FUNCTIONS
 
-- php_c_add_sub_balance:
+<p align="center">
+	<h1>- php_c_add_sub_balance</h1>
+</p>
+
 
 ### Description
 
@@ -111,9 +114,9 @@ php -r "echo php_c_add_sub_balance('6389710900000000000000000000000000', '000023
 **On error**
 
 Throws _MyNanoCEmbeddedException_
-
-- php_c_bip39_to_nano_seed:
-
+<p align="center">
+	<h1>- php_c_bip39_to_nano_seed</h1>
+</p>
 ### Description
 
 Extract Nano SEED from Bip39 menemonic
@@ -123,7 +126,7 @@ $res = php_c_bip39_to_nano_seed($bip39, $dictionary_path)
 ```
 
 params|type|description
-------|-----------
+------|----|-----------
 $bip39|string|Bip39 mnemonic
 $dictionary|string|Path and file to dictionary file *.dic
 
