@@ -38,13 +38,13 @@ $res = php_c_add_sub_balance($valueA, $valueB, $type)
 
 Where:
 
-$res = $valueA + $valueB **or** $res = $valueA - $valueB
+**_$res = $valueA + $valueB_** or **_$res = $valueA - $valueB_**
 
 params|description
 ------|-----------
-$valueA|A value
-$valueB|B value
-$type| Big numbers types
+**_$valueA_**|A value
+**_$valueB_**|B value
+**_$type_**| Big numbers types
 
 $type|Type description
 -----|----------------
@@ -124,8 +124,8 @@ $res = php_c_bip39_to_nano_seed($bip39, $dictionary_path)
 
 params|type|description
 ------|----|-----------
-$bip39|string|Bip39 mnemonic
-$dictionary|string|Path and file to dictionary file *.dic
+**_$bip39_**|string|Bip39 mnemonic
+**_$dictionary_**|string|Path and file to dictionary file *.dic
 
 #### Return value
 
@@ -133,7 +133,7 @@ Nano SEED in hex string format
 
 ##### Example 1
 
-Extract Nano SEED from Bip39 menemonic _mesh clap laptop idea vocal stadium spoil buyer parent main worry siren scout theme country ridge universe pen cage bless robot seek inner latin_ using English Bip39 dictionary
+Extract Nano SEED from Bip39 menemonic "_mesh clap laptop idea vocal stadium spoil buyer parent main worry siren scout theme country ridge universe pen cage bless robot seek inner latin_" using English Bip39 dictionary
 
 ```sh
 php -r "echo php_c_bip39_to_nano_seed('mesh clap laptop idea vocal stadium spoil buyer parent main worry siren scout theme country ridge universe pen cage bless robot seek inner latin', '/var/www/html/dictionary.dic');"
@@ -163,21 +163,21 @@ $res = php_c_block_to_p2pow($block, $worker_wallet, $worker_representative, $wor
 
 params|type|description
 ------|----|-----------
-$block|binary|Binary Nano Block
-$worker_wallet|string|Worker wallet
-$worker_representative|string|Worker representative. If empty string then function clones user representative to worker representative
-$worker_fee|string|Fee to computate Proof of Work
-$worker_type|integer|(Optional) Fee type. If ommited **fee type** is real string
+**_$block_**|binary|Binary Nano Block
+**_$worker_wallet_**|string|Worker wallet
+**_$worker_representative_**|string|Worker representative. If empty string then function clones user representative to worker representative
+**_$worker_fee**_|string|Fee to computate Proof of Work
+**_$worker_type_**|integer|(Optional) Fee type. If ommited **fee type** is real string
 
 type|description
 ----|-----------
-WORKER_FEE_HEX|Fee value is hex string big number
-WORKER_FEE_REAL|Fee value is a real string
-WORKER_FEE_RAW|Fee value is Nano Raw
+**WORKER_FEE_HEX**|Fee value is hex string big number
+**WORKER_FEE_REAL**|Fee value is a real string
+**WORKER_FEE_RAW**|Fee value is Nano Raw
 
 #### Return value
 
-In development
+Binary block to variable
 
 ##### Example
 
@@ -311,7 +311,7 @@ d62024c1b1bc333a769af7d44f28befa59878588b34357874899af7478379679
   }
 }
 # This block is not yet signed. To sign this block see php_c_sign_p2pow_block()
-# To parse this block to JSON see php_c_parse_block_to_json()
+# To parse binary block to JSON see php_c_p2pow_to_json()
 ```
 
 **On error**
@@ -324,6 +324,7 @@ Throws _MyNanoCEmbeddedException_
 - _php_c_generate_block()_
 - _php_c_parse_block_to_json()_
 - _php_c_sign_p2pow_block()_
+- _php_c_p2pow_to_json()_
 
 ## SUMMARY: Constants, Functions and Classes
 
