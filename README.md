@@ -385,6 +385,142 @@ php -r "echo php_c_brainwallet_generate('The state is that great fiction by whic
 
 Throws _MyNanoCEmbeddedException_
 
+<h1>- php_c_calculate_work_from_block()</h1>
+
+### Description
+
+Calculates a Proof of Work of a Nano Block
+
+```php
+php_c_calculate_work_from_block($block, $number_of_threads, $threshold);
+```
+
+params|type|description
+------|----|-----------
+**_$block_**|binary|Input Nano block
+**_$number_of_threads_**|integer|Number of CPU threads
+**_$threshold_**|string|(Optional) Threshold value. If ommited then _DEFAULT_NANO_POW_THRESHOLD = 0xffffffc000000000_ is used
+
+#### Return value
+
+Binary Nano block with calculated Proof of Work with a custom/default threshold
+
+##### Example
+
+Create a file "calculate_pow_in_nano_block.php" and type:
+
+```php
+<?php
+//sat May 23 2020 18:51:17 -03
+
+   /*
+    * EXAMPLE: Prepares a block to receive funds and calculates Proof of Work to be stored in Nano Blockchain
+    */
+
+   echo "STEP1: Create Nano Block to receive (open block) 368.182918 Nanos from nano_3js4zced6abrzy9wiy3q3ozsicszpnfm7oszumrbd9k4yirkhm977n8hbuxy\n";
+
+   $account            = 'nano_1ru5kyg89aerkby6fbwndxchk7ksr3de1bafkz1r4k1796pbubjujrypwsdu';
+   $previous           = '7F8E7DFE181544848FCC28CD969CC5539816B49CE17FCA03B7006CFADDA5C687';
+   $representative     = 'nano_3naq5joid48991pxj95tu9z117bghwk3ndum1o4i85jb6gdkerj9rdj6p816';
+   $balance            = '0.179';
+   $balance_type       = BALANCE_REAL_STRING;
+   $value_to_send      = '368.182918';
+   $value_to_send_type = VALUE_SEND_RECEIVE_REAL_STRING;
+   $destination        = 'nano_3js4zced6abrzy9wiy3q3ozsicszpnfm7oszumrbd9k4yirkhm977n8hbuxy';
+   $direction          = VALUE_TO_RECEIVE;
+
+   try {
+
+      $nano_block = php_c_generate_block(
+
+                       $account,
+                       $previous,
+                       $representative,
+                       $balance,
+                       $balance_type,
+                       $value_to_send,
+                       $value_to_send_type,
+                       $destination,
+                       $direction
+
+                    );
+
+   } catch (Exception $e) {
+
+      echo 'Error code: '.$e->getCode()."\nError message: ".$e->getMessage();
+      exit(1);
+
+   }
+
+   echo "SUCCESS: Nano block created. Now calculating a Proof of Work. It can take a little longer depending your CPU threads and hardware resources ...\n";
+   echo "Using default threshold = ".DEFAULT_NANO_POW_THRESHOLD."\n";
+
+   $number_of_threads = 4; // 4 Threads !!
+
+   try {
+
+      php_c_calculate_work_from_block($nano_block, $number_of_threads);
+
+   } catch (Exception $e) {
+
+      echo "Error code in 'php_c_calculate_work_from_block' ".$e->getCode()."Error message: ".$e->getMessage();
+      exit(1);
+
+   }
+
+   echo "SUCCESS\nNano block with calculated Proof of Work =>\n";
+   echo bin2hex($nano_block);
+   echo "\nFinally Hello World\n";
+```
+
+```sh
+php calculate_pow_in_nano_block.php
+```
+
+**Return value (stored in $nano_block variable)**
+
+```sh
+
+# Binary Nano block result representation in Memory (249 Bytes long)
+0000000000000000000000000000000000000000000000000000000000000006
+6363979c63a198927c46a7945f54f91659c056c0250d97c1814805392c9da63b
+7f8e7dfe181544848fcc28cd969cc5539816b49ce17fca03b7006cfadda5c687
+d1171c6b0588c7382dd89c7ad9fe00152e7f241a2f730545030e292397266227
+00001229618cf8f25cadb2be7e000000
+c722fa98b22138ff8fc878370d7f982b3fb51b32d73fdcf0959e42f43127cce5
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+00
+637cf3efc220fa4c
+
+#Human readable result (JSON Equivalent)
+{
+  "action": "process",
+  "json_block": "true",
+  "block": {
+    "type": "state",
+    "account": "nano_1ru5kyg89aerkby6fbwndxchk7ksr3de1bafkz1r4k1796pbubjujrypwsdu",
+    "previous": "7F8E7DFE181544848FCC28CD969CC5539816B49CE17FCA03B7006CFADDA5C687",
+    "representative": "nano_3naq5joid48991pxj95tu9z117bghwk3ndum1o4i85jb6gdkerj9rdj6p816",
+    "balance": "368361918000000000000000000000000",
+    "link": "C722FA98B22138FF8FC878370D7F982B3FB51B32D73FDCF0959E42F43127CCE5",
+    "link_as_account": "nano_3js4zced6abrzy9wiy3q3ozsicszpnfm7oszumrbd9k4yirkhm977n8hbuxy",
+    "signature": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "work": "4CFA20C2EFF37C63"
+  }
+}
+# This block is not signed yet. To sign this block see php_c_sign_block()
+# To parse Nano binary block to JSON see php_c_parse_block_to_json()
+```
+
+**On error**
+
+Throws _MyNanoCEmbeddedException_
+
+**See also**
+
+- _block see php_c_sign_block()_
+- _php_c_parse_block_to_json()_
+
 ## SUMMARY: Constants, Functions and Classes
 
 ### In console type:
