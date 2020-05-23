@@ -24,6 +24,38 @@ In Development ...
 
 ## Hello World Demo API
 
+## Functions
+
+- php_c_add_sub_balance:
+
+### Description
+
+Returns Addition/Subtraction of two Nano big numbers
+
+```php
+$res = php_c_add_sub_balance($valueA, $valueB, $type)
+```
+
+#### Return value
+
+A real/hex/raw string value of addition/subtraction operation
+
+$res = $valueA + $valueB **or** $res = $valueA - $valueB
+
+##### Example 1
+
+Add "1.3" + "2.5" = ?
+
+```sh
+php -r "echo php_c_add_sub_balance('1.3', '2.5', NANO_ADD_A_B|NANO_RES_REAL_STRING|NANO_A_REAL_STRING|NANO_B_REAL_STRING);"
+```
+
+**Return value**
+
+```sh
+3.8 # => 1.3 + 2.5 = 3.8
+```
+
 ## SUMMARY: Constants, Functions and Classes
 
 ### In console type:
