@@ -24,27 +24,49 @@ In Development ...
 
 ## Hello World Demo API
 
-## Functions
+## FUNCTIONS
 
 - php_c_add_sub_balance:
 
 ### Description
 
-Returns Addition/Subtraction of two Nano big numbers
+Adds or Subtracts two Nano big numbers
 
 ```php
 $res = php_c_add_sub_balance($valueA, $valueB, $type)
 ```
 
+Where:
+
+$res = $valueA + $valueB **or** $res = $valueA - $valueB
+
+params|description
+------|-----------
+$valueA|A value
+$valueB|B value
+$type| Big numbers types
+
+$type|Type description
+-----|----------------
+**NANO_ADD_A_B**|Return value is A + B
+**NANO_SUB_A_B**|Return value is A - B
+**NANO_RES_RAW_128**|Return value is hex string
+**NANO_RES_RAW_STRING**|Reurn value is Nano raw string
+**NANO_RES_REAL_STRING**|Return value is Nano real string
+**NANO_A_RAW_128**|Input value A is a raw hex string
+**NANO_A_RAW_STRING**|Input value A is Nano raw string
+**NANO_A_REAL_STRING**|Input value A is Nano real string
+**NANO_B_RAW_128**|Input value B is a raw hex string
+**NANO_B_RAW_STRING**|Input value B is Nano raw string
+**NANO_B_REAL_STRING**|Input value B is Nano real string
+
 #### Return value
 
 A real/hex/raw string value of addition/subtraction operation
 
-$res = $valueA + $valueB **or** $res = $valueA - $valueB
-
 ##### Example 1
 
-Add "1.3" + "2.5" = ?
+Add two real values "1.3" + "2.5" = ?
 
 ```sh
 php -r "echo php_c_add_sub_balance('1.3', '2.5', NANO_ADD_A_B|NANO_RES_REAL_STRING|NANO_A_REAL_STRING|NANO_B_REAL_STRING);"
@@ -53,8 +75,81 @@ php -r "echo php_c_add_sub_balance('1.3', '2.5', NANO_ADD_A_B|NANO_RES_REAL_STRI
 **Return value**
 
 ```sh
-3.8 # => 1.3 + 2.5 = 3.8
+3.8 # => 1.3 + 2.5
 ```
+
+##### Example 2
+
+Subtract one real value "10.31791" minus Nano raw value 3671790000000000000000000000000 and return a real value
+
+```sh
+php -r "echo php_c_add_sub_balance('10.31791', '3671790000000000000000000000000', NANO_SUB_A_B|NANO_RES_REAL_STRING|NANO_A_REAL_STRING|NANO_B_RAW_STRING);"
+```
+
+**Return value**
+
+```sh
+6.64612 # => 10.31791(REAL) - 3671790000000000000000000000000(RAW) = 6.64612(REAL)
+# Human readable result 10.31791 - 3.67179 = 6.64612
+```
+
+##### Example 3
+
+Add one Nano raw value "6389710900000000000000000000000000" plus Nano hex value "00002363AEAAB97F08117CAFF4200000" and return a Nano raw value
+
+```sh
+php -r "echo php_c_add_sub_balance('6389710900000000000000000000000000', '00002363AEAAB97F08117CAFF4200000', NANO_ADD_A_B|NANO_RES_RAW_STRING|NANO_A_RAW_STRING|NANO_B_RAW_128);"
+```
+
+**Return value**
+
+```sh
+7107492881001800000000000000000000 # => 6389710900000000000000000000000000(RAW) + 00002363AEAAB97F08117CAFF4200000(HEX) = 7107492881001800000000000000000000(RAW)
+# Human readable result 6389.7109 + 717.7819810018 = 7107.4928810018
+```
+
+**On error**
+
+Throws _MyNanoCEmbeddedException_
+
+- php_c_bip39_to_nano_seed:
+
+### Description
+
+Extract Nano SEED from Bip39 menemonic
+
+```php
+$res = php_c_bip39_to_nano_seed($bip39, $dictionary_path)
+```
+
+params|type|description
+------|-----------
+$bip39|string|Bip39 mnemonic
+$dictionary|string|Path and file to dictionary file *.dic
+
+#### Return value
+
+Nano SEED in hex string format
+
+##### Example 1
+
+Extract Nano SEED from Bip39 menemonic _mesh clap laptop idea vocal stadium spoil buyer parent main worry siren scout theme country ridge universe pen cage bless robot seek inner latin_ using English Bip39 dictionary
+
+```sh
+php -r "echo php_c_bip39_to_nano_seed('mesh clap laptop idea vocal stadium spoil buyer parent main worry siren scout theme country ridge universe pen cage bless robot seek inner latin', '/var/www/html/dictionary.dic');"
+```
+
+**Return value**
+
+```sh
+8BC539F4383F55A7F490FBA030CBF764BC15C00C45CCEDD44C808BDBB3861D1B
+# => YOUR NANO SEED. Don't tell your SEED and Bip39 menemonic to anyone. Keep it SAFE !
+# Expose your SEED or Mnemonic everybody will have access to your funds
+```
+
+**On error**
+
+Throws _MyNanoCEmbeddedException_
 
 ## SUMMARY: Constants, Functions and Classes
 
