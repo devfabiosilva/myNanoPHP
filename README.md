@@ -518,8 +518,75 @@ Throws _MyNanoCEmbeddedException_
 
 **See also**
 
-- _block see php_c_sign_block()_
+- _php_c_sign_block()_
 - _php_c_parse_block_to_json()_
+
+<h1>- php_c_compare()</h1>
+
+### Description
+
+Compares two Nano big numbers values
+
+```php
+php_c_compare($valueA, $valueB, $type, $compare);
+```
+
+params|type|description
+------|----|-----------
+**_$valueA_**|binary|Input Nano block
+**_$valueB_**|integer|Number of CPU threads
+**_$type_**|integer|Input big numbers type
+**_$compare_**|integer|Nano Big number condition
+
+**_$type_** type|description
+----------------|-----------
+**NANO_A_REAL_STRING**|Input value A _$valueA_ is real value
+**NANO_A_RAW_STRING**|Input value A _$valueA_ is Nano raw string
+**NANO_A_RAW_128**|Input vallue A _$valueA_ is Raw big number
+**NANO_B_REAL_STRING**|Input value B _$valueB_ is real value
+**NANO_B_RAW_STRING**|Input value B _$valueB_ is Nano raw string
+**NANO_B_RAW_128**|Input value B _$valueB_ is Raw big number
+
+**_$compare_** type|description
+-------------------|-----------
+**NANO_COMPARE_EQ**|Value A _$valueA_ is EQUAL Value B _$valueB_
+**NANO_COMPARE_LT**|Value A _$valueA_ is LESSER THAN Value B _$valueB_
+**NANO_COMPARE_LEQ**|Value A _$valueA_ is LESSER THAN OR EQUAL Value B _$valueB_
+**NANO_COMPARE_GT**|Value A _$valueA_ is GREATER THAN Value B _$valueB_
+**NANO_COMPARE_GEQ**|Value A _$valueA_ is GREATER THAN OR EQUAL Value B _$valueB_
+
+#### Return value
+
+Rerurns **true** if condition _comapare_ satisfies expression else returns **false**
+
+##### Examples
+
+```sh
+php -r "echo (php_c_compare('2.1', '3', NANO_A_REAL_STRING|NANO_B_REAL_STRING, NANO_COMPARE_GT))?'TRUE':'FALSE';"
+# 2.1 > 3 RETURNS FALSE
+```
+
+```sh
+php -r "echo (php_c_compare('72', '3', NANO_A_REAL_STRING|NANO_B_REAL_STRING, NANO_COMPARE_GT))?'TRUE':'FALSE';"
+# 72 > 3 RETURNS TRUE
+```
+
+```sh
+php -r "echo (php_c_compare('5.9', '791789901910919928837771776677', NANO_A_REAL_STRING|NANO_B_RAW_STRING, NANO_COMPARE_LEQ))?'TRUE':'FALSE';"
+# 5.9(REAL) > 791789901910919928837771776677(RAW) RETURNS FALSE
+# Human readable result
+# 5.9 <= 0.791789901910919928837771776677 RETURNS FALSE
+```
+
+```sh
+php -r "echo (php_c_compare('30298174000000000000000000000000', '0000017E6AAE20E930F871DCFE000000', NANO_A_RAW_STRING|NANO_B_RAW_128, NANO_COMPARE_EQ))?'TRUE':'FALSE';"
+# 30298174000000000000000000000000(RAW) == 0000017E6AAE20E930F871DCFE000000(HEX) RETURNS TRUE
+# Human readable result
+# 30.298174 == 30.298174 RETURNS TRUE
+```
+**On error**
+
+Throws _MyNanoCEmbeddedException_
 
 ## SUMMARY: Constants, Functions and Classes
 
@@ -690,10 +757,11 @@ Extension [ <persistent> extension #15 mynanoembedded version 1.0 ] {
     }
     Function [ <internal:mynanoembedded> function php_c_compare ] {
 
-      - Parameters [3] {
+      - Parameters [4] {
         Parameter #0 [ <required> $valueA ]
         Parameter #1 [ <required> $valueB ]
         Parameter #2 [ <required> $type ]
+        Parameter #3 [ <required> $compare ]
       }
     }
     Function [ <internal:mynanoembedded> function php_c_brainwallet_generate ] {

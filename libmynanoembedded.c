@@ -112,10 +112,11 @@ ZEND_BEGIN_ARG_INFO_EX(My_NanoCEmbedded_AddSubBalance, 0, 0, 3)
     ZEND_ARG_INFO(0, type)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(My_NanoCEmbedded_Compare, 0, 0, 3)
+ZEND_BEGIN_ARG_INFO_EX(My_NanoCEmbedded_Compare, 0, 0, 4)
     ZEND_ARG_INFO(0, valueA)
     ZEND_ARG_INFO(0, valueB)
     ZEND_ARG_INFO(0, type)
+    ZEND_ARG_INFO(0, compare)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(My_NanoCEmbedded_Brainwallet, 0, 0, 3)
@@ -2443,9 +2444,9 @@ PHP_FUNCTION(php_c_compare)
    char msg[512], *pA, *pB;
    unsigned char *valueA, *valueB;
    size_t valueA_len, valueB_len;
-   zend_long type, result;
+   zend_long type, compare;
 
-   if (zend_parse_parameters(ZEND_NUM_ARGS(), "ssl", &valueA, &valueA_len, &valueB, &valueB_len, &type)==FAILURE)
+   if (zend_parse_parameters(ZEND_NUM_ARGS(), "ssll", &valueA, &valueA_len, &valueB, &valueB_len, &type, &compare)==FAILURE)
       return;
 
    if (((uint32_t)type)&F_NANO_A_RAW_128) {
@@ -2514,7 +2515,14 @@ PHP_FUNCTION(php_c_compare)
 
    }
 
-   RETURN_LONG(*((uint32_t *)(msg+192))&(F_NANO_COMPARE_EQ|F_NANO_COMPARE_LT|F_NANO_COMPARE_GT));
+   compare&=(F_NANO_COMPARE_EQ|F_NANO_COMPARE_LT|F_NANO_COMPARE_GT);
+
+   if (*((uint32_t *)(msg+192))&((uint32_t)compare))
+      RETURN_TRUE;
+
+   RETURN_FALSE;
+
+   //RETURN_LONG(*((uint32_t *)(msg+192))&(F_NANO_COMPARE_EQ|F_NANO_COMPARE_LT|F_NANO_COMPARE_GT));
 
 }
 
