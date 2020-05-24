@@ -414,7 +414,8 @@ Create a file "calculate_pow_in_nano_block.php" and type:
 //sat May 23 2020 18:51:17 -03
 
    /*
-    * EXAMPLE: Prepares a block to receive funds and calculates Proof of Work to be stored in Nano Blockchain
+    * EXAMPLE: Prepares a block to receive funds and calculates Proof of Work
+    * to be stored in Nano Blockchain
     */
 
    echo "STEP1: Create Nano Block to receive (open block) 368.182918 Nanos from nano_3js4zced6abrzy9wiy3q3ozsicszpnfm7oszumrbd9k4yirkhm977n8hbuxy\n";
@@ -533,8 +534,8 @@ php_c_compare($valueA, $valueB, $type, $compare);
 
 params|type|description
 ------|----|-----------
-**_$valueA_**|binary|Input Nano block
-**_$valueB_**|integer|Number of CPU threads
+**_$valueA_**|string|Input Nano value A
+**_$valueB_**|string|Input Nano value B
 **_$type_**|integer|Input big numbers type
 **_$compare_**|integer|Nano Big number condition
 
