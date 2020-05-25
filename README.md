@@ -427,7 +427,7 @@ Create a file "calculate_pow_in_nano_block.php" and type:
    $balance_type          = BALANCE_REAL_STRING;
    $value_to_receive      = '368.182918';
    $value_to_receive_type = VALUE_SEND_RECEIVE_REAL_STRING;
-   $destination           = 'nano_3js4zced6abrzy9wiy3q3ozsicszpnfm7oszumrbd9k4yirkhm977n8hbuxy';
+   $link                  = '91FFEBD15E445364AC1BCB4751705A80C7B809B7F02F841F34F33429A4F4A7CC';
    $direction             = VALUE_TO_RECEIVE;
 
    try {
@@ -441,7 +441,7 @@ Create a file "calculate_pow_in_nano_block.php" and type:
                        $balance_type,
                        $value_to_receive,
                        $value_to_receive_type,
-                       $destination,
+                       $link,
                        $direction
 
                     );
@@ -488,10 +488,10 @@ php calculate_pow_in_nano_block.php
 7f8e7dfe181544848fcc28cd969cc5539816b49ce17fca03b7006cfadda5c687
 d1171c6b0588c7382dd89c7ad9fe00152e7f241a2f730545030e292397266227
 00001229618cf8f25cadb2be7e000000
-c722fa98b22138ff8fc878370d7f982b3fb51b32d73fdcf0959e42f43127cce5
+91ffebd15e445364ac1bcb4751705a80c7b809b7f02f841f34f33429a4f4a7cc
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 00
-637cf3efc220fa4c
+4ad6c2753a3886b1
 
 #Human readable result (JSON Equivalent)
 {
@@ -503,10 +503,10 @@ c722fa98b22138ff8fc878370d7f982b3fb51b32d73fdcf0959e42f43127cce5
     "previous": "7F8E7DFE181544848FCC28CD969CC5539816B49CE17FCA03B7006CFADDA5C687",
     "representative": "nano_3naq5joid48991pxj95tu9z117bghwk3ndum1o4i85jb6gdkerj9rdj6p816",
     "balance": "368361918000000000000000000000000",
-    "link": "C722FA98B22138FF8FC878370D7F982B3FB51B32D73FDCF0959E42F43127CCE5",
-    "link_as_account": "nano_3js4zced6abrzy9wiy3q3ozsicszpnfm7oszumrbd9k4yirkhm977n8hbuxy",
+    "link": "91FFEBD15E445364AC1BCB4751705A80C7B809B7F02F841F34F33429A4F4A7CC",
+    "link_as_account": "nano_36hzxhaowj4mekp3qkt9c7r7o189q16uhw3hiihmbwsn78khbbyeyygafis4",
     "signature": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
-    "work": "4CFA20C2EFF37C63"
+    "work": "B186383A75C2D64A"
   }
 }
 # This block is not signed yet. To sign this block see php_c_sign_block()
@@ -953,6 +953,347 @@ SUCCESS: Nano SEED generated and encrypted successfully in memory
 **On error**
 
 Throws _MyNanoCEmbeddedException_
+
+**See also**
+
+- _php_c_gen_encrypted_stream_to_seed_
+
+<h1>- php_c_generate_block()</h1>
+
+### Description
+
+Generates a Nano Block to be stored in Nano Blockchain
+
+```php
+$res = php_c_generate_block(
+
+            $account,
+            $previous,
+            $representative,
+            $balance,
+            $balance_type,
+            $val_send_rec,
+            $val_send_rec_type,
+            $link,
+            $direction
+
+       );
+```
+
+params|type|description
+------|----|-----------
+**_$account_**|string|Nano wallet or public key
+**_$previous_**|string|Previous block
+**_$representative_**|sring|Representative wallet or representative public key
+**_$balance_**|string|Nano big number balance
+**_$balance_type_**|integer|Nano big number type (see table below)
+**_$val_send_rec_**|string|Value to send/receive
+**_$val_send_rec_type_**|integer|Value to send/receive type (see table below)
+**_$link_**|Destination wallet or destination public key or link
+**_$direction_**|integer|Send or receive (see table below)
+
+**_$balance_type_** type|description
+-------------------|-----------
+**BALANCE_REAL_STRING**|Input _$balance_ is big number real string
+**BALANCE_RAW_STRING**|Input _$balance_ is big number raw string
+**BALANCE_RAW_128**|Input _$balance_ is big number hex string
+
+**_$val_send_rec_type_** type|description
+-------------------|-----------
+**VALUE_SEND_RECEIVE_REAL_STRING**|Input _$val_send_rec_type_ is big number real string
+**VALUE_SEND_RECEIVE_RAW_STRING**|Input _$val_send_rec_type_ is big number raw string
+**VALUE_SEND_RECEIVE_RAW_128**|Input _$val_send_rec_type_ is big number hex string
+
+**_$direction_** type|description
+-------------------------|-----------
+**VALUE_TO_SEND**|Value to send
+**VALUE_TO_RECEIVE**|Value to receive (open block)
+
+
+#### Return value
+
+Binary Nano block in memory variable.
+
+##### Example 1
+
+Create a file _create_block_ex1.php_ and type:
+
+```php
+<?php
+//mon May 25 2020 17:58 -03
+
+   /*
+    * EXAMPLE: Prepares a block to receive funds (400 nanos) from nano_3js4zced6abrzy9wiy3q3ozsicszpnfm7oszumrbd9k4yirkhm977n8hbuxy
+    */
+
+   echo "Create Nano Block to receive (open block) 400.0 Nanos from nano_3js4zced6abrzy9wiy3q3ozsicszpnfm7oszumrbd9k4yirkhm977n8hbuxy\n";
+
+   $account               = 'nano_1ru5kyg89aerkby6fbwndxchk7ksr3de1bafkz1r4k1796pbubjujrypwsdu';
+   $previous              = '7F8E7DFE181544848FCC28CD969CC5539816B49CE17FCA03B7006CFADDA5C687';
+   $representative        = 'nano_3naq5joid48991pxj95tu9z117bghwk3ndum1o4i85jb6gdkerj9rdj6p816';
+   $balance               = '0.179';
+   $balance_type          = BALANCE_REAL_STRING;
+   $value_to_receive      = '400.0';
+   $value_to_receive_type = VALUE_SEND_RECEIVE_REAL_STRING;
+   $link                  = 'C722FA98B22138FF8FC878370D7F982B3FB51B32D73FDCF0959E42F43127CCE5';
+   $direction             = VALUE_TO_RECEIVE;
+
+   try {
+
+      $nano_block = php_c_generate_block(
+
+                       $account,
+                       $previous,
+                       $representative,
+                       $balance,
+                       $balance_type,
+                       $value_to_receive,
+                       $value_to_receive_type,
+                       $link,
+                       $direction
+
+                    );
+
+   } catch (Exception $e) {
+
+      echo 'Error code: '.$e->getCode()."\nError message: ".$e->getMessage();
+      exit(1);
+
+   }
+
+   echo "Successfully block stored in memory in \$nano_block variable\n";
+
+?>
+```
+
+```sh
+php create_block_ex1.php
+```
+
+**Return value**
+
+```sh
+Create Nano Block to receive (open block) 400.0 Nanos from nano_3js4zced6abrzy9wiy3q3ozsicszpnfm7oszumrbd9k4yirkhm977n8hbuxy
+Successfully block stored in memory in $nano_block variable
+
+# Binary Nano block result representation in Memory (249 Bytes long)
+0000000000000000000000000000000000000000000000000000000000000006
+6363979c63a198927c46a7945f54f91659c056c0250d97c1814805392c9da63b
+7f8e7dfe181544848fcc28cd969cc5539816b49ce17fca03b7006cfadda5c687
+d1171c6b0588c7382dd89c7ad9fe00152e7f241a2f730545030e292397266227
+000013baf81659d1d57d689a38000000
+c722fa98b22138ff8fc878370d7f982b3fb51b32d73fdcf0959e42f43127cce5
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+00
+0000000000000000
+
+#Human readable result (JSON Equivalent)
+{
+  "action": "process",
+  "json_block": "true",
+  "block": {
+    "type": "state",
+    "account": "nano_1ru5kyg89aerkby6fbwndxchk7ksr3de1bafkz1r4k1796pbubjujrypwsdu",
+    "previous": "7F8E7DFE181544848FCC28CD969CC5539816B49CE17FCA03B7006CFADDA5C687",
+    "representative": "nano_3naq5joid48991pxj95tu9z117bghwk3ndum1o4i85jb6gdkerj9rdj6p816",
+    "balance": "400179000000000000000000000000000",
+    "link": "C722FA98B22138FF8FC878370D7F982B3FB51B32D73FDCF0959E42F43127CCE5",
+    "link_as_account": "nano_3js4zced6abrzy9wiy3q3ozsicszpnfm7oszumrbd9k4yirkhm977n8hbuxy",
+    "signature": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "work": "0000000000000000"
+  }
+}
+```
+
+##### Example 2
+
+Create a file _create_block_ex2.php_ and type:
+
+```php
+<?php
+//mon May 25 2020 17:58 -03
+
+   /*
+    * EXAMPLE 2: Prepares a block to open block with 1 Nano (1000000000000000000000000000000) RAW
+    * from link 3673BE411A67C4F5906AB345D01DEC5F0034CF54A3BFE706E934FD724B181DCF
+    */
+
+   echo "Create Nano Block to receive (open block) 1 Nano from link 3673BE411A67C4F5906AB345D01DEC5F0034CF54A3BFE706E934FD724B181DCF\n";
+
+   $account               = 'nano_1kzzdbp44ii5dxe89gqefgqg1ijjb5ced9cywktae77ikj9fs18xqktjmqju';
+   $previous              = '7F8E7DFE181544848FCC28CD969CC5539816B49CE17FCA03B7006CFADDA5C687';
+   $representative        = 'xrb_1cuenosfguwpot55eabwdeh8r3e3esdao8m6hb9ya3kyr38e9n5jo3qun8om';
+   $balance               = '300';
+   $balance_type          = BALANCE_REAL_STRING;
+   $value_to_receive      = '1000000000000000000000000000000';
+   $value_to_receive_type = VALUE_SEND_RECEIVE_RAW_STRING;
+   $link                  = '3673BE411A67C4F5906AB345D01DEC5F0034CF54A3BFE706E934FD724B181DCF';
+   $direction             = VALUE_TO_RECEIVE;
+
+   try {
+
+      $nano_block = php_c_generate_block(
+
+                       $account,
+                       $previous,
+                       $representative,
+                       $balance,
+                       $balance_type,
+                       $value_to_receive,
+                       $value_to_receive_type,
+                       $link,
+                       $direction
+
+                    );
+
+   } catch (Exception $e) {
+
+      echo 'Error code: '.$e->getCode()."\nError message: ".$e->getMessage();
+      exit(1);
+
+   }
+
+   echo "Successfully block stored in memory in \$nano_block variable\n";
+
+?>
+```
+
+```sh
+php create_block_ex2.php
+```
+**Return value**
+
+```sh
+Create Nano Block to receive (open block) 1 Nano from link 3673BE411A67C4F5906AB345D01DEC5F0034CF54A3BFE706E934FD724B181DCF
+Successfully block stored in memory in $nano_block variable
+
+# Binary Nano block result representation in Memory (249 Bytes long)
+0000000000000000000000000000000000000000000000000000000000000006
+4bff5a6c2142035f5863baec6baee0423148d4c59d5ee4b48614b0944edc80dd
+7f8e7dfe181544848fcc28cd969cc5539816b49ce17fca03b7006cfadda5c687
+2b6ca572d76f96ae8636213c5b1e6c058166568a9a647a4fe4065ec04cc3d071
+00000ed7277460e2d77bbc6d40000000
+3673be411a67c4f5906ab345d01dec5f0034cf54a3bfe706e934fd724b181dcf
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+04
+0000000000000000
+
+#Human readable result (JSON Equivalent)
+{
+  "action": "process",
+  "json_block": "true",
+  "block": {
+    "type": "state",
+    "account": "nano_1kzzdbp44ii5dxe89gqefgqg1ijjb5ced9cywktae77ikj9fs18xqktjmqju",
+    "previous": "7F8E7DFE181544848FCC28CD969CC5539816B49CE17FCA03B7006CFADDA5C687",
+    "representative": "xrb_1cuenosfguwpot55eabwdeh8r3e3esdao8m6hb9ya3kyr38e9n5jo3qun8om",
+    "balance": "301000000000000000000000000000000",
+    "link": "3673BE411A67C4F5906AB345D01DEC5F0034CF54A3BFE706E934FD724B181DCF",
+    "link_as_account": "nano_1fmmqs1jnsy6ypa8oet7t1gyrqr18m9obaxzww5gkf9xgb7ji9ghu1tr9th7",
+    "signature": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "work": "0000000000000000"
+  }
+}
+```
+
+##### Example 3
+
+Create a file _create_block_ex3.php_ and type:
+
+```php
+<?php
+//mon May 25 2020 17:58 -03
+
+   /*
+    * EXAMPLE 3: Prepares a block to open first block (receive 10 Nanos) from link 2A825E929A29ED9F2763ACF3DCB0855BFE6A4C58E59F99AC8F596810FACAD283
+    */
+
+   echo "Create Nano Block to receive (open first block) 10 Nanos from link 2A825E929A29ED9F2763ACF3DCB0855BFE6A4C58E59F99AC8F596810FACAD283\n";
+
+   $account               = 'nano_3d15845cjkqczun3k1379xwhgzdz5taj74j9zbbwaegg4okebkf6jfdppdku';
+   $previous              = ''; // Empty string means first block
+   $representative        = 'nano_1t675o8bsremxwn57di69f1qxrkjab51e383o51469ao1ktbeht6nyjd611h';
+   $balance               = '0';
+   $balance_type          = BALANCE_REAL_STRING;
+   $value_to_receive      = '10';
+   $value_to_receive_type = VALUE_SEND_RECEIVE_REAL_STRING;
+   $link                  = '2A825E929A29ED9F2763ACF3DCB0855BFE6A4C58E59F99AC8F596810FACAD283';
+   $direction             = VALUE_TO_RECEIVE;
+
+   try {
+
+      $nano_block = php_c_generate_block(
+
+                       $account,
+                       $previous,
+                       $representative,
+                       $balance,
+                       $balance_type,
+                       $value_to_receive,
+                       $value_to_receive_type,
+                       $link,
+                       $direction
+
+                    );
+
+   } catch (Exception $e) {
+
+      echo 'Error code: '.$e->getCode()."\nError message: ".$e->getMessage();
+      exit(1);
+
+   }
+
+   echo "Successfully block stored in memory in \$nano_block variable\n";
+
+?>
+```
+
+```sh
+php create_block_ex3.php
+```
+
+**Return value**
+
+```sh
+Create Nano Block to receive (open first block) 10 Nanos from link 2A825E929A29ED9F2763ACF3DCB0855BFE6A4C58E59F99AC8F596810FACAD283
+Successfully block stored in memory in $nano_block variable
+
+# Binary Nano block result representation in Memory (249 Bytes long)
+0000000000000000000000000000000000000000000000000000000000000006
+ac033086a8caeafee81900253f78f77d7f1e91128a27fa53c431ce1564c4c9a4
+0000000000000000000000000000000000000000000000000000000000000000
+68851d4c9ce193ef2832ae043b417ee25142460604c1a8c0221d1504b4963f44
+0000007e37be2022c0914b2680000000
+2a825e929a29ed9f2763acf3dcb0855bfe6a4c58e59f99ac8f596810facad283
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+00
+0000000000000000
+
+#Human readable result (JSON Equivalent)
+{
+  "action": "process",
+  "json_block": "true",
+  "block": {
+    "type": "state",
+    "account": "nano_3d15845cjkqczun3k1379xwhgzdz5taj74j9zbbwaegg4okebkf6jfdppdku",
+    "previous": "0000000000000000000000000000000000000000000000000000000000000000",
+    "representative": "nano_1t675o8bsremxwn57di69f1qxrkjab51e383o51469ao1ktbeht6nyjd611h",
+    "balance": "10000000000000000000000000000000",
+    "link": "2A825E929A29ED9F2763ACF3DCB0855BFE6A4C58E59F99AC8F596810FACAD283",
+    "link_as_account": "nano_1cn4dtbbnchfmwmp9d9mukracpzyfb87jsezm8paypda45xeonn5afyr8oru",
+    "signature": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "work": "0000000000000000"
+  }
+}
+```
+
+**On error**
+
+Throws _MyNanoCEmbeddedException_
+
+**See also**
+
+- _php_c_parse_block_to_json()_
 
 ## SUMMARY: Constants, Functions and Classes
 
