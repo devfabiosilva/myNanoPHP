@@ -729,6 +729,7 @@ Assuming **dictionary file** is located in '/var/www/html/dictionary.dic' create
 
    /*
     * EXAMPLE: Creates an encrypted block containing a generated random Nano SEED
+    * and extracts its Nano SEED and Bip39
     */
 
    echo "STEP1: Creates a Nano SEED with a highest entropy level with password '%1kmLaP,xKwI8)17&&61b>ç~1'\n";
@@ -832,6 +833,126 @@ Throws _MyNanoCEmbeddedException_
 **See also**
 
 - _php_c_gen_seed_to_encrypted_stream()_
+
+
+<h1>- php_c_gen_seed_to_encrypted_stream()</h1>
+
+### Description
+
+Creates a Nano SEED using Hardware TRNG (if available) or PRNG with desired entropy level and encrypt Nano SEED with a given formatted password
+
+```php
+$res = php_c_gen_seed_to_encrypted_stream($entropy, $password, $password_min_len, $password_max_len, $password_type);
+```
+
+params|type|description
+------|----|-----------
+**_$entropy_**|integer|Entropy type (see below)
+**_$password_**|string|Password to encrypt the random generated Nano SEED
+**_$password_min_len_**|integer|Minimum allowed password length
+**_$password_max_len_**|integer|Maximum allowed password length
+**_$password_type_**|integer|Password allowed type (see below)
+
+**_$entropy_** type|description
+-------------------|-----------
+**ENTROPY_TYPE_PARANOIC**|Paranoic entropy type. Very slow. Strongly recommended to create SEED's
+**ENTROPY_TYPE_EXCELENT**|Excelent entropy tyoe. Slow. Recommended to create SEED's
+**ENTROPY_TYPE_GOOD**|Good entropy type. Normal. Standard type to create SEED's
+**ENTROPY_TYPE_NOT_ENOUGH**|Not enough. Fast. Not recommended for creating SEED's
+**ENTROPY_TYPE_NOT_RECOMENDED**|Not recommended. Very fast. Try not to use this option. Recommended only to generate temporary SEED's
+
+**_$password_type_** type|description
+-------------------------|-----------
+**PASS_MUST_HAVE_AT_LEAST_NONE**|Password don't need any special characters
+**PASS_MUST_HAVE_AT_LEAST_ONE_NUMBER**|Password must have at least one number
+**PASS_MUST_HAVE_AT_LEAST_ONE_SYMBOL**|Password must have at least one symbol
+**PASS_MUST_HAVE_AT_LEAST_ONE_UPPER_CASE**|Password must have at least one upper case
+**PASS_MUST_HAVE_AT_LEAST_ONE_LOWER_CASE**|Password must have at least one lower case
+
+#### Return value
+
+Encrypted block of Nano SEED in memory
+
+##### Example
+
+Create a file _encrypt_block.php_ and type:
+
+```php
+<?php
+//sun May 24 2020 22:52 -03
+
+   /*
+    * EXAMPLE: Creates an encrypted block in memory containing a generated random Nano SEED
+    */
+
+   echo "Creates a Nano SEED with a highest entropy level with password '%1kmLaP,xKwI8)17&&61b>ç~1'\n";
+
+
+   $entropy          = ENTROPY_TYPE_PARANOIC; // Highest security level. Very slow but the best safest way to generate your random Nano SEED
+   $password         = '%1\kmLaP,/xKwI8)17&&61b>ç|hy[~1'; // Ohhhh. What a strong password !!!
+   $password_min_len = 15; // Minimum acceptable length of the password
+   $password_max_len = 64; // Maximum acceptable length of the password
+   $password_type    = PASS_MUST_HAVE_AT_LEAST_ONE_NUMBER|PASS_MUST_HAVE_AT_LEAST_ONE_SYMBOL| // Recommended password requirements
+                       PASS_MUST_HAVE_AT_LEAST_ONE_UPPER_CASE|PASS_MUST_HAVE_AT_LEAST_ONE_LOWER_CASE;
+
+   echo "Generating a Nano SEED and encrypting in a non deterministic key with password '".$password."'.\nIt can take a little longer\n";
+   echo "Move the mouse, open programs to increase entropy to generate the Nano SEED...\n";
+
+   try {
+
+      $encrypted_nano_seed = php_c_gen_seed_to_encrypted_stream(
+
+                       $entropy,
+                       $password,
+                       $password_min_len,
+                       $password_max_len,
+                       $password_type
+
+                    );
+
+   } catch (Exception $e) {
+
+      echo 'Error code: '.$e->getCode()."\nError message: ".$e->getMessage();
+      exit(1);
+
+   }
+
+   echo "SUCCESS: Nano SEED generated and encrypted successfully in memory.";
+
+?>
+```
+
+```sh
+php decrypt_block.php
+```
+
+**Return value**
+
+```sh
+Creates a Nano SEED with a highest entropy level with password '%1kmLaP,xKwI8)17&&61b>ç~1'
+Generating a Nano SEED and encrypting in a non deterministic key with password '%1\kmLaP,/xKwI8)17&&61b>ç|hy[~1'.
+It can take a little longer
+Move the mouse, open programs to increase entropy to generate the Nano SEED...
+SUCCESS: Nano SEED generated and encrypted successfully in memory
+
+# Encrypted NANO SEED in memory in binary block (352 Bytes long)
+# ----------------------------------------------------------------
+# 5f6e616e6f77616c6c657466696c655f000001004e414e4f205365656420456e
+# 637279707465642066696c652f73747265616d2e204b65657020697420736166
+# 6520616e64206261636b75702069742e20546869732066696c65206973207072
+# 6f7465637465642062792070617373776f72642e2042555920424954434f494e
+# 20616e64204e414e4f2021212100e0e1f2aeef6b77d3ba76f6bd477b47fe7681
+# a3d9094badddcb5d19560fa20d8dbc925b57b5f4d804a663bad48557cc451827
+# 5f0106690ad8a88c04bd2848c4cb2df0819cbc094566b0f9fbeb3f34a2ada355
+# 006df20a2c5f79af9b5ef420d1af961d1905b086a91e58cc9ce4dc88ebdcc0e3
+# 91154acd33b1afe2592216ce2526c4dd1a1aa798e94c614f5f9fdb6bbadea470
+# 88565665cccdcf566c5027dac81407bff193599bcaf24633145f8aaa02c12020
+# 75a6a940999d98b5a15c2e12303519b9709e6b718f6683d9dc4e98e0bba67bfa
+```
+
+**On error**
+
+Throws _MyNanoCEmbeddedException_
 
 ## SUMMARY: Constants, Functions and Classes
 
