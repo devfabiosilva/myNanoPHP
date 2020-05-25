@@ -278,9 +278,10 @@ ZEND_BEGIN_ARG_INFO_EX(My_NanoCEmbedded_SeedToEncryptedStream, 0, 0, 4)
     ZEND_ARG_INFO(0, password_type)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(My_NanoCEmbedded_EncryptedStringToSeedAndBip39, 0, 0, 2)
+ZEND_BEGIN_ARG_INFO_EX(My_NanoCEmbedded_EncryptedStringToSeedAndBip39, 0, 0, 3)
     ZEND_ARG_INFO(0, encrypted_stream)
     ZEND_ARG_INFO(0, password)
+    ZEND_ARG_INFO(0, dictionary_file)
 ZEND_END_ARG_INFO()
 
 static zend_class_entry *f_exception_ce;
@@ -3608,10 +3609,10 @@ PHP_FUNCTION(php_c_gen_encrypted_stream_to_seed)
    int err;
    char msg[512];
    zval *z_encrypted_stream;
-   unsigned char *password;
-   size_t sz_tmp;
+   unsigned char *password, *dictionary_file;
+   size_t sz_tmp, dictionary_file_len;
 
-   if (zend_parse_parameters(ZEND_NUM_ARGS(), "zs", &z_encrypted_stream, &password, &sz_tmp)==FAILURE)
+   if (zend_parse_parameters(ZEND_NUM_ARGS(), "zss", &z_encrypted_stream, &password, &sz_tmp, &dictionary_file, &dictionary_file_len)==FAILURE)
       return;
 
    ZVAL_DEREF(z_encrypted_stream);
@@ -3635,6 +3636,18 @@ PHP_FUNCTION(php_c_gen_encrypted_stream_to_seed)
       return;
 
    }
+
+   if (!dictionary_file_len) {
+
+      sprintf(msg, "Internal error in C function 'php_c_gen_seed_to_encrypted_stream' 18702. Dictionary file not found");
+
+      zend_throw_exception(f_exception_ce, msg, 18702);
+
+      return;
+
+   }
+
+   f_set_dictionary_path((const char *)dictionary_file);
 
    if ((err=f_parse_nano_seed_and_bip39_to_JSON(msg, sizeof(msg), &sz_tmp, (void *)Z_STRVAL_P(z_encrypted_stream), READ_SEED_FROM_STREAM,
       (const char *)password))) {

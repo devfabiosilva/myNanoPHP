@@ -15,7 +15,6 @@
 //sáb 02 mai 2020 01:46:47 -03 
 
 define("DICTIONARY_PATH", "dictionary.dic");
-
 $MIME_TYPE="Content-Type: application/json; charset=utf-8";
 
 if ($_SERVER['REQUEST_METHOD']==='POST') {
@@ -760,6 +759,8 @@ if ($_SERVER['REQUEST_METHOD']==='POST') {
         try {
 
             $ret=php_c_convert_balance($balance, REAL_TO_HEX);
+
+            header($MIME_TYPE);
 
             echo json_encode(array(
                 "error"=>"0",
@@ -2934,7 +2935,7 @@ if ($_SERVER['REQUEST_METHOD']==='POST') {
 
         try {
 
-            $res=php_c_gen_encrypted_stream_to_seed($block_bin, $password);
+            $res=php_c_gen_encrypted_stream_to_seed($block_bin, $password, DICTIONARY_PATH);
 
             header($MIME_TYPE);
             echo $res;

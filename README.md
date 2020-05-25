@@ -420,15 +420,15 @@ Create a file "calculate_pow_in_nano_block.php" and type:
 
    echo "STEP1: Create Nano Block to receive (open block) 368.182918 Nanos from nano_3js4zced6abrzy9wiy3q3ozsicszpnfm7oszumrbd9k4yirkhm977n8hbuxy\n";
 
-   $account            = 'nano_1ru5kyg89aerkby6fbwndxchk7ksr3de1bafkz1r4k1796pbubjujrypwsdu';
-   $previous           = '7F8E7DFE181544848FCC28CD969CC5539816B49CE17FCA03B7006CFADDA5C687';
-   $representative     = 'nano_3naq5joid48991pxj95tu9z117bghwk3ndum1o4i85jb6gdkerj9rdj6p816';
-   $balance            = '0.179';
-   $balance_type       = BALANCE_REAL_STRING;
-   $value_to_send      = '368.182918';
-   $value_to_send_type = VALUE_SEND_RECEIVE_REAL_STRING;
-   $destination        = 'nano_3js4zced6abrzy9wiy3q3ozsicszpnfm7oszumrbd9k4yirkhm977n8hbuxy';
-   $direction          = VALUE_TO_RECEIVE;
+   $account               = 'nano_1ru5kyg89aerkby6fbwndxchk7ksr3de1bafkz1r4k1796pbubjujrypwsdu';
+   $previous              = '7F8E7DFE181544848FCC28CD969CC5539816B49CE17FCA03B7006CFADDA5C687';
+   $representative        = 'nano_3naq5joid48991pxj95tu9z117bghwk3ndum1o4i85jb6gdkerj9rdj6p816';
+   $balance               = '0.179';
+   $balance_type          = BALANCE_REAL_STRING;
+   $value_to_receive      = '368.182918';
+   $value_to_receive_type = VALUE_SEND_RECEIVE_REAL_STRING;
+   $destination           = 'nano_3js4zced6abrzy9wiy3q3ozsicszpnfm7oszumrbd9k4yirkhm977n8hbuxy';
+   $direction             = VALUE_TO_RECEIVE;
 
    try {
 
@@ -439,8 +439,8 @@ Create a file "calculate_pow_in_nano_block.php" and type:
                        $representative,
                        $balance,
                        $balance_type,
-                       $value_to_send,
-                       $value_to_send_type,
+                       $value_to_receive,
+                       $value_to_receive_type,
                        $destination,
                        $direction
 
@@ -588,6 +588,250 @@ php -r "echo (php_c_compare('30298174000000000000000000000000', '0000017E6AAE20E
 **On error**
 
 Throws _MyNanoCEmbeddedException_
+
+<h1>- php_c_convert_balance()</h1>
+
+### Description
+
+Converts one Nano balance to another
+
+```php
+php_c_convert_balance($balance, $type);
+```
+
+params|type|description
+------|----|-----------
+**_$balance_**|string|Input Nano balance
+**_$type_**|integer|type of the balance
+
+**_$type_** type|description
+----------------|-----------
+**REAL_TO_RAW**|Converts a real value to raw value
+**RAW_TO_REAL**|Converts a raw value to real value
+**REAL_TO_HEX**|Converts real value to hex value
+**HEX_TO_REAL**|Converts hex value to real value
+**RAW_TO_HEX**|Converts a raw value to hex value
+**HEX_TO_RAW**|Converts a hex value to raw value
+
+#### Return value
+
+Rerurns a string with converted value
+
+##### Examples
+
+```sh
+php -r "echo php_c_convert_balance('3.6791098001', REAL_TO_RAW);"
+# RETURNS 3679109800100000000000000000000(RAW)
+```
+
+```sh
+php -r "echo php_c_convert_balance('102986792098301000000000000000000', RAW_TO_REAL);"
+# RETURNS 102.986792098301(REAL)
+```
+
+```sh
+php -r "echo php_c_convert_balance('102387.1871001928376', REAL_TO_HEX);"
+# RETURNS 0013b813fc4f1e74792ef7068f300000(HEX)
+```
+
+```sh
+php -r "echo php_c_convert_balance('00231b73b099bd5f7da44a8163040000', HEX_TO_REAL);"
+# RETURNS 182287.181001928370216(REAL)
+```
+
+```sh
+php -r "echo php_c_convert_balance('198282281933192837221600000000000000', RAW_TO_HEX);"
+# RETURNS 002630123F23E91C00F3147CD12E0000(HEX)
+```
+
+```sh
+php -r "echo php_c_convert_balance('08d7b616e531cbcf6cd3657e5ba7634a', HEX_TO_RAW);"
+# RETURNS 11753861003364021922160004983677215562(RAW)
+```
+
+**On error**
+
+Throws _MyNanoCEmbeddedException_
+
+<h1>- php_c_from_multiplier()</h1>
+
+### Description
+
+Takes a multiplier and converts to Nano Proof of Work difficulty
+
+```php
+php_c_from_multiplier($multiplier, $base_difficulty);
+```
+
+params|type|description
+------|----|-----------
+**_$multiplier_**|double|Double value of the multiplier
+**_$base_difficulty_**|string|String value in Hex or Octal or Decimal value
+
+#### Return value
+
+Rerurns a hex string value
+
+##### Examples
+
+```sh
+php -r "echo php_c_from_multiplier(4, DEFAULT_NANO_POW_THRESHOLD);"
+# RETURNS 0xfffffff000000000
+```
+
+```sh
+php -r "echo php_c_from_multiplier(5.671, '0xfffff10000000000');"
+# RETURNS 0xfffffd5adee9340d
+```
+
+```sh
+php -r "echo php_c_from_multiplier(3.23, '0612791712736716625');"
+# RETURNS 0xb0be377ad92a0800
+# 0612791882736716625 // Octal value
+```
+
+```sh
+php -r "echo php_c_from_multiplier(4.891, '8212791982736716625');"
+# RETURNS 0xe2f648e16fa3c600
+# 8212791982736716625 // Decimal value
+```
+
+**On error**
+
+Throws _MyNanoCEmbeddedException_
+
+<h1>- php_c_gen_encrypted_stream_to_seed()</h1>
+
+### Description
+
+Takes a encrypted stream and extract a Nano SEED given a password
+
+```php
+php_c_gen_encrypted_stream_to_seed($encrypted_stream, $password, $dictionary_file);
+```
+params|type|description
+------|----|-----------
+**_$encrypted_stream_**|binary|Encrypted binary block that stores one Nano SEED
+**_$password_**|string|Password to decrypt block and extract the Nano SEED
+**_$dictionary_file_**|string|File and path of dictionary file *.dic
+
+#### Return value
+
+Rerurns a hex string with Nano SEED
+
+##### Example
+
+Assuming **dictionary file** is located in '/var/www/html/dictionary.dic' create a file _decrypt_block.php_ and type:
+
+```php
+<?php
+//sun May 24 2020 22:52 -03
+
+   /*
+    * EXAMPLE: Creates an encrypted block containing a generated random Nano SEED
+    */
+
+   echo "STEP1: Creates a Nano SEED with a highest entropy level with password '%1kmLaP,xKwI8)17&&61b>ç~1'\n";
+
+
+   $entropy          = ENTROPY_TYPE_PARANOIC; // Highest security level. Very slow but the best safest way to generate your random Nano SEED
+   $password         = '%1\kmLaP,/xKwI8)17&&61b>ç|hy[~1'; // Ohhhh. What a strong password !!!
+   $password_min_len = 15; // Minimum acceptable length of the password
+   $password_max_len = 64; // Maximum acceptable length of the password
+   $password_type    = PASS_MUST_HAVE_AT_LEAST_ONE_NUMBER|PASS_MUST_HAVE_AT_LEAST_ONE_SYMBOL| // Recommended password requirements
+                       PASS_MUST_HAVE_AT_LEAST_ONE_UPPER_CASE|PASS_MUST_HAVE_AT_LEAST_ONE_LOWER_CASE;
+
+   echo "Generating a Nano SEED and encrypting in a non deterministic key with password '".$password."'.\nIt can take a little longer\n";
+   echo "Move the mouse, open programs to increase entropy to generate the Nano SEED...\n";
+
+   try {
+
+      $encrypted_nano_seed = php_c_gen_seed_to_encrypted_stream(
+
+                       $entropy,
+                       $password,
+                       $password_min_len,
+                       $password_max_len,
+                       $password_type
+
+                    );
+
+   } catch (Exception $e) {
+
+      echo 'Error code: '.$e->getCode()."\nError message: ".$e->getMessage();
+      exit(1);
+
+   }
+
+   echo "SUCCESS: Nano SEED generated successfully. Now decrypting and extracting with password '".$password."'...\n";
+   echo "STEP 2:\n";
+
+   $dictionary_path = '/var/www/html/dictionary.dic'; // Path to dictionary
+
+   try {
+
+      $encrypted_nano_seed = php_c_gen_encrypted_stream_to_seed($encrypted_nano_seed, $password, $dictionary_path);
+
+   } catch (Exception $e) {
+
+      echo "Error code in 'php_c_gen_encrypted_stream_to_seed' ".$e->getCode()." Error message: ".$e->getMessage();
+      exit(1);
+
+   }
+
+   echo "SUCCESS\nUnencrypted Nano SEED =>\n";
+   echo $encrypted_nano_seed;
+   echo "\nFinally Hello World\n";
+
+?>
+```
+
+```sh
+php decrypt_block.php
+```
+
+```sh
+# Encrypted NANO SEED in memory in binary block (352 Bytes long)
+# ----------------------------------------------------------------
+# 5f6e616e6f77616c6c657466696c655f000001004e414e4f205365656420456e
+# 637279707465642066696c652f73747265616d2e204b65657020697420736166
+# 6520616e64206261636b75702069742e20546869732066696c65206973207072
+# 6f7465637465642062792070617373776f72642e2042555920424954434f494e
+# 20616e64204e414e4f2021212100e0e1f2aeef6b77d3ba76f6bd477b47fe7681
+# a3d9094badddcb5d19560fa20d8dbc925b57b5f4d804a663bad48557cc451827
+# 5f0106690ad8a88c04bd2848c4cb2df0819cbc094566b0f9fbeb3f34a2ada355
+# 006df20a2c5f79af9b5ef420d1af961d1905b086a91e58cc9ce4dc88ebdcc0e3
+# 91154acd33b1afe2592216ce2526c4dd1a1aa798e94c614f5f9fdb6bbadea470
+# 88565665cccdcf566c5027dac81407bff193599bcaf24633145f8aaa02c12020
+# 75a6a940999d98b5a15c2e12303519b9709e6b718f6683d9dc4e98e0bba67bfa
+
+# RETURNS
+STEP1: Creates a Nano SEED with a highest entropy level with password '%1kmLaP,xKwI8)17&&61b>ç~1'
+Generating a Nano SEED and encrypting in a non deterministic key with password '%1\kmLaP,/xKwI8)17&&61b>ç|hy[~1'.
+It can take a little longer
+Move the mouse, open programs to increase entropy to generate the Nano SEED...
+SUCCESS: Nano SEED generated successfully. Now decrypting and extracting with password '%1\kmLaP,/xKwI8)17&&61b>ç|hy[~1'...
+STEP 2:
+
+SUCCESS
+Unencrypted Nano SEED =>
+{
+
+   "seed":"BDFBD45F2EA1F82E972FF7548A7C8B5CEBDE7CB1C04ADD5265DD94B1CA58B459",
+   "bip39":"sadness team blind front buzz blanket frequent year fee fault carpet right sadness dinner shove announce tail nasty jazz city bronze clump sphere dish"
+
+}
+Finally Hello World
+
+```
+
+**On error**
+
+Throws _MyNanoCEmbeddedException_
+
+**See also**
+
+- _php_c_gen_seed_to_encrypted_stream()_
 
 ## SUMMARY: Constants, Functions and Classes
 
@@ -1010,9 +1254,10 @@ Extension [ <persistent> extension #15 mynanoembedded version 1.0 ] {
     }
     Function [ <internal:mynanoembedded> function php_c_gen_encrypted_stream_to_seed ] {
 
-      - Parameters [2] {
+      - Parameters [3] {
         Parameter #0 [ <required> $encrypted_stream ]
         Parameter #1 [ <required> $password ]
+        Parameter #2 [ <required> $dictionary_file ]
       }
     }
   }
