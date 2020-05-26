@@ -2725,7 +2725,7 @@ if ($_SERVER['REQUEST_METHOD']==='POST') {
 
             http_response_code(404);
             header($MIME_TYPE);
-            echo '{"error":"120","reason":"Missing: Work"}';
+            echo '{"error":"121","reason":"Missing: Work"}';
             exit(0);
 
         }
@@ -2837,6 +2837,93 @@ if ($_SERVER['REQUEST_METHOD']==='POST') {
         try {
 
             $encrypted_bin=php_c_gen_seed_to_encrypted_stream($entropy_sel, $password, 15, 64, PASS_MUST_HAVE_AT_LEAST_ONE_NUMBER|
+                PASS_MUST_HAVE_AT_LEAST_ONE_SYMBOL|PASS_MUST_HAVE_AT_LEAST_ONE_UPPER_CASE|PASS_MUST_HAVE_AT_LEAST_ONE_LOWER_CASE);
+
+        } catch (Exception $e) {
+
+            http_response_code(500);
+            header($MIME_TYPE);
+
+            $info="";
+            $error=$e->getCode();
+
+            if ($error>0) {
+
+                if ($error&PASS_MUST_HAVE_AT_LEAST_ONE_NUMBER)
+                    $info="pass needs at least one number, ";
+
+                if ($error&PASS_MUST_HAVE_AT_LEAST_ONE_SYMBOL)
+                    $info.="pass needs at least one symbol, ";
+
+                if ($error&PASS_MUST_HAVE_AT_LEAST_ONE_UPPER_CASE)
+                    $info.="pass needs at least one upper case, ";
+
+                if ($error&PASS_MUST_HAVE_AT_LEAST_ONE_LOWER_CASE)
+                    $info.="pass needs at least one lower case";
+
+                if ($error&PASS_IS_OUT_OVF)
+                    $info.="pass is overflow";
+                else if ($error&PASS_IS_TOO_SHORT)
+                    $info.="pass is too short";
+                else if ($error&PASS_IS_TOO_LONG)
+                    $info.="pass is too long";
+
+                echo '{"error":"500", "reason":"'.$e->getMessage().' Can not encrypt Nano SEED to stream '.$error.'","info":"'.$info.'"}';
+
+            } else
+                echo '{"error":"500", "reason":"'.$e->getMessage().' Can not encrypt Nano SEED to stream '.$error.'"}';
+
+            exit(0);
+
+        }
+
+        try {
+
+            $encrypted_hex=bin2hex($encrypted_bin);
+
+            header($MIME_TYPE);
+            echo '{"encrypted_seed":"'.$encrypted_hex.'"}';
+
+        } catch (Exception $e) {
+
+            http_response_code(500);
+            header($MIME_TYPE);
+            echo '{"error":"500", "reason":"'.$e->getMessage().' Can not convert bin to hex string '.$e->getCode().'"}';
+
+        }
+
+        exit(0);
+
+    }
+
+    if ($cmd==="save_seed_to_encrypted_stream") {
+
+        $password=$_POST['password'];
+
+        if (!isset($password)) {
+
+            http_response_code(404);
+            header($MIME_TYPE);
+            echo '{"error":"122","reason":"Missing: Password"}';
+            exit(0);
+
+        }
+
+        $seed=$_POST['seed'];
+
+        if (!isset($seed)) {
+
+            http_response_code(404);
+            header($MIME_TYPE);
+            echo '{"error":"123","reason":"Missing: NANO Seed}';
+            exit(0);
+
+        }
+
+
+        try {
+
+            $encrypted_bin=php_c_gen_seed_to_encrypted_stream($seed, $password, 15, 64, PASS_MUST_HAVE_AT_LEAST_ONE_NUMBER|
                 PASS_MUST_HAVE_AT_LEAST_ONE_SYMBOL|PASS_MUST_HAVE_AT_LEAST_ONE_UPPER_CASE|PASS_MUST_HAVE_AT_LEAST_ONE_LOWER_CASE);
 
         } catch (Exception $e) {

@@ -839,7 +839,10 @@ Throws _MyNanoCEmbeddedException_
 
 ### Description
 
-Creates a Nano SEED using Hardware TRNG (if available) or PRNG with desired entropy level and encrypt Nano SEED with a given formatted password
+This function has two functionalities
+
+- Creates a Nano SEED using Hardware TRNG (if available) or PRNG with desired entropy level and encrypt Nano SEED with a given formatted password non deterministic cryptography
+- Save your NANO SEED and encrypt with a given formatted password with non deterministic cryptography
 
 ```php
 $res = php_c_gen_seed_to_encrypted_stream($entropy, $password, $password_min_len, $password_max_len, $password_type);
@@ -847,7 +850,7 @@ $res = php_c_gen_seed_to_encrypted_stream($entropy, $password, $password_min_len
 
 params|type|description
 ------|----|-----------
-**_$entropy_**|integer|Entropy type (see below)
+**_$entropy_**|integer or string|Entropy type (see below) or your NANO SEED
 **_$password_**|string|Password to encrypt the random generated Nano SEED
 **_$password_min_len_**|integer|Minimum allowed password length
 **_$password_max_len_**|integer|Maximum allowed password length
@@ -873,7 +876,7 @@ params|type|description
 
 Encrypted block of Nano SEED in memory
 
-##### Example
+##### Example 1 (Generating and encrypting NANO Seed in block);
 
 Create a file _encrypt_block.php_ and type:
 
@@ -950,13 +953,63 @@ SUCCESS: Nano SEED generated and encrypted successfully in memory
 # 75a6a940999d98b5a15c2e12303519b9709e6b718f6683d9dc4e98e0bba67bfa
 ```
 
+##### Example 2 (Saving and encrypting your NANO Seed in block);
+
+Saving and ecrypting your example Nano SEED = "3E4EAC9A2CA907F6CA48C3F9F2FD09F3C37F2891555A5F24FC0318A9317D2B65" with **password**=_MyPasswordHere1234@5678_
+
+```sh
+php -r "echo bin2hex(php_c_gen_seed_to_encrypted_stream('3E4EAC9A2CA907F6CA48C3F9F2FD09F3C37F2891555A5F24FC0318A9317D2B65', 'MyPasswordHere1234@5678', 15, 65, (PASS_MUST_HAVE_AT_LEAST_ONE_NUMBER|PASS_MUST_HAVE_AT_LEAST_ONE_SYMBOL|PASS_MUST_HAVE_AT_LEAST_ONE_UPPER_CASE|PASS_MUST_HAVE_AT_LEAST_ONE_LOWER_CASE)));"
+```
+
+**Return value**
+
+```sh
+5f6e616e6f77616c6c657466696c655f000001004e414e4f205365656420456e
+637279707465642066696c652f73747265616d2e204b65657020697420736166
+6520616e64206261636b75702069742e20546869732066696c65206973207072
+6f7465637465642062792070617373776f72642e2042555920424954434f494e
+20616e64204e414e4f2021212100f5cd704691168f67bea9ef815a35edc7ea7b
+a69a654f2d3bbb4dccc006642dcb5bee435754c5446678fd5493dc449ebb794b
+4616dd9f055fb5c4f190cc8f37e72d8b3921d2c06b5130956715b52e5e47dbb4
+082696821149df4d32506497f015b5da8ededf28143b422e2913b5b285189ff6
+2f7808622f5c29861ecef08fd324f8939e077945bad50fa812a10a5ece5c696c
+28c2072227f24f168b06d21f0ab105c36787dc03894880036c61a6079442625f
+a3e236862b53c0bc41538d499275783a733325ae2e1f7548e952adce20d8723e
+```
+
+##### Example 3 (Saving and encrypting your NANO Seed in block with the same Nano SEED and password in example 2);
+
+Saving and ecrypting your example Nano SEED = "3E4EAC9A2CA907F6CA48C3F9F2FD09F3C37F2891555A5F24FC0318A9317D2B65" with **password**=_MyPasswordHere1234@5678_
+
+```sh
+php -r "echo bin2hex(php_c_gen_seed_to_encrypted_stream('3E4EAC9A2CA907F6CA48C3F9F2FD09F3C37F2891555A5F24FC0318A9317D2B65', 'MyPasswordHere1234@5678', 15, 65, (PASS_MUST_HAVE_AT_LEAST_ONE_NUMBER|PASS_MUST_HAVE_AT_LEAST_ONE_SYMBOL|PASS_MUST_HAVE_AT_LEAST_ONE_UPPER_CASE|PASS_MUST_HAVE_AT_LEAST_ONE_LOWER_CASE)));"
+```
+
+**Return value**
+
+```sh
+5f6e616e6f77616c6c657466696c655f000001004e414e4f205365656420456e
+637279707465642066696c652f73747265616d2e204b65657020697420736166
+6520616e64206261636b75702069742e20546869732066696c65206973207072
+6f7465637465642062792070617373776f72642e2042555920424954434f494e
+20616e64204e414e4f2021212100b38389db347bd67df6041ca05ffc564b5712
+654eea7a0b094364aef2721bda4a2239f300b0130013638491a02ebb1a771d75
+bfa8c050132e69ae057c7d82349c2c4ded4ecd57b30bde25d63fce8b6f53edf1
+a785035a330c21963253fc2c007fde25fb0318bb2ca2fb63394b47e2f415d6ce
+d50b7254d5b6d1d34b46f40a403c4f73e40b78fe74222de10aa12eff8e872595
+66f0bd7e5add023ecd2eff126dd412367e7493b1565fb660c132a578abc71d39
+5e206d93db181d4d3ea00ccd5bd4df6ebc7e253e67f004de1192c0518cc0d2da
+```
+
+**NOTICE**: Although you are using the same Nano SEED and the same password in example 2 and 3, encrypted block are **DIFFERENTS**. And both are valid and can be decrypted with _php_c_gen_encrypted_stream_to_seed()_
+
 **On error**
 
 Throws _MyNanoCEmbeddedException_
 
 **See also**
 
-- _php_c_gen_encrypted_stream_to_seed_
+- _php_c_gen_encrypted_stream_to_seed()_
 
 <h1>- php_c_generate_block()</h1>
 
