@@ -3515,10 +3515,11 @@ PHP_FUNCTION(php_c_gen_seed_to_encrypted_stream)
    char msg[512];
    unsigned char *password;
    size_t password_len;
-   zend_long entropy, password_min_len, password_max_len, password_type=(F_PASS_MUST_HAVE_AT_LEAST_ONE_NUMBER|F_PASS_MUST_HAVE_AT_LEAST_ONE_SYMBOL|
+   zend_long password_min_len, password_max_len, password_type=(F_PASS_MUST_HAVE_AT_LEAST_ONE_NUMBER|F_PASS_MUST_HAVE_AT_LEAST_ONE_SYMBOL|
       F_PASS_MUST_HAVE_AT_LEAST_ONE_UPPER_CASE|F_PASS_MUST_HAVE_AT_LEAST_ONE_LOWER_CASE);
+   zval *z_val;
 
-   if (zend_parse_parameters(ZEND_NUM_ARGS(), "lsll|l", &entropy, &password, &password_len, &password_min_len, &password_max_len, &password_type)==FAILURE)
+   if (zend_parse_parameters(ZEND_NUM_ARGS(), "zsll|l", &z_val, &password, &password_len, &password_min_len, &password_max_len, &password_type)==FAILURE)
       return;
 
    if (password_min_len<1) {
@@ -3572,15 +3573,57 @@ PHP_FUNCTION(php_c_gen_seed_to_encrypted_stream)
 
    }
 
-   if ((err=f_generate_nano_seed((uint8_t *)(msg+(sizeof(msg)-32)), (uint32_t)entropy))) {
+   switch (Z_TYPE_P(z_val)) {
 
-      err*=-1;
+      case IS_LONG:
 
-      sprintf(msg, "Internal error in C function 'php_c_gen_seed_to_encrypted_stream' %d. Cannot generate NANO SEED", err);
+         if ((err=f_generate_nano_seed((uint8_t *)(msg+(sizeof(msg)-32)), (uint32_t)Z_LVAL_P(z_val)))) {
 
-      zend_throw_exception(f_exception_ce, msg, err);
+            err*=-1;
 
-      return;
+            sprintf(msg, "Internal error in C function 'php_c_gen_seed_to_encrypted_stream' %d. Cannot generate NANO SEED", err);
+
+            zend_throw_exception(f_exception_ce, msg, (zend_long)err);
+
+            return;
+
+         }
+
+         break;
+
+      case IS_STRING:
+
+         if (Z_STRLEN_P(z_val)!=64) {
+
+            sprintf(msg, "Internal error in C function 'php_c_gen_seed_to_encrypted_stream' -18904. Invalid SEED length");
+
+            zend_throw_exception(f_exception_ce, msg, -18904);
+
+            return;
+
+         }
+
+         if ((err=f_str_to_hex((uint8_t *)(msg+(sizeof(msg)-32)), (char *)Z_STRVAL_P(z_val)))) {
+
+            err*=-1;
+
+            sprintf(msg, "Internal error in C function 'php_c_gen_seed_to_encrypted_stream' %d. Cannot convert hex string to binary", err);
+
+            zend_throw_exception(f_exception_ce, msg, (zend_long)err);
+
+            return;
+
+         }
+
+         break;
+
+      default:
+
+         sprintf(msg, "Internal error in C function 'php_c_gen_seed_to_encrypted_stream' -18905. Unknown type of entropy or Nano SEED");
+
+         zend_throw_exception(f_exception_ce, msg, -18905);
+
+         return;
 
    }
 
