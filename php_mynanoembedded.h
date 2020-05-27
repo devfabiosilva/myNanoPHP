@@ -20,6 +20,7 @@ PHP_RINIT_FUNCTION(mynanoembedded);
 PHP_RSHUTDOWN_FUNCTION(mynanoembedded);
 PHP_MINFO_FUNCTION(mynanoembedded);
 
+PHP_FUNCTION(php_c_is_valid_nano_seed_encrypted);
 PHP_FUNCTION(php_c_gen_encrypted_stream_to_seed);
 PHP_FUNCTION(php_c_gen_seed_to_encrypted_stream);
 PHP_FUNCTION(php_c_get_difficulty);

@@ -742,10 +742,68 @@ int pk_to_wallet(char *, char *, NANO_PUBLIC_KEY_EXTENDED);
  */
 int f_seed_to_nano_wallet(NANO_PRIVATE_KEY, NANO_PUBLIC_KEY, NANO_SEED, uint32_t);
 
+/**
+ *
+ * @fn int f_nano_is_valid_block(F_BLOCK_TRANSFER *block)
+ * @brief Checks if Binary Nano Block is valid
+ * @param [in] block Nano Block
+ *
+ * @return 0 if is invalid block or 1 if is valid block
+ *
+ */
 int f_nano_is_valid_block(F_BLOCK_TRANSFER *);
-int f_nano_block_to_json(char *dest, size_t *olen, size_t dest_size, F_BLOCK_TRANSFER *user_block);
+
+/**
+ * @fn int f_nano_block_to_json(char *dest, size_t *olen, size_t dest_size, F_BLOCK_TRANSFER *user_block)
+ * @brief Parse a Nano Block to JSON
+ *
+ * @param [out] dest Destination of the converted JSON block
+ * @param [out] olen Output length of the converted JSON block. <i>olen</i> can be NULL. If NULL, destination size contains a NULL char
+ * @param [in] dest_size Size of <i>dest<i> memory buffer
+ * @param [in] user_block User Nano block
+ *
+ * @return 0 if success, non zero if error
+ *
+ */
+int f_nano_block_to_json(char *, size_t *, size_t, F_BLOCK_TRANSFER *);
+
+/**
+ * @fn int f_nano_get_block_hash(uint8_t *hash, F_BLOCK_TRANSFER *block)
+ * @brief Gets a hash from Nano block
+ *
+ * @param [out] hash Output hash
+ * @param [in] block Nano Block
+ *
+ * @return 0 if success, non zero if error
+ *
+ */
 int f_nano_get_block_hash(uint8_t *, F_BLOCK_TRANSFER *);
+
+/**
+ * @fn int f_nano_get_p2pow_block_hash(uint8_t *user_hash, uint8_t *fee_hash, F_BLOCK_TRANSFER *block)
+ * @brief Get Nano user block hash and Nano fee block hashes from P2PoW block
+ *
+ * @param [out] user_hash Hash of the user block
+ * @param [out] fee_hash Hash of the P2PoW block
+ * @param [in] block Input Nano Block
+ *
+ * @return 0 if success, non zero if error
+ *
+ */
 int f_nano_get_p2pow_block_hash(uint8_t *, uint8_t *, F_BLOCK_TRANSFER *);
+
+/**
+ * @fn int f_nano_p2pow_to_JSON(char *buffer, size_t *olen, size_t buffer_sz, F_BLOCK_TRANSFER *block)
+ * @brief Parse binary P2PoW block to JSON
+ *
+ * @param [out] buffer Output JSON string
+ * @param [out] olen Output JSON string size. <i>olen</i> can be NULL. If NULL, <i>buffer</i> will be terminated with a NULL char
+ * @param [in] buffer_sz Size of memory buffer
+ * @param [in] block P2PoW block
+ *
+ * @return 0 if success, non zero if error
+ *
+ */
 int f_nano_p2pow_to_JSON(char *, size_t *, size_t, F_BLOCK_TRANSFER *);
 
 /**
@@ -1335,6 +1393,8 @@ int f_sign_data(
  * @see f_sign_data()
  */
 int f_verify_signed_data( const unsigned char *signature, const unsigned char *message, size_t message_len, const void *public_key, uint32_t pk_type);
+
+int f_is_valid_nano_seed_encrypted(void *stream, size_t stream_len, int read_from);
 
 #ifndef F_ESP32
 

@@ -1361,7 +1361,7 @@ php --re mynanoembedded
 ```sh
 Extension [ <persistent> extension #15 mynanoembedded version 1.0 ] {
 
-  - Constants [64] {
+  - Constants [66] {
     Constant [ string DEFAULT_NANO_POW_THRESHOLD ] { 0xffffffc000000000 }
     Constant [ string NANO_PREFIX ] { nano_ }
     Constant [ string XRB_PREFIX ] { xrb_ }
@@ -1426,6 +1426,8 @@ Extension [ <persistent> extension #15 mynanoembedded version 1.0 ] {
     Constant [ integer PASS_IS_OUT_OVF ] { 1024 }
     Constant [ integer PASS_IS_TOO_SHORT ] { 512 }
     Constant [ integer PASS_IS_TOO_LONG ] { 256 }
+    Constant [ integer READ_SEED_FROM_STREAM ] { 1 }
+    Constant [ integer READ_SEED_FROM_FILE ] { 2 }
   }
 
   - Functions {
@@ -1773,6 +1775,13 @@ Extension [ <persistent> extension #15 mynanoembedded version 1.0 ] {
         Parameter #0 [ <required> $encrypted_stream ]
         Parameter #1 [ <required> $password ]
         Parameter #2 [ <required> $dictionary_file ]
+      }
+    }
+    Function [ <internal:mynanoembedded> function php_c_is_valid_nano_seed_encrypted ] {
+
+      - Parameters [2] {
+        Parameter #0 [ <required> $encrypted_stream ]
+        Parameter #1 [ <optional> $read_from ]
       }
     }
   }

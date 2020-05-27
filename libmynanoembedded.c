@@ -284,6 +284,11 @@ ZEND_BEGIN_ARG_INFO_EX(My_NanoCEmbedded_EncryptedStringToSeedAndBip39, 0, 0, 3)
     ZEND_ARG_INFO(0, dictionary_file)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_INFO_EX(My_NanoCEmbedded_ValidEncryptedSeed, 0, 0, 1)
+    ZEND_ARG_INFO(0, encrypted_stream)
+    ZEND_ARG_INFO(0, read_from)
+ZEND_END_ARG_INFO()
+
 static zend_class_entry *f_exception_ce;
 
 static zend_object *f_exception_create_object(zend_class_entry *ce) {
@@ -405,7 +410,8 @@ PHP_MINIT_FUNCTION(mynanoembedded)
    REGISTER_LONG_CONSTANT("PASS_IS_OUT_OVF", F_PASS_IS_OUT_OVF, CONST_CS|CONST_PERSISTENT);
    REGISTER_LONG_CONSTANT("PASS_IS_TOO_SHORT", F_PASS_IS_TOO_SHORT, CONST_CS|CONST_PERSISTENT);
    REGISTER_LONG_CONSTANT("PASS_IS_TOO_LONG", F_PASS_IS_TOO_LONG, CONST_CS|CONST_PERSISTENT);
-
+   REGISTER_LONG_CONSTANT("READ_SEED_FROM_STREAM", READ_SEED_FROM_STREAM, CONST_CS|CONST_PERSISTENT);
+   REGISTER_LONG_CONSTANT("READ_SEED_FROM_FILE", READ_SEED_FROM_FILE, CONST_CS|CONST_PERSISTENT);
    f_random_attach(gen_rand_no_entropy);
 
    return SUCCESS;
@@ -541,6 +547,7 @@ static const zend_function_entry mynanoembedded_functions[] = {
     PHP_FE(php_c_get_difficulty, My_NanoCEmbedded_GetDifficulty)
     PHP_FE(php_c_gen_seed_to_encrypted_stream, My_NanoCEmbedded_SeedToEncryptedStream)
     PHP_FE(php_c_gen_encrypted_stream_to_seed, My_NanoCEmbedded_EncryptedStringToSeedAndBip39)
+    PHP_FE(php_c_is_valid_nano_seed_encrypted, My_NanoCEmbedded_ValidEncryptedSeed)
     PHP_FE_END
 
 };
@@ -3704,6 +3711,44 @@ PHP_FUNCTION(php_c_gen_encrypted_stream_to_seed)
    }
 
    ZVAL_STRINGL(return_value, msg, sz_tmp);
+
+}
+
+PHP_FUNCTION(php_c_is_valid_nano_seed_encrypted)
+{
+
+   int err;
+   char msg[512];
+   zval *z_val;
+   zend_long read_from=READ_SEED_FROM_STREAM;
+
+   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z|l", &z_val, &read_from)==FAILURE)
+      return;
+
+   if (Z_TYPE_P(z_val)!=IS_STRING) {
+
+      sprintf(msg, "Internal error in C function 'php_c_is_valid_nano_seed_encrypted' 19000. Encrypted Nano SEED is not binary block");
+
+      zend_throw_exception(f_exception_ce, msg, 19000);
+
+      return;
+
+   }
+
+   if ((err=f_is_valid_nano_seed_encrypted((void *)Z_STRVAL_P(z_val), (size_t)Z_STRLEN_P(z_val), (int)read_from))>0)
+      RETURN_TRUE;
+
+   if (err) {
+
+      sprintf(msg, "Internal error in C function 'php_c_is_valid_nano_seed_encrypted' %d.", err);
+
+      zend_throw_exception(f_exception_ce, msg, (zend_long)err);
+
+      return;
+
+   }
+
+   RETURN_FALSE;
 
 }
 

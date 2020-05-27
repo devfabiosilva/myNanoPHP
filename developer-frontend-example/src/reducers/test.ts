@@ -1,6 +1,6 @@
 import { TEST_ACTION } from '../actions';
 
-export default function test(state: string|null = "Fabio Pereira", action: any) {
+export default function test(state: string|null = "Testing Redux", action: any) {
 
     switch (action.type) {
 

@@ -79,12 +79,6 @@ export async function my_nano_php_raw2real(balance: string) {
 }
 
 ////// nano rpc
-/*
-{
-    "action": "account_balance",
-    "account": "nano_3e3j5tkog48pnny9dmfzj1r16pg8t1e76dz5tmac6iq689wyjfpi00000000"
-  }
-*/
 
 export async function nano_rpc_account_balance(account: string) {
     let data: any = null, err: any;

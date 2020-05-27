@@ -3038,6 +3038,51 @@ if ($_SERVER['REQUEST_METHOD']==='POST') {
 
     }
 
+    if ($cmd==="valid_encrypted_seed") {
+
+        $block=$_POST['block'];
+
+        if (!isset($block)) {
+
+            http_response_code(404);
+            header($MIME_TYPE);
+            echo '{"error":"124","reason":"Missing: Block"}';
+            exit(0);
+
+        }
+
+        try {
+
+            $block_bin=hex2bin($block);
+
+        } catch (Exception $e) {
+
+            http_response_code(500);
+            header($MIME_TYPE);
+            echo '{"error":"500", "reason":"'.$e->getMessage().' Can not convert hex to bin '.$e->getCode().'"}';
+            exit(0);
+
+        }
+
+        try {
+
+            $res=php_c_is_valid_nano_seed_encrypted($block_bin);
+
+            header($MIME_TYPE);
+
+            echo '{"error":"0","reason":"Success","valid":"'.(($res)?'1':'0').'"}';
+
+        } catch (Exception $e) {
+            http_response_code(500);
+            header($MIME_TYPE);
+            echo '{"error":"500", "reason":"'.$e->getMessage().' Can not verify encrypted Nano SEED stream '.$e->getCode().'"}';
+            exit(0);
+        }
+
+        exit(0);
+
+    }
+
     if ($cmd==="library_info") {
 
        header($MIME_TYPE);
