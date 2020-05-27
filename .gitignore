@@ -5,6 +5,8 @@
 mbedtls
 sodium
 POC
+node_modules
+secret.ts
 
 # Object files
 *.o

@@ -841,7 +841,7 @@ Throws _MyNanoCEmbeddedException_
 
 This function has two functionalities
 
-- Creates a Nano SEED using Hardware TRNG (if available) or PRNG with desired entropy level and encrypt Nano SEED with a given formatted password non deterministic cryptography
+- Creates a Nano SEED using TRNG Hardware (if available) or PRNG with desired entropy level and encrypt Nano SEED with a given formatted password with non deterministic cryptography
 - Save your NANO SEED and encrypt with a given formatted password with non deterministic cryptography
 
 ```php
