@@ -1348,6 +1348,50 @@ Throws _MyNanoCEmbeddedException_
 
 - _php_c_parse_block_to_json()_
 
+<h1>- php_c_generate_seed()</h1>
+
+### Description
+
+Geneartes a random seed using hardware TRNG (if available) or PRNG and genarates a random Nano SEED
+
+```php
+$res = php_c_generate_seed($entropy);
+```
+
+params|type|description
+------|----|-----------
+**_$entropy_**|integer|Entropy type (see below)
+
+**_$entropy_** type|description
+-------------------|-----------
+**ENTROPY_TYPE_PARANOIC**|Paranoic entropy type. Very slow. Strongly recommended to create SEED's
+**ENTROPY_TYPE_EXCELENT**|Excelent entropy tyoe. Slow. Recommended to create SEED's
+**ENTROPY_TYPE_GOOD**|Good entropy type. Normal. Standard type to create SEED's
+**ENTROPY_TYPE_NOT_ENOUGH**|Not enough. Fast. Not recommended for creating SEED's
+**ENTROPY_TYPE_NOT_RECOMENDED**|Not recommended. Very fast. Try not to use this option. Recommended only to generate temporary SEED's
+
+#### Return value
+
+Nano SEED encoded hex string
+
+##### Example
+
+```php
+php -r "echo php_c_generate_seed(ENTROPY_TYPE_PARANOIC);"
+```
+
+**Return value**
+
+```sh
+# RETURN VALUE
+52A90664B8C463BD20ECCDDE96FAADE8E95CEB3F4E5978E6A5E74B4E00478F4A
+```
+
+**On error**
+
+Throws _MyNanoCEmbeddedException_
+
+
 ## SUMMARY: Constants, Functions and Classes
 
 ### In console type:

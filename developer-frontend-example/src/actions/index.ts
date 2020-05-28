@@ -1,11 +1,22 @@
-const ACTION_A = 1;
-const ACTION_B = 2;
+import { NANO_KEY_PAIR } from '../utils/wallet_interface';
 
-export const TEST_ACTION = {
-    ACTION_A,
-    ACTION_B
+
+const ACTION_NONE = 0;
+const EXTRACT_PUBLIC_KEY = 1;
+const EXTRACT_ADDRESS_FROM_PUBLIC_KEY = 2;
+
+export const NANO_WALLET_ACTIONS = {
+    ACTION_NONE,
+    EXTRACT_PUBLIC_KEY,
+    EXTRACT_ADDRESS_FROM_PUBLIC_KEY,
 }
 
-export function testAction(data: string) {
-    return { type: ACTION_A, data };
+export function setPublicKey(public_key: NANO_KEY_PAIR) {
+    return { type: EXTRACT_PUBLIC_KEY, public_key };
+}
+
+export function extract_address_from_public_key(address: string) {
+
+    return { type: EXTRACT_ADDRESS_FROM_PUBLIC_KEY, address }
+   
 }

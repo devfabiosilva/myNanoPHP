@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-//import { connect } from 'react-redux';
+import { connect } from 'react-redux';
 import {
 
   //extract_key_pair_from_nano_seed,
@@ -18,7 +18,7 @@ import {
   ACCOUNT_TEST
 } from '../utils/secret';
 
-export default function Wallet(props: any) {
+export function Wallet(props: any) {
 
   const [ wallet, setWallet ] = useState('Internal error');
   const [ walletNumber, setWalletNumber ] = useState("0");
@@ -29,6 +29,8 @@ export default function Wallet(props: any) {
 
   useEffect(
     () => {
+      console.log("AQUI");
+      console.log(props.nano_wallet_state);
       nano_rpc_account_balance(ACCOUNT_TEST).then(
         (data: any) => {
           (data)?my_nano_php_nano2pk(ACCOUNT_TEST).then(
@@ -49,7 +51,8 @@ export default function Wallet(props: any) {
     [
       publicKey,
       balance,
-      pendingAccount
+      pendingAccount,
+      props.nano_wallet_state
     ]
   );
 
@@ -99,16 +102,15 @@ export default function Wallet(props: any) {
     </div>
   );
 }
-/*
+
 const mapStateToProps = (state: any, ownProps: any) => ({
-  nano_wallet_state: state.test
+  nano_wallet_state: state.wallets
 });
 
 const mapDispatchToProps = (dispatch: any, ownProps: any) => ({
 
-  m_test: (val: string) => dispatch(testAction(val))
+  //m_test: (val: string) => dispatch(testAction(val))
 
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Main);
-*/
+export default connect(mapStateToProps, mapDispatchToProps)(Wallet);

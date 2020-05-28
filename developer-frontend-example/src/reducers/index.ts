@@ -1,10 +1,10 @@
 import { combineReducers, createStore} from 'redux';
-import test from './test';
+import { wallets } from './wallet_state';
 
 const nano_wallet_rootReducer = combineReducers(
 
         { 
-            test
+            wallets
         }
 
     );
