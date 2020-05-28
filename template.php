@@ -3025,7 +3025,7 @@ if ($_SERVER['REQUEST_METHOD']==='POST') {
             $res=php_c_gen_encrypted_stream_to_seed($block_bin, $password, DICTIONARY_PATH);
 
             header($MIME_TYPE);
-            echo $res;
+            echo '{"error":"0","reason":"Success","result":'.$res.'}';
 
         } catch (Exception $e) {
             http_response_code(500);

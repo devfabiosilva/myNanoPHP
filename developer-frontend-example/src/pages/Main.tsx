@@ -1,13 +1,14 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { testAction } from '../actions';
-import Wallet from '../components/wallet';
+//import Wallet from '../components/wallet';
+import OpenWalletFile from '../components/openencfile';
 //dom 2020 05 24 20:30
 export function Main(props: any) {
 
     return (
         <div>
-            <Wallet />
+            <OpenWalletFile />
         </div>
     );
 

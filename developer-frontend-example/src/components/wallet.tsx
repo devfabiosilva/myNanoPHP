@@ -61,43 +61,20 @@ export default function Wallet(props: any) {
       setWalletNumber(inputWalletNumber);
     }
     */
-    var reader = new FileReader();
-    var fileUploader:any = document.getElementById('file-uploader-id');
-    var txt: any;
-    reader.onloadend = function () {
-      txt =reader.result;
-      console.log(Buffer.from(txt).toString('hex'));
-    }
-
-    if (fileUploader)
-      if (fileUploader.files[0])
-        reader.readAsBinaryString(fileUploader.files[0]);
   }
  
-  function openFile() {
-    var myfile = document.getElementById('file-uploader-id');
-    if (myfile)
-      myfile.click();
-  }
-
   return (
     <div className="wallet-container">
       <div className="wallet-number-container">
         <div className="wallet-number-til">Número da carteira:</div>
         <div className="wallet-number">
-          <input 
-            type="file"    
-            id="file-uploader-id"
-            className="file-uploader"
-            onChange={() => teste('')}
-          />
           <input
             type="text"
             className="wallet-number-input"
             defaultValue={ walletNumber }
             onChange={ (e) => setInputWalletNumber(e.target.value) }
             onKeyPress={(e) => teste(e.key) }
-            onBlur={(e) => teste("Blur")}
+            onBlur={() => teste("Blur")}
           />
         </div>
       </div>
@@ -114,9 +91,7 @@ export default function Wallet(props: any) {
         Contas pendentes: { pendingAccount }
       </div>
       <div className="button-container">
-        <button className="send-button"
-          onClick={() => openFile()}
-        >
+        <button className="send-button">
           Enviar
         </button>
       </div>

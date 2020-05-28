@@ -78,6 +78,19 @@ export async function my_nano_php_raw2real(balance: string) {
 
 }
 
+export async function my_nano_php_open_encrypted_seed(block: string, password: string)
+{
+    let data: any;
+
+    data = await my_nano_php_api(`command=encrypted_stream_to_seed&block=${block}&password=${password}`, "my_nano_php_open_encrypted_seed");
+
+    return new Promise((res, error) => {
+
+        return (data.error === "0")?res(data):error(data);
+
+    });
+}
+
 ////// nano rpc
 
 export async function nano_rpc_account_balance(account: string) {
