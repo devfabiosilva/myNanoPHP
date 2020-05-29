@@ -1391,6 +1391,125 @@ php -r "echo php_c_generate_seed(ENTROPY_TYPE_PARANOIC);"
 
 Throws _MyNanoCEmbeddedException_
 
+<h1>- php_c_generate_token()</h1>
+
+### Description
+
+Generates a 16 bytes with non deterministic hash token
+
+```php
+$res = php_c_generate_token($data, $password);
+```
+
+params|type|description
+------|----|-----------
+**_$data_**|string|Data do be assigned
+**_$password_**|string|Password to define non deterministic hash
+
+#### Return value
+
+Token encoded in hex string
+
+##### Example 1
+
+Hash string "_Hello World_" with password "_MyPassword@1234_"
+
+```sh
+php -r "echo php_c_generate_token('Hello World', 'MyPassword@1234');"
+```
+
+**Return value**
+
+```sh
+# RETURN VALUE
+c70576a2e31d0b6e071d7352c4a43b5f
+```
+
+##### Example 2
+
+Hash string "_Hello World_" with password "_MyPassword@1234_" (Again)
+
+```sh
+php -r "echo php_c_generate_token('Hello World', 'MyPassword@1234');"
+```
+
+**Return value**
+
+```sh
+# RETURN VALUE
+f87a96e215e0a3c56f7f0969288956cd
+```
+
+_Password_ and _data_ are the same but hash are different and both are valid
+
+
+**On error**
+
+Throws _MyNanoCEmbeddedException_
+
+**See also**
+
+_php_c_verify_token()_
+
+<h1>- php_c_get_account_from_block()</h1>
+
+### Description
+
+Extracts account with encoded Nano Base32 string or public key hex string
+
+```php
+$res = php_c_get_account_from_block($block, $type, $prefix);
+```
+
+params|type|description
+------|----|-----------
+**_$block_**|binary|Binary Nano block
+**_$type_**|integer|Type 0 for wallet address (with _nano__ or _xrb__ prefixes) or 1 for hex string (public key)
+**_$prefix_**|string|(Optional) If ommited, then prefix will be _NANO_PREFIX_ prefix when type is 0. Choose _NANO_PREFIX_ or _XRB_PREFIX_ prefixes
+
+#### Return value
+
+Extracted Nano wallet with encoded Base32 or hex string public key
+
+##### Example
+
+```php
+/*
+ Assuming Nano block below is in $block variable
+ 0000000000000000000000000000000000000000000000000000000000000006
+ 918105963ce5d61ad9d74d294164fac36a077b5e2b53d219e619d5ee3e64e1b0
+ f9252d13ec4103ccc6b1f1712c617413adc741d16a465452ca90c504d9f2c278
+ 22f2c23d07f7eb43ebdb470e35493ebbadfdc447bd4b983623703767728974b6
+ 000000000052b7d2dcc80cd2e4000000
+ f9640ff8804a3720efc9d2a190cdcac87011b6eb2bff9bcda6e15400ec76d8b0
+ d6a78e49f87bb5e019c4013144eafe3102e713eadde0bd61b2688ca0d1946a8601a6276fc43beccdf798225b67d65329bcaf3ceb12bc5e17ed542c6f131d8006
+ 00
+ 7865287ae2880e4a
+*/
+
+echo php_c_get_account_from_block($block, 0);
+echo "\n";
+echo php_c_get_account_from_block($block, 1);
+echo "\n";
+echo php_c_get_account_from_block($block, 0, NANO_PREFIX);
+echo "\n";
+echo php_c_get_account_from_block($block, 0, XRB_PREFIX);
+
+```
+
+**Return value**
+
+```sh
+# RETURN VALUE
+nano_36e31pd5ssgp5dexgmbba7khoiuc1xxowctmtaeye8goxrz8brfi48iexshm
+918105963CE5D61AD9D74D294164FAC36A077B5E2B53D219E619D5EE3E64E1B0
+nano_36e31pd5ssgp5dexgmbba7khoiuc1xxowctmtaeye8goxrz8brfi48iexshm
+xrb_36e31pd5ssgp5dexgmbba7khoiuc1xxowctmtaeye8goxrz8brfi48iexshm
+```
+
+**On error**
+
+Throws _MyNanoCEmbeddedException_
 
 ## SUMMARY: Constants, Functions and Classes
 
