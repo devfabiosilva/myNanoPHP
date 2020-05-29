@@ -23,7 +23,7 @@ export function Main(props: any) {
 }
 
 const mapStateToProps = (state: any, ownProps: any) => ({
-    nano_wallet_state: state.wallets
+    nano_wallet_state: state.wallet
 });
 
 const mapDispatchToProps = (dispatch: any, ownProps: any) => ({

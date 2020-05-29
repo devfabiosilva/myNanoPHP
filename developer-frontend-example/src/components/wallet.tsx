@@ -1,97 +1,88 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState} from 'react';
 import { connect } from 'react-redux';
 import {
 
-  //extract_key_pair_from_nano_seed,
   nano_rpc_account_balance,
-  my_nano_php_nano2pk,
   my_nano_php_raw2real
 
 } from '../service';
 
 import { 
-  //NANO_SEED, 
   UNDEFINED, 
 } from '../utils';
-
-import {
-  ACCOUNT_TEST
-} from '../utils/secret';
+import { setMyWallet } from '../actions';
+import { my_wallet } from '../utils/wallet_interface';
 
 export function Wallet(props: any) {
-
-  const [ wallet, setWallet ] = useState('Internal error');
-  const [ walletNumber, setWalletNumber ] = useState("0");
-  const [ inputWalletNumber, setInputWalletNumber ] = useState("");
-  const [ publicKey, setPublicKey ] = useState("");
-  const [ pendingAccount, setPendingAccount ] = useState("0");
-  const [ balance, setBalance ] = useState("0.0");
+  const [balance, setBalance] = useState("Loading balance ...");
+  //const [pendingAccount, setPendingAccount ] = useState("Loading pending account ...");
 
   useEffect(
     () => {
-      console.log("AQUI");
-      console.log(props.nano_wallet_state);
-      nano_rpc_account_balance(ACCOUNT_TEST).then(
+
+      nano_rpc_account_balance(props.state.wallet).then(
         (data: any) => {
-          (data)?my_nano_php_nano2pk(ACCOUNT_TEST).then(
-            (d: any) => (d.public_key)?setPublicKey(d.public_key):setPublicKey(UNDEFINED),
-            (e) => setPublicKey(e.reason)
-          ):setPublicKey(UNDEFINED);
-          setWallet(ACCOUNT_TEST);
-          (data.pending)?setPendingAccount(data.pending):setPendingAccount(UNDEFINED);
-          (data.balance)?my_nano_php_raw2real(data.balance).then(
-            (d: any) => setBalance(d.real_balance),
-            (e) => setBalance(e.reason)
-          ):setBalance(UNDEFINED);
-          setWalletNumber("1");
+          console.log(data);
+          (data)?
+            (data.balance)?
+              my_nano_php_raw2real(data.balance).then(
+                (d: any) => {
+                  props.setMyWallet({
+                    balance: d.real_balance,
+                  });
+                  setBalance(props.state.balance);
+                },
+                (e: any) => {
+                  props.setMyWallet({
+                    balance: e.reason
+                  });
+                }
+              )
+            :props.setMyWallet(
+              {
+                balance:UNDEFINED
+              }
+            )
+          :props.setMyWallet(
+            {
+              balance:UNDEFINED
+            }
+          );
         },
-        (e) => console.log(e)
+        (error) => {
+          console.log(error)
+        }
       );
+      //console.log(props.state);
     },
     [
-      publicKey,
-      balance,
-      pendingAccount,
-      props.nano_wallet_state
+      props.state,
+      props,
+      props.state.balance
     ]
   );
 
-  function teste(e: any) {
-    console.log(e);
-    /*
-    if (e==="Enter") {
-      console.log("Aqui")
-      setWalletNumber(inputWalletNumber);
-    }
-    */
-  }
- 
+
+
   return (
     <div className="wallet-container">
       <div className="wallet-number-container">
         <div className="wallet-number-til">Número da carteira:</div>
         <div className="wallet-number">
-          <input
-            type="text"
-            className="wallet-number-input"
-            defaultValue={ walletNumber }
-            onChange={ (e) => setInputWalletNumber(e.target.value) }
-            onKeyPress={(e) => teste(e.key) }
-            onBlur={() => teste("Blur")}
-          />
+          { props.state.wallet_number }
         </div>
       </div>
       <div className="wallet">
-        Carteira: { wallet }
+        Carteira: { props.state.wallet }
       </div>
       <div className="wallet-public-key">
-        Chave pública { publicKey }
+        Chave pública { props.state.public_key }
       </div>
       <div className="balance">
         Balanço: { balance }
       </div>
       <div className="pending-account">
-        Contas pendentes: { pendingAccount }
+        Contas pendentes: 
       </div>
       <div className="button-container">
         <button className="send-button">
@@ -101,15 +92,17 @@ export function Wallet(props: any) {
 
     </div>
   );
+
 }
 
 const mapStateToProps = (state: any, ownProps: any) => ({
-  nano_wallet_state: state.wallets
+  //nano_wallet_state: state.wallet
+  state: state.wallet
 });
 
 const mapDispatchToProps = (dispatch: any, ownProps: any) => ({
 
-  //m_test: (val: string) => dispatch(testAction(val))
+  setMyWallet: (param: my_wallet) => dispatch(setMyWallet(param))
 
 });
 

@@ -1,7 +1,13 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { setPublicKey, extract_address_from_public_key } from '../actions';
-import { NANO_KEY_PAIR, MY_NANO_PHP_ERROR, PUBLIC_KEY2ADDRESS } from '../utils/wallet_interface';
+import { setPublicKey } from '../actions';
+
+import { 
+  MY_NANO_PHP_ERROR, 
+  PUBLIC_KEY2ADDRESS, 
+  my_wallet
+} from '../utils/wallet_interface';
+
 import {
 
   my_nano_php_open_encrypted_seed,
@@ -15,10 +21,10 @@ export function OpenEncryptedWalletFile(props: any) {
 
   function teste(e: any) {
 
-    var password:any = document.getElementById('file-password');
-    var reader = new FileReader();
-    var fileUploader:any = document.getElementById('file-uploader-id');
-    var txt: any;
+    let password:any = document.getElementById('file-password');
+    let reader = new FileReader();
+    let fileUploader:any = document.getElementById('file-uploader-id');
+    let txt: any;
 
     reader.onloadend = function () {
       txt = reader.result;
@@ -31,14 +37,16 @@ export function OpenEncryptedWalletFile(props: any) {
           my_nano_php_seed2keypair(0, d.result.seed).then(
             (key_pair) => {
 
-              console.log(key_pair as MY_NANO_PHP_SEED2KEYPAIR);
-              props.wallet_public_key({
-                public_key: (key_pair as MY_NANO_PHP_SEED2KEYPAIR).key_pair.public_key
-              })
-
               my_nano_php_public_key2address((key_pair as MY_NANO_PHP_SEED2KEYPAIR).key_pair.public_key).then(
                 (wallet_address) => {
-                  props.extract_address_from_public_key((wallet_address as PUBLIC_KEY2ADDRESS).wallet)
+
+                  props.wallet_public_key(
+                    {
+                      wallet: (wallet_address as PUBLIC_KEY2ADDRESS).wallet,
+                      public_key: (key_pair as MY_NANO_PHP_SEED2KEYPAIR).key_pair.public_key,
+                      wallet_number: 0
+                    }
+                  )
                 },
                 (error) => console.log(error)
               )
@@ -91,12 +99,12 @@ export function OpenEncryptedWalletFile(props: any) {
 }
 
 const mapStateToProps = (state: any, ownProps: any) => ({
-  nano_wallet: state.wallets
+  nano_wallet: state.wallet
 });
 
 const mapDispatchToProps = (dispatch: any, ownProps: any) => ({
-  wallet_public_key: (public_key: NANO_KEY_PAIR) => dispatch(setPublicKey(public_key)),
-  extract_address_from_public_key: (public_key: string) => dispatch(extract_address_from_public_key(public_key))
+  wallet_public_key: (public_key: my_wallet) => dispatch(setPublicKey(public_key)),
+
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(OpenEncryptedWalletFile);

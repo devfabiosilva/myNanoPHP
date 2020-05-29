@@ -152,6 +152,6 @@ export async function nano_rpc_account_balance(account: string) {
         (d) => data = d.data,
         (e) => err = e.data
     );
-
+    
     return new Promise((resolve, reject) => (data)?(data.error)?reject({error: data.error}):resolve(data):reject(err));
 }
