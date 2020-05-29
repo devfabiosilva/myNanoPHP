@@ -1474,6 +1474,8 @@ Extracted Nano wallet with encoded Base32 or hex string public key
 ##### Example
 
 ```php
+<?php
+
 /*
  Assuming Nano block below is in $block variable
  0000000000000000000000000000000000000000000000000000000000000006
@@ -1495,6 +1497,7 @@ echo php_c_get_account_from_block($block, 0, NANO_PREFIX);
 echo "\n";
 echo php_c_get_account_from_block($block, 0, XRB_PREFIX);
 
+?>
 ```
 
 **Return value**
@@ -1510,6 +1513,137 @@ xrb_36e31pd5ssgp5dexgmbba7khoiuc1xxowctmtaeye8goxrz8brfi48iexshm
 **On error**
 
 Throws _MyNanoCEmbeddedException_
+
+_php_c_verify_token()_
+
+<h1>- php_c_get_balance_from_block()</h1>
+
+### Description
+
+Extracts balances from binary nano block
+
+```php
+$res = php_c_get_balance_from_block($block, $balance_type);
+```
+
+params|type|description
+------|----|-----------
+**_$block_**|binary|Binary Nano block
+**_$balance_type_**|integer|(Optional) Balance type. (See table below). If ommited balance type will be parsed to real value
+
+**_$balance_type_** type|description
+------------------------|-----------
+**BALANCE_REAL_STRING**|Real string value
+**BALANCE_RAW_STRING**|Raw string value
+**BALANCE_RAW_128**|Hex string value
+
+#### Return value
+
+Extracted Nano balance value
+
+##### Example
+
+```php
+<?php
+
+/*
+ Assuming Nano block below is in $block variable
+ 0000000000000000000000000000000000000000000000000000000000000006
+ 918105963ce5d61ad9d74d294164fac36a077b5e2b53d219e619d5ee3e64e1b0
+ f9252d13ec4103ccc6b1f1712c617413adc741d16a465452ca90c504d9f2c278
+ 22f2c23d07f7eb43ebdb470e35493ebbadfdc447bd4b983623703767728974b6
+ 00001b9dd181a316c69b1feb73b30000
+ f9640ff8804a3720efc9d2a190cdcac87011b6eb2bff9bcda6e15400ec76d8b08
+ 4daaa49ccf95d10353b93711c24e605aa2219dac2e5020996619f7184bb8733ee733d2a2e033481aa5bf82652aa201b63a58f6ef4cd43a8468f6112d4ad8d07
+ 00
+ 7865287ae2880e4a
+*/
+
+echo php_c_get_balance_from_block($block);
+echo "\n";
+echo php_c_get_balance_from_block($block, BALANCE_RAW_128);
+echo "\n";
+echo php_c_get_balance_from_block($block, BALANCE_RAW_STRING);
+echo "\n";
+echo php_c_get_balance_from_block($block, BALANCE_REAL_STRING);
+echo "\n";
+echo "Finally Hello World\n";
+
+?>
+```
+
+**Return value**
+
+```sh
+# RETURN VALUE
+560.12871990198387                # Real value
+00001b9dd181a316c69b1feb73b30000  # Hex string value
+560128719901983870000000000000000 # Raw balance string
+560.12871990198387                # Real value
+Finally Hello World
+```
+
+**On error**
+
+Throws _MyNanoCEmbeddedException_
+
+
+
+<h1>- php_c_get_block_hash()</h1>
+
+### Description
+
+Calculates block hash in Nano Block
+
+```php
+$res = php_c_get_block_hash($block);
+```
+
+params|type|description
+------|----|-----------
+**_$block_**|binary|Binary Nano block
+
+#### Return value
+
+Nano block hash
+
+##### Example
+
+```php
+<?php
+
+/*
+ Assuming Nano block below is in $block variable
+ 0000000000000000000000000000000000000000000000000000000000000006
+ 918105963ce5d61ad9d74d294164fac36a077b5e2b53d219e619d5ee3e64e1b0
+ f9252d13ec4103ccc6b1f1712c617413adc741d16a465452ca90c504d9f2c278
+ 22f2c23d07f7eb43ebdb470e35493ebbadfdc447bd4b983623703767728974b6
+ 00001b9dd181a316c69b1feb73b30000
+ f9640ff8804a3720efc9d2a190cdcac87011b6eb2bff9bcda6e15400ec76d8b08
+ 4daaa49ccf95d10353b93711c24e605aa2219dac2e5020996619f7184bb8733ee733d2a2e033481aa5bf82652aa201b63a58f6ef4cd43a8468f6112d4ad8d07
+ 00
+ 7865287ae2880e4a
+*/
+
+echo php_c_get_block_hash($block);
+echo "\nFinally Hello World\n";
+
+?>
+```
+
+**Return value**
+
+```sh
+# RETURN VALUE
+200D55EB5D65BD5CBB095E20873D7E7900D58496CAEB3CA263C778BA9D932C95
+Finally Hello World
+```
+
+**On error**
+
+Throws _MyNanoCEmbeddedException_
+
+**Documentation on progress ...**
 
 ## SUMMARY: Constants, Functions and Classes
 
