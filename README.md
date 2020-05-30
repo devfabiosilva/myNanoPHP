@@ -1514,8 +1514,6 @@ xrb_36e31pd5ssgp5dexgmbba7khoiuc1xxowctmtaeye8goxrz8brfi48iexshm
 
 Throws _MyNanoCEmbeddedException_
 
-_php_c_verify_token()_
-
 <h1>- php_c_get_balance_from_block()</h1>
 
 ### Description
@@ -1732,6 +1730,195 @@ Throws _MyNanoCEmbeddedException_
 **See also**
 
 - _php_c_nano_proof_of_work()_
+
+    Function [ <internal:mynanoembedded> function php_c_get_entropy_name ] {
+
+      - Parameters [1] {
+        Parameter #0 [ <required> $entropy ]
+      }
+    }
+
+<h1>- php_c_get_entropy_name()</h1>
+
+### Description
+
+Get a entropy name string given a index or entropy value
+
+```php
+$res = php_c_get_entropy_name($entropy);
+```
+
+params|type|description
+------|----|-----------
+**_$entropy_**|integer|Entropy value, index or char index value
+
+#### Return value
+
+String value of the entropy
+
+##### Example 1
+
+```sh
+php -r "echo php_c_get_entropy_name(1);"
+```
+
+**Return value**
+
+```sh
+F_ENTROPY_TYPE_PARANOIC
+```
+
+##### Example 2
+
+```sh
+php -r "echo php_c_get_entropy_name('1');"
+```
+
+**Return value**
+
+```sh
+F_ENTROPY_TYPE_PARANOIC
+```
+
+##### Example 3
+
+```sh
+php -r "echo php_c_get_entropy_name('2');"
+```
+
+**Return value**
+
+```sh
+F_ENTROPY_TYPE_EXCELENT
+```
+
+##### Example 3
+
+```sh
+php -r "echo php_c_get_entropy_name(ENTROPY_TYPE_GOOD);"
+```
+
+**Return value**
+
+```sh
+F_ENTROPY_TYPE_GOOD
+```
+
+<h1>- php_c_get_link_from_block()</h1>
+
+### Description
+
+Extracts link with encoded Nano Base32 string or link hex string
+
+```php
+$res = php_c_get_link_from_block($block, $type, $prefix);
+```
+
+params|type|description
+------|----|-----------
+**_$block_**|binary|Binary Nano block
+**_$type_**|integer|Type 0 for wallet address (with _nano__ or _xrb__ prefixes) or 1 for hex string (link)
+**_$prefix_**|string|(Optional) If ommited, then prefix will be _NANO_PREFIX_ prefix when type is 0. Choose _NANO_PREFIX_ or _XRB_PREFIX_ prefixes
+
+#### Return value
+
+Extracted Nano link as account with encoded Base32 or hex string public key
+
+##### Example
+
+```php
+<?php
+
+/*
+ Assuming Nano block below is in $block variable
+ 0000000000000000000000000000000000000000000000000000000000000006
+ 918105963ce5d61ad9d74d294164fac36a077b5e2b53d219e619d5ee3e64e1b0
+ f9252d13ec4103ccc6b1f1712c617413adc741d16a465452ca90c504d9f2c278
+ 22f2c23d07f7eb43ebdb470e35493ebbadfdc447bd4b983623703767728974b6
+ 000000000052b7d2dcc80cd2e4000000
+ f9640ff8804a3720efc9d2a190cdcac87011b6eb2bff9bcda6e15400ec76d8b0
+ d6a78e49f87bb5e019c4013144eafe3102e713eadde0bd61b2688ca0d1946a8601a6276fc43beccdf798225b67d65329bcaf3ceb12bc5e17ed542c6f131d8006
+ 00
+ 7865287ae2880e4a
+*/
+
+echo php_c_get_link_from_block($block, 0);
+echo "\n";
+echo php_c_get_link_from_block($block, 1);
+echo "\n";
+echo php_c_get_link_from_block($block, 0, NANO_PREFIX);
+echo "\n";
+echo php_c_get_link_from_block($block, 0, XRB_PREFIX);
+
+?>
+```
+
+**Return value**
+
+```sh
+# RETURN VALUE
+nano_3yd63zwa1kjq65qwmno3k58wok5i48ugpczzmh8tfrcn15p9fp7it3ptoj8w
+F9640FF8804A3720EFC9D2A190CDCAC87011B6EB2BFF9BCDA6E15400EC76D8B0
+nano_3yd63zwa1kjq65qwmno3k58wok5i48ugpczzmh8tfrcn15p9fp7it3ptoj8w
+xrb_3yd63zwa1kjq65qwmno3k58wok5i48ugpczzmh8tfrcn15p9fp7it3ptoj8w
+```
+
+**On error**
+
+Throws _MyNanoCEmbeddedException_
+
+<h1>- php_c_get_prefixes_from_block()</h1>
+
+### Description
+
+Extracts prefixes from Nano block
+
+```php
+$res = php_c_get_prefixes_from_block($block);
+```
+
+params|type|description
+------|----|-----------
+**_$block_**|binary|Binary Nano block
+
+#### Return value
+
+Prefixes information of the Nano block as integer
+
+##### Example
+
+```php
+<?php
+
+/*
+ Assuming Nano block below is in $block variable
+ 0000000000000000000000000000000000000000000000000000000000000006
+ 918105963ce5d61ad9d74d294164fac36a077b5e2b53d219e619d5ee3e64e1b0
+ f9252d13ec4103ccc6b1f1712c617413adc741d16a465452ca90c504d9f2c278
+ 22f2c23d07f7eb43ebdb470e35493ebbadfdc447bd4b983623703767728974b6
+ 000000000052b7d2dcc80cd2e4000000
+ f9640ff8804a3720efc9d2a190cdcac87011b6eb2bff9bcda6e15400ec76d8b0
+ d6a78e49f87bb5e019c4013144eafe3102e713eadde0bd61b2688ca0d1946a8601a6276fc43beccdf798225b67d65329bcaf3ceb12bc5e17ed542c6f131d8006
+ 00
+ 7865287ae2880e4a
+*/
+
+echo php_c_get_prefixes_from_block($block);
+echo "\n";
+
+?>
+```
+
+**Return value**
+
+```sh
+0 #Returns 0 (Account, Destination or Link, Representative) are in nano_ prefix
+```
+
+**On error**
+
+Throws _MyNanoCEmbeddedException_
+
 
 **Documentation on progress ...**
 
