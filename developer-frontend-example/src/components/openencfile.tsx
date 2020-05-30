@@ -2,18 +2,20 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { setPublicKey } from '../actions';
 
-import { 
+import {
+
   MY_NANO_PHP_ERROR, 
   PUBLIC_KEY2ADDRESS, 
   my_wallet
+
 } from '../utils/wallet_interface';
 
 import {
 
   my_nano_php_open_encrypted_seed,
   my_nano_php_seed2keypair,
-  MY_NANO_PHP_SEED2KEYPAIR,
-  my_nano_php_public_key2address
+  my_nano_php_public_key2address,
+  MY_NANO_PHP_SEED2KEYPAIR
 
 } from '../service';
 
@@ -33,7 +35,6 @@ export function OpenEncryptedWalletFile(props: any) {
       my_nano_php_open_encrypted_seed(Buffer.from(txt).toString('hex'), password.value).then(
         (d: any) =>
         {
-          console.log(d);
           my_nano_php_seed2keypair(0, d.result.seed).then(
             (key_pair) => {
 

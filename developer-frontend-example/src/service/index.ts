@@ -5,10 +5,7 @@ import {
 } from '../utils/secret';
 import { NANO_PREFIX } from '../utils';
 import { PUBLIC_KEY2ADDRESS, MY_NANO_PHP_ERROR } from '../utils/wallet_interface';
-/*
-export interface MY_NANO_PHP_KEY_PAIR {
 
-}*/
 export interface MY_NANO_PHP_SEED2KEYPAIR {
     error: string|number,
     reason: string,
