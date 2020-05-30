@@ -574,7 +574,7 @@ php -r "echo (php_c_compare('72', '3', NANO_A_REAL_STRING|NANO_B_REAL_STRING, NA
 
 ```sh
 php -r "echo (php_c_compare('5.9', '791789901910919928837771776677', NANO_A_REAL_STRING|NANO_B_RAW_STRING, NANO_COMPARE_LEQ))?'TRUE':'FALSE';"
-# 5.9(REAL) > 791789901910919928837771776677(RAW) RETURNS FALSE
+# 5.9(REAL) <= 791789901910919928837771776677(RAW) RETURNS FALSE
 # Human readable result
 # 5.9 <= 0.791789901910919928837771776677 RETURNS FALSE
 ```
@@ -1587,8 +1587,6 @@ Finally Hello World
 
 Throws _MyNanoCEmbeddedException_
 
-
-
 <h1>- php_c_get_block_hash()</h1>
 
 ### Description
@@ -1642,6 +1640,98 @@ Finally Hello World
 **On error**
 
 Throws _MyNanoCEmbeddedException_
+
+<h1>- php_c_get_difficulty()</h1>
+
+### Description
+
+Calculates a relative difficulty given a _work_, _hash_ and _threshold_
+
+```php
+$res = php_c_get_difficulty($hash, $work, $threshold);
+```
+
+params|type|description
+------|----|-----------
+**_$block_**|string|Hash of the block
+**_$work_**|string|Calculated work
+**_$threshold_**|string|(Optional) Threshold. If threshold is ommited then _DEFAULT_NANO_POW_THRESHOLD = 0xffffffc000000000_ is assumed
+
+#### Return value
+
+JSON string value
+
+##### Example 1
+
+```sh
+php -r "echo php_c_get_difficulty('F9252D13EC4103CCC6B1F1712C617413ADC741D16A465452CA90C504D9F2C278', '0x4a0e88e27a286578');"
+```
+
+**Return value**
+
+```sh
+# RETURN VALUE
+{
+  "hash": "F9252D13EC4103CCC6B1F1712C617413ADC741D16A465452CA90C504D9F2C278",
+  "work": "0x4a0e88e27a286578",
+  "difficulty": "0xffffffef5e1596a0",
+  "base_difficulty": "0xffffffc000000000",
+  "multiplier": "3.84789208342411",
+  "valid": "1"
+}
+```
+
+##### Example 2
+
+```sh
+php -r "echo php_c_get_difficulty('97754bc2448355786175c4f8f46ee281336fda0ef83c06a3524b1664c9c9bb6a', '0x300607865057a2fb');"
+```
+
+**Return value**
+
+```sh
+# RETURN VALUE
+{
+  "hash": "97754bc2448355786175c4f8f46ee281336fda0ef83c06a3524b1664c9c9bb6a",
+  "work": "0x300607865057a2fb",
+  "difficulty": "0xfffffff81bffd01f",
+  "base_difficulty": "0xffffffc000000000",
+  "multiplier": "8.11088815564106",
+  "valid": "1"
+}
+```
+
+##### Example 3
+
+```sh
+php -r "echo php_c_get_difficulty('97754bc2448355786175c4f8f46ee281336fda0ef83c06a3524b1664c9c9bb6a', '18446743901642424320');"
+# 18446743901642424320(decimal) = 0xffffffd7f0000000(hex)
+# Use 0x prefix for hexadecimal Ex.: 0xffffffd7f0000000
+# Use 0 prefic for octal. Ex.: 01777777775376000000000
+# No prefix for decimal. Ex.: 18446743901642424320
+```
+
+**Return value**
+
+```sh
+# RETURN VALUE
+{
+  "hash": "b0cbcbe1b522fbac1ba1b1880dcea19afdae31008a242b7d9c6165982559fe53",
+  "work": "0xa5422ca8ae8ca022",
+  "difficulty": "0xfffffff23e8131c1",
+  "base_difficulty": "0xffffffd7f0000000",
+  "multiplier": "2.91239914457107",
+  "valid": "1"
+}
+```
+
+**On error**
+
+Throws _MyNanoCEmbeddedException_
+
+**See also**
+
+- _php_c_nano_proof_of_work()_
 
 **Documentation on progress ...**
 
