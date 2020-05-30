@@ -8,15 +8,17 @@ import {
 } from '../service';
 
 import { 
-  UNDEFINED, 
+
+  UNDEFINED,
+
 } from '../utils';
 
 import { setMyWallet } from '../actions';
 import { my_wallet } from '../utils/wallet_interface';
 
 export function Wallet(props: any) {
-  const [balance, setBalance] = useState("Loading balance ...");
-  const [pendingAccount, setPendingAccount ] = useState("Loading pending account ...");
+  const [balance, setBalance] = useState("");
+  const [pendingAccount, setPendingAccount ] = useState("");
 
   useEffect(
     () => {
@@ -82,10 +84,10 @@ export function Wallet(props: any) {
         { props.language.pk } { props.state.public_key }
       </div>
       <div className="balance">
-        { props.language.balance }: { balance }
+        { props.language.balance }: { (balance)?balance:props.language.loading_balance }
       </div>
       <div className="pending-account">
-        { props.language.pending_account }: { pendingAccount }
+        { props.language.pending_account }: { (pendingAccount)?pendingAccount:props.language.loading_pending }
       </div>
       <div className="button-container">
         <button className="send-button">
@@ -99,9 +101,10 @@ export function Wallet(props: any) {
 }
 
 const mapStateToProps = (state: any, ownProps: any) => ({
-  //nano_wallet_state: state.wallet
+
   state: state.wallet,
   language: state.lang
+
 });
 
 const mapDispatchToProps = (dispatch: any, ownProps: any) => ({

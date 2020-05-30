@@ -4,10 +4,11 @@ import { lang } from './lang_interface';
 
 const nano_wallet_rootReducer = combineReducers(
 
-        { 
-            wallet,
-            lang
-        }
+    { 
+        wallet,
+        lang
+    }
+
 );
 
 export const store = createStore(nano_wallet_rootReducer);

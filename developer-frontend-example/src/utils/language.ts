@@ -9,7 +9,14 @@ export const LANG_PT_BR = {
     pk: "Chave pública",
     balance: "Balanço",
     pending_account: "Pendente",
-    send: "Enviar"
+    send: "Enviar",
+    brainwallet: "Brainwallet",
+    salt: "Salt",
+    open_brainwallet: "Abrir Brainwallet",
+    msg_brainwallet_empty: "O campo Brainwallet está vazio",
+    msg_salt_empty: "O campo 'salt' está vazio",
+    loading_balance: "Carregando balanço ...",
+    loading_pending: "Carregando balanços pendendentes ..."
 
 }
 
@@ -21,6 +28,13 @@ export const LANG_EN_US = {
     pk: "Public key",
     balance: "Balance",
     pending_account: "Pending",
-    send: "Send"
+    send: "Send",
+    brainwallet: "Brainwallet",
+    salt: "Salt",
+    open_brainwallet: "Open Brainwallet",
+    msg_brainwallet_empty: "Brainwallet cannot be empty string",
+    msg_salt_empty: "Salt cannot be empty string",
+    loading_balance: "Loading balance ...",
+    loading_pending: "Loading pending balance ..."
 
 }

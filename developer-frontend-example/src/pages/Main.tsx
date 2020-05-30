@@ -1,8 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import OpenEncryptedWalletFile from '../components/openencfile';
+//import OpenEncryptedWalletFile from '../components/openencfile';
 import { NANO_KEY_PAIR } from '../utils/wallet_interface';
 import Wallet from '../components/wallet';
+import Brainwallet from '../components/brainwallet';
 
 //dom 2020 05 24 20:30
 export function Main(props: any) {
@@ -10,7 +11,7 @@ export function Main(props: any) {
     if ((props.nano_wallet_state as NANO_KEY_PAIR).public_key === "")
         return (
             <div>
-                <OpenEncryptedWalletFile />
+                <Brainwallet />
             </div>
         )
     else

@@ -11,7 +11,8 @@ export interface my_wallet {
     wallet_representative?: string,
     wallet?: string,
     pending?: string,
-    balance?: string
+    balance?: string,
+    bip39?: string  //SECURITY: Fire and forget. Extract public key from (encrypted file|brainwallet|Bip39) and forget private key immediately
 }
 
 export interface NANO_KEY_PAIR {
@@ -27,4 +28,19 @@ export interface PUBLIC_KEY2ADDRESS {
     reason: string
     wallet: string,
     public_key: string,
+}
+
+export interface BRAINWALLET_RESPONSE {
+    error: string|number,
+    reason: string,
+    text: string,
+    salt: string,
+    extracted: {
+      result: {
+        seed: string,
+        bip39: string
+      },
+      warning_msg: string
+    },
+    warning: string
 }

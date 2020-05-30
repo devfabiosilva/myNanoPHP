@@ -4,7 +4,13 @@ import {
     NANO_NODE_URL
 } from '../utils/secret';
 import { NANO_PREFIX } from '../utils';
-import { PUBLIC_KEY2ADDRESS, MY_NANO_PHP_ERROR } from '../utils/wallet_interface';
+import { 
+
+    PUBLIC_KEY2ADDRESS, 
+    MY_NANO_PHP_ERROR, 
+    BRAINWALLET_RESPONSE 
+
+} from '../utils/wallet_interface';
 
 export interface MY_NANO_PHP_SEED2KEYPAIR {
     error: string|number,
@@ -111,11 +117,11 @@ export async function my_nano_php_open_encrypted_seed(block: string, password: s
     });
 }
 
-export async function my_nano_php_seed2keypair(wallet_number: number, seed: string)
+export async function my_nano_php_seed2keypair(wallet_number: number, seed: string, prefix:string = NANO_PREFIX)
 {
     let data: MY_NANO_PHP_SEED2KEYPAIR|MY_NANO_PHP_ERROR;
 
-    data = await my_nano_php_api(`command=seed2key_pair&seed=${seed}&wallet_number=${wallet_number.toString()}`, "my_nano_php_seed2keypair");
+    data = await my_nano_php_api(`command=seed2key_pair&seed=${seed}&wallet_number=${wallet_number.toString()}&prefix=${prefix}`, "my_nano_php_seed2keypair");
 
     return new Promise((res, error) => {
         
@@ -136,6 +142,20 @@ export async function my_nano_php_public_key2address(public_key: string, prefix:
 
     });
 }
+
+export async function my_nano_php_open_brainwallet(text: string, salt:string)
+{
+    let data: BRAINWALLET_RESPONSE|MY_NANO_PHP_ERROR;
+
+    data = await my_nano_php_api(`command=brainwallet&text=${text}&salt=${salt}`, "my_nano_php_open_brainwallet");
+
+    return new Promise((res, error) => {
+        
+        return (data.error === "0")?res(data as BRAINWALLET_RESPONSE):error(data as MY_NANO_PHP_ERROR);
+
+    });
+}
+
 
 ////// nano rpc
 
