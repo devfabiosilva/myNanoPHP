@@ -1912,6 +1912,179 @@ echo "\n";
 
 Throws _MyNanoCEmbeddedException_
 
+<h1>- php_c_get_previous_from_block()</h1>
+
+### Description
+
+Extracts previous hash from Nano Block
+
+```php
+$res = php_c_get_previous_from_block($block);
+```
+
+params|type|description
+------|----|-----------
+**_$block_**|binary|Binary Nano block
+
+#### Return value
+
+Previous block Nano hash
+
+##### Example
+
+```php
+<?php
+
+/*
+ Assuming Nano block below is in $block variable
+ 0000000000000000000000000000000000000000000000000000000000000006
+ 918105963ce5d61ad9d74d294164fac36a077b5e2b53d219e619d5ee3e64e1b0
+ f9252d13ec4103ccc6b1f1712c617413adc741d16a465452ca90c504d9f2c278
+ 22f2c23d07f7eb43ebdb470e35493ebbadfdc447bd4b983623703767728974b6
+ 000000000052b7d2dcc80cd2e4000000
+ f9640ff8804a3720efc9d2a190cdcac87011b6eb2bff9bcda6e15400ec76d8b0
+ d6a78e49f87bb5e019c4013144eafe3102e713eadde0bd61b2688ca0d1946a8601a6276fc43beccdf798225b67d65329bcaf3ceb12bc5e17ed542c6f131d8006
+ 00
+ 7865287ae2880e4a
+*/
+
+echo php_c_get_previous_from_block($block);
+echo "\n";
+
+?>
+```
+
+**Return value**
+
+```sh
+F9252D13EC4103CCC6B1F1712C617413ADC741D16A465452CA90C504D9F2C278
+```
+
+**On error**
+
+Throws _MyNanoCEmbeddedException_
+
+<h1>- php_c_get_representative_from_block()</h1>
+
+### Description
+
+Extracts representative with encoded Nano Base32 string or link hex string
+
+```php
+$res = php_c_get_representative_from_block($block, $type, $prefix);
+```
+
+params|type|description
+------|----|-----------
+**_$block_**|binary|Binary Nano block
+**_$type_**|integer|Type 0 for wallet address (with _nano__ or _xrb__ prefixes) or 1 for hex string (link)
+**_$prefix_**|string|(Optional) If ommited, then prefix will be _NANO_PREFIX_ prefix when type is 0. Choose _NANO_PREFIX_ or _XRB_PREFIX_ prefixes
+
+#### Return value
+
+Extracted Nano representative with encoded Base32 or hex string public key
+
+##### Example
+
+```php
+<?php
+
+/*
+ Assuming Nano block below is in $block variable
+ 0000000000000000000000000000000000000000000000000000000000000006
+ 918105963ce5d61ad9d74d294164fac36a077b5e2b53d219e619d5ee3e64e1b0
+ f9252d13ec4103ccc6b1f1712c617413adc741d16a465452ca90c504d9f2c278
+ 22f2c23d07f7eb43ebdb470e35493ebbadfdc447bd4b983623703767728974b6
+ 000000000052b7d2dcc80cd2e4000000
+ f9640ff8804a3720efc9d2a190cdcac87011b6eb2bff9bcda6e15400ec76d8b0
+ d6a78e49f87bb5e019c4013144eafe3102e713eadde0bd61b2688ca0d1946a8601a6276fc43beccdf798225b67d65329bcaf3ceb12bc5e17ed542c6f131d8006
+ 00
+ 7865287ae2880e4a
+*/
+
+echo php_c_get_representative_from_block($block, 0);
+echo "\n";
+echo php_c_get_representative_from_block($block, 1);
+echo "\n";
+echo php_c_get_representative_from_block($block, 0, NANO_PREFIX);
+echo "\n";
+echo php_c_get_representative_from_block($block, 0, XRB_PREFIX);
+
+?>
+```
+
+**Return value**
+
+```sh
+# RETURN VALUE
+nano_1aqkrayihxzdahoxpjrg8o6mxgxfzq46hhcdm1u48w3qexsakx7pzzhjn3fc
+22F2C23D07F7EB43EBDB470E35493EBBADFDC447BD4B983623703767728974B6
+nano_1aqkrayihxzdahoxpjrg8o6mxgxfzq46hhcdm1u48w3qexsakx7pzzhjn3fc
+xrb_1aqkrayihxzdahoxpjrg8o6mxgxfzq46hhcdm1u48w3qexsakx7pzzhjn3fc
+```
+
+**On error**
+
+Throws _MyNanoCEmbeddedException_
+
+    Function [ <internal:mynanoembedded> function php_c_get_signature_from_block ] {
+
+      - Parameters [1] {
+        Parameter #0 [ <required> $block ]
+      }
+    }
+
+<h1>- php_c_get_signature_from_block()</h1>
+
+### Description
+
+Extracts previous hash from Nano Block
+
+```php
+$res = php_c_get_signature_from_block($block);
+```
+
+params|type|description
+------|----|-----------
+**_$block_**|binary|Binary Nano block
+
+#### Return value
+
+Signature of the Nano Block
+
+##### Example
+
+```php
+<?php
+
+/*
+ Assuming Nano block below is in $block variable
+ 0000000000000000000000000000000000000000000000000000000000000006
+ 918105963ce5d61ad9d74d294164fac36a077b5e2b53d219e619d5ee3e64e1b0
+ f9252d13ec4103ccc6b1f1712c617413adc741d16a465452ca90c504d9f2c278
+ 22f2c23d07f7eb43ebdb470e35493ebbadfdc447bd4b983623703767728974b6
+ 000000000052b7d2dcc80cd2e4000000
+ f9640ff8804a3720efc9d2a190cdcac87011b6eb2bff9bcda6e15400ec76d8b0
+ d6a78e49f87bb5e019c4013144eafe3102e713eadde0bd61b2688ca0d1946a8601a6276fc43beccdf798225b67d65329bcaf3ceb12bc5e17ed542c6f131d8006
+ 00
+ 7865287ae2880e4a
+*/
+
+echo php_c_get_signature_from_block($block);
+echo "\n";
+
+?>
+```
+
+**Return value**
+
+```sh
+D6A78E49F87BB5E019C4013144EAFE3102E713EADDE0BD61B2688CA0D1946A8601A6276FC43BECCDF798225B67D65329BCAF3CEB12BC5E17ED542C6F131D8006
+```
+
+**On error**
+
+Throws _MyNanoCEmbeddedException_
 
 **Documentation on progress ...**
 
