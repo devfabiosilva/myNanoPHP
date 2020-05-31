@@ -12,7 +12,8 @@ import {
     BRAINWALLET_RESPONSE, 
     MY_NANO_PHP_ERROR, 
     NANO_KEY_PAIR, 
-    my_wallet 
+    my_wallet, 
+    WALLET_FROM
 
 } from '../utils/wallet_interface';
 
@@ -26,15 +27,17 @@ export function Brainwallet(props: any) {
 
         let brainwallet: any = document.getElementById("word-phrases-id");
         let salt: any = document.getElementById("salt-id");
+        let braiwallet_value: string;
+        let salt_value: string
 
-        if (brainwallet.value.trim() === "") {
+        if ((braiwallet_value = brainwallet.value.trim()) === "") {
 
             setWarningMsg( props.language.msg_brainwallet_empty );
             return;
 
         }
 
-        if (salt.value.trim() === "" ) {
+        if ((salt_value = salt.value.trim()) === "") {
 
             setWarningMsg( props.language.msg_salt_empty );
             return;
@@ -44,7 +47,7 @@ export function Brainwallet(props: any) {
         if (warningMsg!=="")
             setWarningMsg("");
 
-        my_nano_php_open_brainwallet(brainwallet.value, salt.value).then(
+        my_nano_php_open_brainwallet(braiwallet_value, salt_value).then(
             (result) => {
 
                 setWarningMsg(
@@ -60,6 +63,7 @@ export function Brainwallet(props: any) {
 
                         props.wallet_public_key(
                             {
+                                origin: WALLET_FROM.FROM_BRAINWALLET,
                                 public_key: (seed2keypair.key_pair as NANO_KEY_PAIR).public_key,
                                 wallet_number: (seed2keypair.key_pair as NANO_KEY_PAIR).wallet_number,
                                 wallet: (seed2keypair.key_pair as NANO_KEY_PAIR).wallet

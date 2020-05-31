@@ -1,7 +1,15 @@
 import { NANO_WALLET_ACTIONS } from '../actions';
-import { my_wallet } from '../utils/wallet_interface';
+import { my_wallet, WALLET_FROM } from '../utils/wallet_interface';
 
-export function wallet(state: my_wallet = {public_key: ""}, action: any) {
+export function wallet(
+    state: my_wallet = {
+
+        origin: WALLET_FROM.SELECT_OPTION,
+        public_key: ""
+
+    }, 
+    action: any
+) {
 
     switch (action.type) {
 

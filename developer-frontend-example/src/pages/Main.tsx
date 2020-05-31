@@ -1,24 +1,59 @@
 import React from 'react';
 import { connect } from 'react-redux';
-//import OpenEncryptedWalletFile from '../components/openencfile';
-import { NANO_KEY_PAIR } from '../utils/wallet_interface';
+import OpenEncryptedWalletFile from '../components/openencfile';
+import {
+
+    NANO_KEY_PAIR,
+    WALLET_FROM,
+    my_wallet
+
+} from '../utils/wallet_interface';
+
 import Wallet from '../components/wallet';
 import Brainwallet from '../components/brainwallet';
+import OpenSeed from '../components/openseed';
+import SelectWallet from '../components/walletoption';
 
 //dom 2020 05 24 20:30
 export function Main(props: any) {
 
     if ((props.nano_wallet_state as NANO_KEY_PAIR).public_key === "")
-        return (
-            <div>
-                <Brainwallet />
-            </div>
-        )
+        switch ((props.nano_wallet_state as my_wallet).origin) {
+
+            case WALLET_FROM.FROM_SEED:
+                return (
+                    <OpenSeed />
+                );
+
+            case WALLET_FROM.FROM_BIP39:
+                return (
+                    <div>In development ...</div>
+                );
+
+            case WALLET_FROM.FROM_ENCRYPTED_FILE:
+                return (
+                    <OpenEncryptedWalletFile />
+                );
+
+            case WALLET_FROM.FROM_GENERATING_SEED:
+                return (
+                    <div>Generating seed in development ...</div>
+                )
+
+            case WALLET_FROM.FROM_BRAINWALLET:
+                return (
+                    <Brainwallet />
+                );
+            
+            default:
+                return (
+                    <SelectWallet />
+                );
+
+        }
     else
         return (
-            <div>
-                <Wallet />
-            </div>
+            <Wallet />
         )
 
 }

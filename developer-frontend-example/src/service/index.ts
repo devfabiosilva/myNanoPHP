@@ -1,34 +1,25 @@
 import axios from 'axios';
 
 import {
+
     NANO_NODE_URL
+
 } from '../utils/secret';
-import { NANO_PREFIX } from '../utils';
+
+import {
+
+    NANO_PREFIX
+
+} from '../utils';
+
 import { 
 
     PUBLIC_KEY2ADDRESS, 
     MY_NANO_PHP_ERROR, 
-    BRAINWALLET_RESPONSE 
+    BRAINWALLET_RESPONSE, 
+    MY_NANO_PHP_SEED2KEYPAIR
 
 } from '../utils/wallet_interface';
-
-export interface MY_NANO_PHP_SEED2KEYPAIR {
-    error: string|number,
-    reason: string,
-    key_pair: {
-        private_key: string,
-        public_key: string,
-        wallet_number: number|string,
-        wallet: string
-    }
-}
-
-export interface MY_NANO_PHP_PK2ADDRESS {
-    error: string|number,
-    reason: string,
-    wallet: string,
-    public_key: string
-}
 
 const MY_NANO_PHP_URL = 'http://localhost';
 

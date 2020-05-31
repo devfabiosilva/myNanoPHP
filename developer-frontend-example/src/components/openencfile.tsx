@@ -6,7 +6,9 @@ import {
 
   MY_NANO_PHP_ERROR, 
   PUBLIC_KEY2ADDRESS, 
-  my_wallet
+  my_wallet,
+  WALLET_FROM,
+  MY_NANO_PHP_SEED2KEYPAIR
 
 } from '../utils/wallet_interface';
 
@@ -15,13 +17,12 @@ import {
   my_nano_php_open_encrypted_seed,
   my_nano_php_seed2keypair,
   my_nano_php_public_key2address,
-  MY_NANO_PHP_SEED2KEYPAIR
 
 } from '../service';
 
 export function OpenEncryptedWalletFile(props: any) {
 
-  function teste(e: any) {
+  function loadFile() {
 
     let password:any = document.getElementById('file-password');
     let reader = new FileReader();
@@ -43,6 +44,7 @@ export function OpenEncryptedWalletFile(props: any) {
 
                   props.wallet_public_key(
                     {
+                      origin: WALLET_FROM.FROM_ENCRYPTED_FILE,
                       wallet: (wallet_address as PUBLIC_KEY2ADDRESS).wallet,
                       public_key: (key_pair as MY_NANO_PHP_SEED2KEYPAIR).key_pair.public_key,
                       wallet_number: 0
@@ -81,31 +83,35 @@ export function OpenEncryptedWalletFile(props: any) {
   return (
     <div>
       <input 
+
         type="file" 
         id="file-uploader-id"
-        onChange={ () => teste('')}
+        onChange={ () => loadFile()}
+
       />
       <input 
+
         type="password" 
         id="file-password" 
-        placeholder="Type your password to open file"
+        placeholder={ props.language.type_your_password }
+
       />
       <button
         onClick={ () => openFile()}
       >
-        Clique para abrir arq criptografado
+        { props.language.open_enc_file }
       </button>
     </div>
   );
 }
 
 const mapStateToProps = (state: any, ownProps: any) => ({
-  nano_wallet: state.wallet
+  nano_wallet: state.wallet,
+  language: state.lang
 });
 
 const mapDispatchToProps = (dispatch: any, ownProps: any) => ({
-  wallet_public_key: (public_key: my_wallet) => dispatch(setPublicKey(public_key)),
-
+  wallet_public_key: (public_key: my_wallet) => dispatch(setPublicKey(public_key))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(OpenEncryptedWalletFile);

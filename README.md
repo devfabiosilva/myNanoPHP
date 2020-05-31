@@ -1731,13 +1731,6 @@ Throws _MyNanoCEmbeddedException_
 
 - _php_c_nano_proof_of_work()_
 
-    Function [ <internal:mynanoembedded> function php_c_get_entropy_name ] {
-
-      - Parameters [1] {
-        Parameter #0 [ <required> $entropy ]
-      }
-    }
-
 <h1>- php_c_get_entropy_name()</h1>
 
 ### Description

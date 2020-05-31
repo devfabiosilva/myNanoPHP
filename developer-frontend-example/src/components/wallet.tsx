@@ -17,6 +17,7 @@ import { setMyWallet } from '../actions';
 import { my_wallet } from '../utils/wallet_interface';
 
 export function Wallet(props: any) {
+
   const [balance, setBalance] = useState("");
   const [pendingAccount, setPendingAccount ] = useState("");
 
@@ -66,8 +67,6 @@ export function Wallet(props: any) {
       props
     ]
   );
-
-
 
   return (
     <div className="wallet-container">
