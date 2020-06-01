@@ -2218,7 +2218,174 @@ TRUE
 **On error**
 
 Throws _MyNanoCEmbeddedException_
-test
+
+<h1>- php_c_nano_proof_of_work()</h1>
+
+### Description
+
+Calculates a Proof of Work of a given hash with multithread support
+
+```php
+$res = php_c_nano_proof_of_work($hash, $n_thr, $threshold);
+```
+
+params|type|description
+------|----|-----------
+**_$hash_**|string|Hash to be computed
+**_$n_thr_**|string|Number of CPU threads
+**_$threshold_**|string|(Optional) Threshold. If ommitted then _DEFAULT_NANO_POW_THRESHOLD = 0xffffffc000000000_ is used
+
+#### Return value
+
+Calculated Proof of Work of the hash in JSON string format
+
+##### Example 1
+
+```sh
+php -r "echo php_c_nano_proof_of_work('4e5e494fa316ffc82b8252b23524f1433639858267d641c1217059dc4403e045', 4);"
+```
+
+**Return value**
+
+```sh
+{
+
+   "pow":"0xfdbf88e2507dc654",
+   "threshold":"0xffffffc000000000",
+   "multiplier":"1.000000000000000"
+
+}
+```
+
+##### Example 2
+
+```sh
+php -r "echo php_c_nano_proof_of_work('4e5e494fa316ffc82b8252b23524f1433639858267d641c1217059dc4403e045', 4, '0xfffffff000000000');"
+```
+
+**Return value**
+
+```sh
+{
+
+   "pow":"0xa03503b1bebcc2fb",
+   "threshold":"0xfffffff000000000",
+   "multiplier":"4.000000000000000"
+
+}
+```
+
+**On error**
+
+Throws _MyNanoCEmbeddedException_
+
+<h1>- php_c_nano_seed_to_bip39()</h1>
+
+### Description
+
+Parses a Nano SEED to Bip39 mnemonic
+
+```php
+$res = php_c_nano_seed_to_bip39($seed, $dictionary_path);
+```
+
+params|type|description
+------|----|-----------
+**_$seed_**|string|Nano SEED to be parsed
+**_$dictionary_path_**|string|Path and name of the dictionary *.dic
+
+#### Return value
+
+Bip39 encoded string
+
+##### Example
+
+```sh
+php -r "echo php_c_nano_seed_to_bip39('27e990765dfa506201a0ba85288efd33502864d18e42cb0873fe3a3dc21a7132', '/var/www/html/dictionary.dic');"
+```
+
+**Return value**
+
+```sh
+child erode budget room pink country alley blanket lunch dutch satisfy grit action crash economy sign slam drum zebra inner switch artwork shadow extra
+```
+
+**On error**
+
+Throws _MyNanoCEmbeddedException_
+
+<h1>- php_c_nano_verify_work()</h1>
+
+### Description
+
+Parses a Nano SEED to Bip39 mnemonic
+
+```php
+$res = php_c_nano_verify_work($hash, $work, $threshold);
+```
+
+params|type|description
+------|----|-----------
+**_$hash_**|string|Nano SEED to be parsed
+**_$work_**|string|Path and name of the dictionary *.dic
+**_$threshold_**|string|(Optional) Threshold. If ommitted then _DEFAULT_NANO_POW_THRESHOLD = 0xffffffc000000000_ is used
+
+#### Return value
+
+_TRUE_ is work is valid or _FALSE_ is is invalid
+
+##### Example 1
+
+```sh
+php -r "echo (php_c_nano_verify_work('4e5e494fa316ffc82b8252b23524f1433639858267d641c1217059dc4403e045', '0xfdbf88e2507dc654', '0xfffffffc00000000'))?'TRUE':'FALSE';"
+```
+
+**Return value**
+
+```sh
+FALSE
+```
+
+##### Example 2
+
+```sh
+php -r "echo (php_c_nano_verify_work('4e5e494fa316ffc82b8252b23524f1433639858267d641c1217059dc4403e045', '0xfdbf88e2507dc654'))?'TRUE':'FALSE';"
+```
+
+**Return value**
+
+```sh
+TRUE
+```
+
+##### Example 2
+
+```sh
+php -r "echo (php_c_nano_verify_work('4e5e494fa316ffc82b8252b23524f1433639858267d641c1217059dc4403e045', '0xfdbf88e2507dc654', '0xfffffffc00000000'))?'TRUE':'FALSE';"
+```
+
+**Return value**
+
+```sh
+TRUE
+```
+
+##### Example 3
+
+```sh
+php -r "echo (php_c_nano_verify_work('4e5e494fa316ffc82b8252b23524f1433639858267d641c1217059dc4403e045', '0x54bc660196cd155a', '0xfffffffc00000000'))?'TRUE':'FALSE';"
+```
+
+**Return value**
+
+```sh
+TRUE
+```
+
+**On error**
+
+Throws _MyNanoCEmbeddedException_
+
 **Documentation on progress ...**
 
 ## SUMMARY: Constants, Functions and Classes
