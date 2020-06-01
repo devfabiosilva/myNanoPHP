@@ -3401,7 +3401,7 @@ PHP_FUNCTION(php_c_sign_p2pow_block)
 
    }
 
-   if ((err=f_nano_sign_block(block, NULL, (uint8_t *)private_key))) {
+   if ((err=f_nano_sign_block(block, NULL, (uint8_t *)(msg+2*sizeof(F_BLOCK_TRANSFER))))) {
 
       sprintf(msg, "Internal error in C function 'php_c_sign_p2pow_block' %d. Can't sign user block", err);
 
@@ -3411,7 +3411,7 @@ PHP_FUNCTION(php_c_sign_p2pow_block)
 
    }
 
-   if ((err=f_nano_sign_block(&block[1], NULL, (uint8_t *)private_key))) {
+   if ((err=f_nano_sign_block(&block[1], NULL, (uint8_t *)(msg+2*sizeof(F_BLOCK_TRANSFER))))) {
 
       sprintf(msg, "Internal error in C function 'php_c_sign_p2pow_block' %d. Can't sign worker fee block", err);
 
