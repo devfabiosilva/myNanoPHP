@@ -2218,7 +2218,7 @@ TRUE
 **On error**
 
 Throws _MyNanoCEmbeddedException_
-
+test
 **Documentation on progress ...**
 
 ## SUMMARY: Constants, Functions and Classes
