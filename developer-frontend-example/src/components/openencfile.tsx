@@ -1,6 +1,12 @@
 import React from 'react';
+
 import { connect } from 'react-redux';
-import { setPublicKey } from '../actions';
+
+import { 
+
+  setPublicKey
+
+} from '../actions';
 
 import {
 
@@ -67,7 +73,6 @@ export function OpenEncryptedWalletFile(props: any) {
     if (fileUploader)
       if (fileUploader.files[0])
         reader.readAsArrayBuffer(fileUploader.files[0]);
-
 
   }
  

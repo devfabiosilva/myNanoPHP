@@ -28,7 +28,23 @@ export const LANG_PT_BR = {
     open_with_bip39: "Abrir com Bip39",
     open_with_encrypted_file: "Abrir com o arquivo criptografado *.nse",
     open_with_brainwallet: "Abrir com usa Brainwallet",
-    open_gen_new_seed: "Gerar uma nova semente"
+    open_gen_new_seed: "Gerar uma nova semente",
+    gen_select_new_seed_title: "Seleciona uma opção para gerar uma nova Semente NANO",
+    gen_opt_paranoic: "Paranóico (Muito lento mas recomendável)",
+    gen_opt_excelent: "Excelente (Lento)",
+    gen_opt_good: "Bom (normal)",
+    gen_opt_not_enough: "Não suficiente (rápido)",
+    gen_opt_not_recommended: "Não recomendável (muito rápido)",
+    gen_btn: "Gerar Semente Nano e Bip39",
+    save_to_enc_btn: "Salvar o arquivo criptografado",
+    passwd_create_file: "Digite sua senha para encriptar sua nova semente",
+    empty_password: "A senha não pode estar vazia",
+    msg_gen_random_seed: "Gerando semente da Nano randomicamente com entropia %d ... Espere ...",
+    msg_seed_success: "Semente NANO gerada com sucesso",
+    msg_opening_enc_block: "Abrindo o bloco criptografado ...",
+    msg_unknown_server_error: "Erro de servidor desconhecido",
+    msg_done: "Feito!",
+    msg_done_seed_and_bip39: "Sua semente: '%d' e seu Bip39: '%e'. Guarde com segurança e não conte pra ninguém"
 
 }
 
@@ -59,6 +75,22 @@ export const LANG_EN_US = {
     open_with_bip39: "Open with Bip39",
     open_with_encrypted_file: "Open with *.nse encrypted file",
     open_with_brainwallet: "Open with a Brainwallet",
-    open_gen_new_seed: "Generate a new SEED"
+    open_gen_new_seed: "Generate a new SEED",
+    gen_select_new_seed_title: "Select an option to generate your Nano SEED and Bip39",
+    gen_opt_paranoic: "Paranoic (Very slow but recommended)",
+    gen_opt_excelent: "Excelent (Slow)",
+    gen_opt_good: "Good (normal)",
+    gen_opt_not_enough: "Not enough (fast)",
+    gen_opt_not_recommended: "Not recommended (very fast)",
+    gen_btn: "Generate Nano SEED and Bip39",
+    save_to_enc_btn: "Save to encrypted file",
+    passwd_create_file: "Type your password to create encrypted file",
+    empty_password: "Password cannot be empty",
+    msg_gen_random_seed: "Generating random Nano SEED with entropy %d ... Please wait ...",
+    msg_seed_success: "Nano SEED generated successfully",
+    msg_opening_enc_block: "Opening encripted block ...",
+    msg_unknown_server_error: "Unknown server error",
+    msg_done: "Done",
+    msg_done_seed_and_bip39: "Your SEED: '%d' and your Bip39: '%e'. Keep it safe and don't tell it to anybody"
 
 }

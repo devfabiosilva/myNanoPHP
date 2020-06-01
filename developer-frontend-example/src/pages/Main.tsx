@@ -13,6 +13,7 @@ import Wallet from '../components/wallet';
 import Brainwallet from '../components/brainwallet';
 import OpenSeed from '../components/openseed';
 import SelectWallet from '../components/walletoption';
+import GenerateSeed from '../components/generate_seed';
 
 //dom 2020 05 24 20:30
 export function Main(props: any) {
@@ -37,7 +38,7 @@ export function Main(props: any) {
 
             case WALLET_FROM.FROM_GENERATING_SEED:
                 return (
-                    <div>Generating seed in development ...</div>
+                    <GenerateSeed />
                 )
 
             case WALLET_FROM.FROM_BRAINWALLET:

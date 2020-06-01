@@ -17,7 +17,8 @@ import {
     PUBLIC_KEY2ADDRESS, 
     MY_NANO_PHP_ERROR, 
     BRAINWALLET_RESPONSE, 
-    MY_NANO_PHP_SEED2KEYPAIR
+    MY_NANO_PHP_SEED2KEYPAIR,
+    GENERATED_ENCRYPTED_SEED
 
 } from '../utils/wallet_interface';
 
@@ -143,6 +144,19 @@ export async function my_nano_php_open_brainwallet(text: string, salt:string)
     return new Promise((res, error) => {
         
         return (data.error === "0")?res(data as BRAINWALLET_RESPONSE):error(data as MY_NANO_PHP_ERROR);
+
+    });
+}
+
+export async function my_nano_php_generate_encrypted_seed(entropy: string, password: string)
+{
+    let data: GENERATED_ENCRYPTED_SEED|MY_NANO_PHP_ERROR
+
+    data = await my_nano_php_api(`command=gen_seed_to_encrypted_stream&entropy=${entropy}&password=${password}`, "my_nano_php_generate_encrypted_seed");
+
+    return new Promise((res, error) => {
+
+        return (data.error === "0")?res(data):error(data);
 
     });
 }

@@ -19,6 +19,9 @@ $MIME_TYPE="Content-Type: application/json; charset=utf-8";
 
 if ($_SERVER['REQUEST_METHOD']==='POST') {
 
+    header('Access-Control-Allow-Origin: *');
+    header('Access-Control-Allow-Methods: GET, POST');
+
     $cmd=$_POST['command'];
 
     if (!isset($cmd)) {
@@ -2882,7 +2885,7 @@ if ($_SERVER['REQUEST_METHOD']==='POST') {
             $encrypted_hex=bin2hex($encrypted_bin);
 
             header($MIME_TYPE);
-            echo '{"encrypted_seed":"'.$encrypted_hex.'"}';
+            echo '{"error":"0","reason":"Success","encrypted_seed":"'.$encrypted_hex.'"}';
 
         } catch (Exception $e) {
 

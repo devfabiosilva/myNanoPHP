@@ -9,6 +9,21 @@ export const WALLET_FROM = {
 
 }
 
+export const ENTROPY_TYPE = {
+
+    PARANOIC: "paranoic",
+    EXCELENT: "excelent",
+    GOOD: "good",
+    NOT_ENOUGH: "not_enough",
+    NOT_RECOMMENDED: "not_recommended"
+
+}
+
+export interface SEED_AND_BIP39 {
+    seed?: string,
+    bip39?: string
+}
+
 export interface MY_NANO_PHP_SEED2KEYPAIR {
     error: string|number,
     reason: string,
@@ -46,6 +61,7 @@ export interface my_wallet {
     pending?: string,
     balance?: string,
     bip39?: string  //SECURITY: Fire and forget. Extract public key from (encrypted file|brainwallet|Bip39) and forget private key immediately
+    encrypted_block?: string
 
 }
 
@@ -79,4 +95,19 @@ export interface BRAINWALLET_RESPONSE {
       warning_msg: string
     },
     warning: string
+}
+
+export interface GENERATED_ENCRYPTED_SEED {
+    error: string|number,
+    reason: string,
+    encrypted_seed: string
+}
+
+export interface OPEN_ENCRYPTED_SEED_RESPONSE {
+    error: string|number,
+    reason: string,
+    result: {
+        seed: string,
+        bip39: string
+    }
 }
