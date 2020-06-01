@@ -2027,13 +2027,6 @@ xrb_1aqkrayihxzdahoxpjrg8o6mxgxfzq46hhcdm1u48w3qexsakx7pzzhjn3fc
 
 Throws _MyNanoCEmbeddedException_
 
-    Function [ <internal:mynanoembedded> function php_c_get_signature_from_block ] {
-
-      - Parameters [1] {
-        Parameter #0 [ <required> $block ]
-      }
-    }
-
 <h1>- php_c_get_signature_from_block()</h1>
 
 ### Description
@@ -2080,6 +2073,146 @@ echo "\n";
 
 ```sh
 D6A78E49F87BB5E019C4013144EAFE3102E713EADDE0BD61B2688CA0D1946A8601A6276FC43BECCDF798225B67D65329BCAF3CEB12BC5E17ED542C6F131D8006
+```
+
+**On error**
+
+Throws _MyNanoCEmbeddedException_
+
+<h1>- php_c_get_work_from_block()</h1>
+
+### Description
+
+Extract calculated work from Nano Block
+
+```php
+$res = php_c_get_work_from_block($block);
+```
+
+params|type|description
+------|----|-----------
+**_$block_**|binary|Binary Nano block
+
+#### Return value
+
+Calculated work from Nano Block
+
+##### Example
+
+```php
+<?php
+
+/*
+ Assuming Nano block below is in $block variable
+ 0000000000000000000000000000000000000000000000000000000000000006
+ 918105963ce5d61ad9d74d294164fac36a077b5e2b53d219e619d5ee3e64e1b0
+ f9252d13ec4103ccc6b1f1712c617413adc741d16a465452ca90c504d9f2c278
+ 22f2c23d07f7eb43ebdb470e35493ebbadfdc447bd4b983623703767728974b6
+ 000000000052b7d2dcc80cd2e4000000
+ f9640ff8804a3720efc9d2a190cdcac87011b6eb2bff9bcda6e15400ec76d8b0
+ d6a78e49f87bb5e019c4013144eafe3102e713eadde0bd61b2688ca0d1946a8601a6276fc43beccdf798225b67d65329bcaf3ceb12bc5e17ed542c6f131d8006
+ 00
+ 7865287ae2880e4a
+*/
+
+echo php_c_get_work_from_block($block);
+echo "\n";
+
+?>
+```
+
+**Return value**
+
+```sh
+0x4a0e88e27a286578
+```
+
+**On error**
+
+Throws _MyNanoCEmbeddedException_
+
+<h1>- php_c_library_info()</h1>
+
+### Description
+
+Information about _myNanoPHP C library_ in JSON string format
+
+```php
+$res = php_c_library_info();
+```
+
+#### Return value
+
+Info about _myNanoPHP C Library_ in JSON string format
+
+<h1>- php_c_license()</h1>
+
+### Description
+
+Prints MIT license clausule
+
+```php
+$res = php_c_license();
+```
+
+#### Return value
+
+MIT license text string
+
+<h1>- php_c_nano_check_sig()</h1>
+
+### Description
+
+Verifies if a signature of a hash is valid using Nano wallet (_xrb__ or _nano__) or public key
+
+```php
+$res = php_c_nano_check_sig($singature, $message, $nano_pk);
+```
+
+params|type|description
+------|----|-----------
+**_$signature_**|string|Signature of the message
+**_$message_**|string|Hash of the message in Blake2b
+**_$nano_pk_**|string|Base32 encoded Nano wallet or Nano public key
+
+#### Return value
+
+_True_ if signature is valid or _False_ if signature is invalid
+
+##### Example 1
+
+```sh
+php -r "echo (php_c_nano_check_sig('3FFD1927EFB8747174A4124057AEE94A58C9304F123C0C7921A8F102F1B5C53C2B1A30E078C9533A01B95D7E9B78F4063E7D4F9B696828FE673B4422AA62E604', 'D572DC8E6F179AF1BB223D8946AFC6411EC35D7CD3176A8E2DA3CC2FC41DA30B', 'nano_3xemzomy4atzmq5u55mzzixqw9zxykyeyeiqia7rb1xy1saufpr8wzder1xh'))?'TRUE':'FALSE';"
+```
+
+**Return value**
+
+```sh
+TRUE
+```
+
+##### Example 2
+
+```sh
+php -r "echo (php_c_nano_check_sig('8235D51B5E80B695A93E11985E69279A0ED0024941469D8F447E701D97A8F612320A0D784A4ACBC162DAEDD682797F23A4FADAD78093356F89A2FF57C7B9A400', 'CAC6B8707B3978771C9044E91C430172400852374D2A3EE65FE08CB259F69233', 'xrb_1qpmofer8nymj1mwmegxfjhqqpcwwm78uiqtshrrpkoij47b8apdc4y5apor'))?'TRUE':'FALSE';"
+```
+
+**Return value**
+
+```sh
+TRUE
+```
+
+##### Example 3
+
+```sh
+php -r "echo (php_c_nano_check_sig('784AD4EF466745ACE911F0A5103DB030B6A505912284C2BC03E852A68BE16E16DBEAD6CCE2D1EB4169D0DB188430424870A2AFD0098014F3E282172B4AB7E808', 'AAAE2E008893C35CC1C53FD7643AA4E851F6BA332A314FE31D1B345066F7E384', '511AC43730543F18C07836BB2F61032B16EDA46F10779CA0F330C9B663881060'))?'TRUE':'FALSE';"
+```
+
+**Return value**
+
+```sh
+TRUE
 ```
 
 **On error**
