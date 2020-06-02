@@ -3069,6 +3069,15 @@ Extension [ <persistent> extension #15 mynanoembedded version 1.0 ] {
         Parameter #1 [ <optional> $read_from ]
       }
     }
+    Function [ <internal:mynanoembedded> function php_c_bip39_to_nano_key_pair ] {
+
+      - Parameters [4] {
+        Parameter #0 [ <required> $bip39 ]
+        Parameter #1 [ <required> $dictionary_path ]
+        Parameter #2 [ <required> $wallet_number ]
+        Parameter #3 [ <optional> $prefix ]
+      }
+    }
   }
 
   - Classes [1] {

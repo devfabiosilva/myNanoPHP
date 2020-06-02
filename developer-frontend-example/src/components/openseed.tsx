@@ -10,7 +10,7 @@ import {
 
 } from '../utils/wallet_interface';
 
-export function OpenSeed(props: any) {
+export function OpenSeed(props: any, bip39: any) {
 
     function openNanoSeed() {
 

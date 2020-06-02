@@ -1086,6 +1086,49 @@ if ($_SERVER['REQUEST_METHOD']==='POST') {
 
     }
 
+    if ($cmd==="bip39_2_key_pair") {
+
+       $bip39=$_POST['bip39'];
+
+       if (!isset($bip39)) {
+           http_response_code(404);
+           header($MIME_TYPE);
+           echo '{"error":"125","reason":"Missing Bip39 string"}';
+           exit(0);
+
+       }
+
+       $wallet_number=$_POST['wallet_number'];
+
+       if (!isset($wallet_number)) {
+           http_response_code(404);
+           header($MIME_TYPE);
+           echo '{"error":"126","reason":"Missing Bip39 wallet number"}';
+           exit(0);
+
+       }
+
+       try {
+
+           $key_pair=(isset($_POST['prefix']))?php_c_bip39_to_nano_key_pair($bip39, DICTIONARY_PATH, $wallet_number, $_POST['prefix']):
+              php_c_bip39_to_nano_key_pair($bip39, DICTIONARY_PATH, $wallet_number);
+
+           echo json_encode(array(
+               "error"=>"0",
+               "reason"=>"Success",
+               "key_pair"=>json_decode($key_pair)
+           ));
+            
+       } catch (Exception $e) {
+           http_response_code(500);
+           header($MIME_TYPE);
+           echo '{"error":"500", "reason":"'.$e->getMessage().' when extracting keypair from Bip39.'.$e->getCode().'"}';
+       }
+
+       exit(0);
+
+    }
+
     if ($cmd==="add") {
 
         $valueA=$_POST['valuea'];

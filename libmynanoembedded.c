@@ -289,6 +289,13 @@ ZEND_BEGIN_ARG_INFO_EX(My_NanoCEmbedded_ValidEncryptedSeed, 0, 0, 1)
     ZEND_ARG_INFO(0, read_from)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_INFO_EX(My_NanoCEmbedded_Bip39ToNanoKeyPair, 0, 0, 3)
+    ZEND_ARG_INFO(0, bip39)
+    ZEND_ARG_INFO(0, dictionary_path)
+    ZEND_ARG_INFO(0, wallet_number)
+    ZEND_ARG_INFO(0, prefix)
+ZEND_END_ARG_INFO()
+
 static zend_class_entry *f_exception_ce;
 
 static zend_object *f_exception_create_object(zend_class_entry *ce) {
@@ -548,6 +555,7 @@ static const zend_function_entry mynanoembedded_functions[] = {
     PHP_FE(php_c_gen_seed_to_encrypted_stream, My_NanoCEmbedded_SeedToEncryptedStream)
     PHP_FE(php_c_gen_encrypted_stream_to_seed, My_NanoCEmbedded_EncryptedStringToSeedAndBip39)
     PHP_FE(php_c_is_valid_nano_seed_encrypted, My_NanoCEmbedded_ValidEncryptedSeed)
+    PHP_FE(php_c_bip39_to_nano_key_pair, My_NanoCEmbedded_Bip39ToNanoKeyPair)
     PHP_FE_END
 
 };
@@ -2614,6 +2622,215 @@ PHP_FUNCTION(php_c_add_sub_balance)
 
 }
 
+int seed_to_nano_key_pair_util(
+   char *msg,
+   unsigned char *seed,
+   unsigned char *wallet_number_str,
+   size_t wallet_number_len,
+   unsigned char *prefix,
+   const char *function_name)
+{
+//util function msg must be at least 768 bytes long !!!
+// IF seed is NOT in HEX string then seed is stored at msg+128 and seed=NULL
+   int err;
+   char *p;
+   uint64_t wallet_number;
+
+    if (wallet_number_len>13) {
+
+       sprintf(msg, "Internal error in C function '%s' 15602 wrong wallet number size '%lu'", function_name, (unsigned long int)wallet_number_len);
+
+       return 15602;
+
+    }
+
+    if (!wallet_number_len) {
+
+      sprintf(msg, "Internal error in C function '%s' 15603 wallet number can not be an empty string", function_name);
+
+      return 15603;
+
+   }
+
+   if ((err=f_convert_to_long_int_std((unsigned long int *)&wallet_number, (char *)wallet_number_str, wallet_number_len+1))) {
+
+      sprintf(msg, "Internal error in C function 'f_convert_to_long_int_std' %d. Can't convert unsigned long int to string '%s'", err, function_name);
+
+      return err;
+
+   }
+
+   if (wallet_number>((uint64_t)((uint32_t)-1))) {
+
+      sprintf(msg, "Internal error in C function '%s' 15604 wallet number can't be greater than (2^32-1). Value parsed '%lu'", function_name,
+         (unsigned long int)wallet_number);
+
+      return 15604;
+
+   }
+
+   if (is_nano_prefix((const char *)prefix, NANO_PREFIX))
+      goto seed_to_nano_key_pair_util_STEP1;
+
+   if (is_nano_prefix((const char *)prefix, XRB_PREFIX))
+      goto seed_to_nano_key_pair_util_STEP1;
+
+   sprintf(msg, "Internal error in C function '%s' 15601. Unknown Nano prefix '%s'", function_name, (const char *)prefix);
+
+   return 15601;
+
+seed_to_nano_key_pair_util_STEP1:
+
+   p=msg+128;
+
+   if (seed) {
+
+      if ((err=f_str_to_hex((uint8_t *)p, (char *)seed))) {
+
+         sprintf(msg, "Internal error in C function 'f_str_to_hex' %d. Cannot convert hex to string in '%s' function", err, function_name);
+
+         return err;
+
+      }
+
+   }
+
+   if ((err=f_seed_to_nano_wallet((uint8_t *)msg, (uint8_t *)(msg+64), (uint8_t *)p, (uint32_t)wallet_number))) {
+
+      sprintf(msg, "Internal error in C function 'f_seed_to_nano_wallet' %d. Extract Nano Key pair from seed in '%s' function", err, function_name);
+
+      return err;
+
+   }
+
+
+   strcpy(p, "{\"private_key\":\"");
+   strcat(p, f_nano_key_to_str(msg+512, (unsigned char *)msg));
+   strcat(p, "\",\"public_key\":\"");
+   strcat(p, f_nano_key_to_str(msg+512, (unsigned char *)(msg+64)));
+   sprintf(msg+512, "\",\"wallet_number\":\"%u\",\"wallet\":\"", (unsigned int)wallet_number);
+   strcat(p, msg+512);
+
+   if ((err=pk_to_wallet(msg+512, (char *)prefix, (uint8_t *)(msg+64)))) {
+
+      sprintf(msg, "Internal error in C function 'f_seed_to_nano_wallet' %d. Parse Nano Public Key to wallet in '%s' fail", err, function_name);
+
+      return err;
+
+   }
+
+   strcat(p, msg+512);
+   strcat(p, "\"}");
+
+   return 0;
+
+}
+
+PHP_FUNCTION(php_c_bip39_to_nano_key_pair)
+{
+
+   int err;
+   char msg[768];
+   unsigned char *bip39_str, *wallet_number_str, *prefix=NANO_PREFIX, *dictionary_str;
+   size_t bip39_len, wallet_number_len, prefix_len=(sizeof(NANO_PREFIX)-1), dictionary_len;
+
+   if (zend_parse_parameters(ZEND_NUM_ARGS(), "sss|s", &bip39_str, &bip39_len, &dictionary_str, &dictionary_len, &wallet_number_str,
+         &wallet_number_len, &prefix, &prefix_len)==FAILURE) return;
+
+   if (bip39_len>(sizeof(msg)-257)) {
+
+      sprintf(msg, "Internal error in C function 'php_c_bip39_to_nano_key_pair' 19100 overflow Bip39 string size '%lu'", bip39_len);
+
+      zend_throw_exception(f_exception_ce, msg, 19100);
+
+      return;
+
+   }
+
+   if (!bip39_len) {
+
+      sprintf(msg, "Internal error in C function 'php_c_bip39_to_nano_key_pair' 19101. Bip39 can not be empty string");
+
+      zend_throw_exception(f_exception_ce, msg, 19101);
+
+      return;
+
+   }
+
+   if (!dictionary_len) {
+
+      sprintf(msg, "Internal error in C function 'php_c_bip39_to_nano_key_pair' 19102. Mandatory: Filepath");
+
+      zend_throw_exception(f_exception_ce, msg, 19102);
+
+      return;
+
+   }
+
+   strncpy(msg+256, (const char *)bip39_str, sizeof(msg)-256);
+
+   if ((err=f_bip39_to_nano_seed((uint8_t *)(msg+128), msg+256, (char *)dictionary_str))) {
+
+      sprintf(msg, "Internal error in C function 'php_c_bip39_to_nano_key_pair' %d. Cannot parse Bip39 to Nano SEED", err);
+
+      zend_throw_exception(f_exception_ce, msg, (zend_long)err);
+
+   }
+
+   memset(msg+256, 0, sizeof(msg)-256);
+
+   if (err)
+      return;
+
+   if ((err=seed_to_nano_key_pair_util(msg, NULL, wallet_number_str, wallet_number_len, prefix, "php_c_bip39_to_nano_key_pair"))) {
+
+      sprintf(msg, "Internal error in C function 'php_c_bip39_to_nano_key_pair' %d. Cannot parse KeyPair", err);
+
+      zend_throw_exception(f_exception_ce, msg, (zend_long)err);
+
+      return;
+
+   }
+
+   RETURN_STR(strpprintf(384, "%s", msg+128));
+
+}
+
+PHP_FUNCTION(php_c_seed_to_nano_key_pair)
+{
+
+   int err;
+   char msg[768], *p;
+   unsigned char *seed, *wallet_number_str, *prefix=NANO_PREFIX;
+   size_t seed_len, wallet_number_len, prefix_len=sizeof(NANO_PREFIX)-1;
+   uint64_t wallet_number;
+
+   if (zend_parse_parameters(ZEND_NUM_ARGS(), "ss|s", &seed, &seed_len, &wallet_number_str, &wallet_number_len, &prefix, &prefix_len)==FAILURE)
+      return;
+
+   if (seed_len!=64) {
+
+      sprintf(msg, "Internal error in C function 'php_c_seed_to_nano_key_pair' 15600 wrong Nano SEED size '%lu'", (unsigned long int)seed_len);
+
+      zend_throw_exception(f_exception_ce, msg, 15600);
+
+      return;
+
+   }
+
+   if ((err=seed_to_nano_key_pair_util(msg, seed, wallet_number_str, wallet_number_len, prefix, "php_c_seed_to_nano_key_pair"))) {
+
+      zend_throw_exception(f_exception_ce, msg, (zend_long)err);
+
+      return;
+
+   }
+
+   RETURN_STR(strpprintf(384, "%s", msg+128));
+
+}
+
+/*
 PHP_FUNCTION(php_c_seed_to_nano_key_pair)
 {
 
@@ -2735,7 +2952,7 @@ php_c_seed_to_nano_wallet_STEP1:
    RETURN_STR(strpprintf(384, "%s", p));
 
 }
-
+*/
 PHP_FUNCTION(php_c_bip39_to_nano_seed)
 {
    int err;
