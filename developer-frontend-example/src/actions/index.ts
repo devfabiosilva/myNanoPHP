@@ -27,11 +27,3 @@ export function setMyWallet(wallet_param: my_wallet) {
 export function setLanguage(language: number){
     return { type: SET_LANGUAGE, language }
 }
-
-/*
-export function extract_address_from_public_key(address: string) {
-
-    return { type: EXTRACT_ADDRESS_FROM_PUBLIC_KEY, address }
-   
-}
-*/

@@ -2631,6 +2631,239 @@ Finally Hello World
 
 Throws _MyNanoCEmbeddedException_
 
+<h1>- php_c_parse_block_to_json()</h1>
+
+### Description
+
+Parses a Nano block to JSON
+
+```php
+$res = php_c_parse_block_to_json($block);
+```
+
+params|type|description
+------|----|-----------
+**_$block_**|string|Nano block to be parsed to JSON
+
+#### Return value
+
+Formated JSON string
+
+##### Example
+
+Create a file _block2json.php_ and type:
+
+```php
+<?php
+//tue jun 02 2020 01:58 -03 
+
+   /*
+    * EXAMPLE: Parse P2PoW to JSON example
+    */
+
+   echo "STEP1: Create Nano Block to receive 2.281 Nanos (open block) from link 79640F38102A3728EFC9D2A190CDCAC87011B6EB2BFF9BCD10F12405EC76D8C1\n";
+
+   //account_private_key => SECURITY WARNING !!! Private key must be in a safe place. NEVER tell your Private KEY, SEED, Bip39 or Brainwallet to ANYBODY
+   $account_private_key = '19B8423A2D010067C03F88A35836967894009D439FDAE79B29CDEA8B06C0062F97A886ECB1EE8BA6B0E455D1419FBEBA367986810CB3220AE0B9F9A585C86779';
+   /////////////////////////////////////////////////////////// $account_private_key (KEEP IT SAFE) /////////////////////////////////////////////////////////
+
+   $account             = 'nano_37xaiupd5undntrgaogja8huxgjph85a457m6a7g3ghsnp4wisusx1mqkigg';
+   $previous            = 'F9252D12EC2103CAD6B2E7212C617413ADC741D16A465452CA90C504D9F2C278';
+   $representative      = 'nano_1aqkrayihxzdahoxpjrg8o6mxgxfzq46hhcdm1u48w3qexsakx7pzzhjn3fc';
+   $balance             = '16.2300118101';
+   $balance_type        = BALANCE_REAL_STRING;
+   $value_to_send       = '2.281';
+   $value_to_send_type  = VALUE_SEND_RECEIVE_REAL_STRING;
+   $destination         = '79640F38102A3728EFC9D2A190CDCAC87011B6EB2BFF9BCD10F12405EC76D8C1';
+   $direction           = VALUE_TO_RECEIVE;
+
+   try {
+
+      $nano_block = php_c_generate_block(
+
+                       $account,
+                       $previous,
+                       $representative,
+                       $balance,
+                       $balance_type,
+                       $value_to_send,
+                       $value_to_send_type,
+                       $destination,
+                       $direction
+
+                    );
+
+   } catch (Exception $e) {
+
+      echo 'Error code: '.$e->getCode()."\nError message: ".$e->getMessage();
+      exit(1);
+
+   }
+
+   echo "SUCCESS: Nano block created. Signing the block ...\nSTEP 2:\n";
+
+   try {
+
+      $nano_block_signed = php_c_sign_block($nano_block, null, $account_private_key);
+
+   } catch (Exception $e) {
+
+      echo "Error code in 'php_c_sign_block' ".$e->getCode()."Error message: ".$e->getMessage();
+      exit(1);
+
+   }
+
+   echo "SUCCESS\nNano block signed block =>\n";
+   echo bin2hex($nano_block_signed);
+
+   echo "\nSTEP3: Calculating work ...\nIt can take a little longer... Wait ...\n";
+
+   try {
+
+      php_c_calculate_work_from_block($nano_block_signed, 4); // 4 threads
+
+   } catch (Exception $e) {
+
+      echo "Error code in 'php_c_calculate_work_from_block' ".$e->getCode()."Error message: ".$e->getMessage();
+      exit(1);
+
+   }
+
+   echo "SUCCESS\nNano block signed block and with work =>\n";
+   echo bin2hex($nano_block_signed);
+   echo "\nSUCCESS: Work done:\n\nNow parsing to JSON ...\nSTEP 4:\n";
+   echo php_c_parse_block_to_json($nano_block_signed);
+
+   echo "\n\nFinally Hello World\n";
+
+?>
+```
+
+```sh
+php block2json.php
+```
+
+**Return value**
+
+```sh
+STEP1: Create Nano Block to receive 2.281 Nanos (open block) from link 79640F38102A3728EFC9D2A190CDCAC87011B6EB2BFF9BCD10F12405EC76D8C1
+SUCCESS: Nano block created. Signing the block ...
+STEP 2:
+SUCCESS
+Nano block signed block =>
+0000000000000000000000000000000000000000000000000000000000000006
+97a886ecb1ee8ba6b0e455d1419fbeba367986810cb3220ae0b9f9a585c86779
+f9252d12ec2103cad6b2e7212c617413adc741d16a465452ca90c504d9f2c278
+22f2c23d07f7eb43ebdb470e35493ebbadfdc447bd4b983623703767728974b6
+000000e9a44e168ac332b4814c500000
+79640f38102a3728efc9d2a190cdcac87011b6eb2bff9bcd10f12405ec76d8c1
+5de3b33b503cc2eb206bcfd29add24d1e1b6548b5ceafe73f75f5b10948ceb887cfa6779f86f6690b84dfaf4dc8e7fdd3b0639f560cc9b78d01262cd99ee390a
+00
+0000000000000000
+STEP3: Calculating work ...                                                                                                                                                                     
+It can take a little longer... Wait ...                                                                                                                                                         
+SUCCESS
+Nano block signed block and with work =>
+0000000000000000000000000000000000000000000000000000000000000006
+97a886ecb1ee8ba6b0e455d1419fbeba367986810cb3220ae0b9f9a585c86779
+f9252d12ec2103cad6b2e7212c617413adc741d16a465452ca90c504d9f2c278
+22f2c23d07f7eb43ebdb470e35493ebbadfdc447bd4b983623703767728974b6
+000000e9a44e168ac332b4814c500000
+79640f38102a3728efc9d2a190cdcac87011b6eb2bff9bcd10f12405ec76d8c1
+5de3b33b503cc2eb206bcfd29add24d1e1b6548b5ceafe73f75f5b10948ceb887cfa6779f86f6690b84dfaf4dc8e7fdd3b0639f560cc9b78d01262cd99ee390a
+00
+cae98de011f0df7b
+SUCCESS: Work done:
+
+Now parsing to JSON ...
+STEP 4:
+{
+  "action": "process",
+  "json_block": "true",
+  "block": {
+    "type": "state",
+    "account": "nano_37xaiupd5undntrgaogja8huxgjph85a457m6a7g3ghsnp4wisusx1mqkigg",
+    "previous": "F9252D12EC2103CAD6B2E7212C617413ADC741D16A465452CA90C504D9F2C278",
+    "representative": "nano_1aqkrayihxzdahoxpjrg8o6mxgxfzq46hhcdm1u48w3qexsakx7pzzhjn3fc",
+    "balance": "18511011810100000000000000000000",
+    "link": "79640F38102A3728EFC9D2A190CDCAC87011B6EB2BFF9BCD10F12405EC76D8C1",
+    "link_as_account": "nano_1yd63ww31cjq75qwmno3k58wok5i48ugpczzmh8j3wb61qp9fp835zfzanwe",
+    "signature": "5DE3B33B503CC2EB206BCFD29ADD24D1E1B6548B5CEAFE73F75F5B10948CEB887CFA6779F86F6690B84DFAF4DC8E7FDD3B0639F560CC9B78D01262CD99EE390A",
+    "work": "7BDFF011E08DE9CA"
+  }
+}
+
+Finally Hello World
+
+```
+
+**On error**
+
+Throws _MyNanoCEmbeddedException_
+
+**See also**
+
+- _php_c_generate_block()_
+
+<h1>- php_c_public_key_to_nano_wallet()</h1>
+
+### Description
+
+Parses a public key to Base32 encoded string (Nano Wallet) with prefix
+
+```php
+$res = php_c_public_key_to_nano_wallet($public_key, $nano_prefix);
+```
+
+params|type|description
+------|----|-----------
+**_$public_key_**|string|Public key of the block
+**_$nano_prefix_**|string|(Optional) Prefix. If ommited then Prefix will be _nano__
+
+#### Return value
+
+Nano wallet (Base32 encoded string with selected prefix);
+
+##### Example 1
+
+```sh
+php -r "echo php_c_public_key_to_nano_wallet('79640F38102A3728EFC9D2A190CDCAC87011B6EB2BFF9BCD10F12405EC76D8C1');"
+```
+
+**Return value**
+
+```sh
+nano_1yd63ww31cjq75qwmno3k58wok5i48ugpczzmh8j3wb61qp9fp835zfzanwe
+```
+
+##### Example 2
+
+```sh
+php -r "echo php_c_public_key_to_nano_wallet('F9252D12EC2103CAD6B2E7212C617413ADC741D16A465452CA90C504D9F2C278', NANO_PREFIX);"
+```
+
+**Return value**
+
+```sh
+nano_3yb77nbgraa5sddd7ss37jiqa6xfrx1x4tk8cjbeo6871mez7imr9fr9x4j6
+```
+
+##### Example 3
+
+```sh
+php -r "echo php_c_public_key_to_nano_wallet('98B5E79DBC175AEFB986036AB2E4ECF3E816B8854A2D53CE80A37A648F5AEC0D', XRB_PREFIX);"
+```
+
+**Return value**
+
+```sh
+xrb_387owygur7ttxywre1ucpdkgswza4twackjfch9a3autek9oou1fdwtu9knd
+```
+
+**On error**
+
+Throws _MyNanoCEmbeddedException_
+
 **Documentation on progress ...**
 
 ## SUMMARY: Constants, Functions and Classes

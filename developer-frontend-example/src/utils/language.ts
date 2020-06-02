@@ -44,7 +44,10 @@ export const LANG_PT_BR = {
     msg_opening_enc_block: "Abrindo o bloco criptografado ...",
     msg_unknown_server_error: "Erro de servidor desconhecido",
     msg_done: "Feito!",
-    msg_done_seed_and_bip39: "Sua semente: '%d' e seu Bip39: '%e'. Guarde com segurança e não conte pra ninguém"
+    msg_done_seed_and_bip39: "Sua semente: '%d' e seu Bip39: '%e'. Guarde com segurança e não conte pra ninguém",
+    your_bip39: "Seu menemonico Bip39",
+    type_your_bip39_here: "Digite seu menemonico aqui",
+    open_nano_bip39: "Extrair par de chaves do Bip39"
 
 }
 
@@ -91,6 +94,9 @@ export const LANG_EN_US = {
     msg_opening_enc_block: "Opening encripted block ...",
     msg_unknown_server_error: "Unknown server error",
     msg_done: "Done",
-    msg_done_seed_and_bip39: "Your SEED: '%d' and your Bip39: '%e'. Keep it safe and don't tell it to anybody"
+    msg_done_seed_and_bip39: "Your SEED: '%d' and your Bip39: '%e'. Keep it safe and don't tell it to anybody",
+    your_bip39: "Your Bip39 menemonic",
+    type_your_bip39_here: "Type your menemonic here",
+    open_nano_bip39: "Extract KeyPair from Bip39"
 
 }

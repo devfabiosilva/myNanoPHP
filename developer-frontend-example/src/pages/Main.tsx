@@ -28,7 +28,7 @@ export function Main(props: any) {
 
             case WALLET_FROM.FROM_BIP39:
                 return (
-                    <div>In development ...</div>
+                    <OpenSeed bip39 />
                 );
 
             case WALLET_FROM.FROM_ENCRYPTED_FILE:

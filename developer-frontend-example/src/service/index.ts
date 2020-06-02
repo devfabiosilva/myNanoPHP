@@ -68,6 +68,24 @@ export async function my_nano_php_extract_key_pair_from_nano_seed
     return await my_nano_php_api(`command=seed2key_pair&seed=${seed}&wallet_number=${wallet_number.toString()}${(prefix)?"&prefix="+prefix:""}`, "my_nano_php_extract_key_pair_from_nano_seed");
 }
 
+export async function my_nano_php_extract_key_pair_from_bip39
+(
+    wallet_number: number,
+    bip39: string, 
+    prefix: string|null=null
+) 
+{
+    let data: MY_NANO_PHP_SEED2KEYPAIR|MY_NANO_PHP_ERROR;
+    data = await my_nano_php_api(`command=bip39_2_key_pair&bip39=${bip39}&wallet_number=${wallet_number.toString()}${(prefix)?"&prefix="+prefix:""}`, "my_nano_php_extract_key_pair_from_bip39");
+
+    return new Promise((res, error) => {
+        
+        return (data.error === "0")?res(data as MY_NANO_PHP_SEED2KEYPAIR):error(data as MY_NANO_PHP_ERROR);
+
+    });
+
+}
+
 export async function my_nano_php_nano2pk(wallet: string) {
 
     let data: any;
