@@ -6,7 +6,7 @@ import {
 
   setPublicKey
 
-} from '../actions';
+} from '../../actions';
 
 import {
 
@@ -16,7 +16,7 @@ import {
   WALLET_FROM,
   MY_NANO_PHP_SEED2KEYPAIR
 
-} from '../utils/wallet_interface';
+} from '../../utils/wallet_interface';
 
 import {
 
@@ -24,7 +24,7 @@ import {
   my_nano_php_seed2keypair,
   my_nano_php_public_key2address,
 
-} from '../service';
+} from '../../service';
 
 export function OpenEncryptedWalletFile(props: any) {
 

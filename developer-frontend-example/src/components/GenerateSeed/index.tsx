@@ -11,16 +11,16 @@ import {
     WALLET_FROM,
     OPEN_ENCRYPTED_SEED_RESPONSE,
 
-} from '../utils/wallet_interface';
+} from '../../utils/wallet_interface';
 
 import { 
 
     my_nano_php_generate_encrypted_seed, 
     my_nano_php_open_encrypted_seed 
 
-} from '../service';
+} from '../../service';
 
-import { setPublicKey, setMyWallet } from '../actions';
+import { setPublicKey, setMyWallet } from '../../actions';
 
 export function GenerateSeed(props: any) {
 

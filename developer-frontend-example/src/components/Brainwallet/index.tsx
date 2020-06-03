@@ -5,7 +5,7 @@ import {
     my_nano_php_open_brainwallet,
     my_nano_php_seed2keypair
 
-} from '../service';
+} from '../../service';
 
 import {
 
@@ -15,9 +15,9 @@ import {
     my_wallet, 
     WALLET_FROM
 
-} from '../utils/wallet_interface';
+} from '../../utils/wallet_interface';
 
-import { setPublicKey } from '../actions';
+import { setPublicKey } from '../../actions';
 
 export function Brainwallet(props: any) {
 

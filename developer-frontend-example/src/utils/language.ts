@@ -51,7 +51,12 @@ export const LANG_PT_BR = {
     msg_invalid_keypair_size: "Tamanho do par de chaves inválidos",
     open_keypair: "Abrir carteira com par de chaves",
     your_keypair: "Seu par de chaves",
-    type_your_keypair_here: "Digite seu par de chaves aqui"
+    type_your_keypair_here: "Digite seu par de chaves aqui",
+    msg_invalid_public_key_size: "Tamanho da chave pública inválida",
+    open_from_public_key: "Abrir carteira com chave pública (somente leitura)",
+    your_public_key: "Sua chave pública",
+    type_your_public_key_here: "Digite sua chave pública aqui",
+    open_public_key: "Abrir carteira com a chave pública"
 
 }
 
@@ -76,7 +81,7 @@ export const LANG_EN_US = {
     open_nano_seed: "Open Nano SEED",
     type_your_seed_here: "Type your SEED here",
     your_seed: "Your NANO SEED",
-    msg_empty_seed: "SEED|BIP39|KeyPair is empty",
+    msg_empty_seed: "SEED|BIP39|KeyPair|PublicKey is empty",
     open_selected: "Open selected",
     open_with_seed: "Open with seed",
     open_with_bip39: "Open with Bip39",
@@ -105,6 +110,11 @@ export const LANG_EN_US = {
     msg_invalid_keypair_size: "Invalid keypair size",
     open_keypair: "Open wallet with keypair",
     your_keypair: "Your KeyPair",
-    type_your_keypair_here: "Type your keypair here"
+    type_your_keypair_here: "Type your keypair here",
+    msg_invalid_public_key_size: "Invalid public key size",
+    open_from_public_key: "Open wallet with public key (read only)",
+    your_public_key: "Your public key",
+    type_your_public_key_here: "Type your public key here",
+    open_public_key: "Open wallet with public key"
 
 }

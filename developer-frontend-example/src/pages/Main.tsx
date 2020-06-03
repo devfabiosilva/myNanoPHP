@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import OpenEncryptedWalletFile from '../components/openencfile';
+import OpenEncryptedWalletFile from '../components/OpenEncryptedFile';
 import {
 
     NANO_KEY_PAIR,
@@ -9,11 +9,11 @@ import {
 
 } from '../utils/wallet_interface';
 
-import Wallet from '../components/wallet';
-import Brainwallet from '../components/brainwallet';
-import OpenSeed from '../components/openseed';
-import SelectWallet from '../components/walletoption';
-import GenerateSeed from '../components/generate_seed';
+import Wallet from '../components/Wallet';
+import Brainwallet from '../components/Brainwallet';
+import OpenSeed from '../components/OpenSeed';
+import SelectWallet from '../components/WalletOptions';
+import GenerateSeed from '../components/GenerateSeed';
 
 //dom 2020 05 24 20:30
 export function Main(props: any) {
@@ -36,6 +36,11 @@ export function Main(props: any) {
                     <OpenSeed keyPair />
                 );
 
+            case WALLET_FROM.FROM_PUBLIC_KEY:
+                return (
+                    <OpenSeed publicKey />
+                );
+            
             case WALLET_FROM.FROM_ENCRYPTED_FILE:
                 return (
                     <OpenEncryptedWalletFile />

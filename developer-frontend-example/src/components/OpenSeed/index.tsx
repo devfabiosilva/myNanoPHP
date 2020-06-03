@@ -7,13 +7,13 @@ import {
     my_nano_php_extract_key_pair_from_bip39,
     my_nano_php_public_key_to_wallet
 
-} from '../service';
+} from '../../service';
 
 import { 
 
     setPublicKey
 
-} from '../actions';
+} from '../../actions';
 
 import { 
 
@@ -22,7 +22,7 @@ import {
     WALLET_FROM,
     PUBLIC_KEY_TO_WALLET_RESPONSE
 
-} from '../utils/wallet_interface';
+} from '../../utils/wallet_interface';
 
 export function OpenSeed(props: any) {
 
@@ -88,7 +88,38 @@ export function OpenSeed(props: any) {
                 (public_key_to_wallet_error: any) => {
                     console.log(public_key_to_wallet_error);
                 }
-            )
+            );
+        } else if (props.publicKey) {
+
+            if (seed_value.length!==64) {
+
+                alert(props.language.msg_invalid_public_key_size);
+                return;
+
+            }
+
+            my_nano_php_public_key_to_wallet(seed_value).then(
+                (public_key_to_wallet_res: any) => {
+                    console.log(public_key_to_wallet_res);
+                    props.wallet_public_key(
+
+                        {
+
+                            origin: WALLET_FROM.FROM_PUBLIC_KEY,
+                            public_key: (public_key_to_wallet_res as PUBLIC_KEY_TO_WALLET_RESPONSE).public_key,
+                            wallet_number: 0,
+                            wallet: (public_key_to_wallet_res as PUBLIC_KEY_TO_WALLET_RESPONSE).wallet
+
+                        }
+
+                    );
+
+                },
+                (public_key_to_wallet_error: any) => {
+                    console.log(public_key_to_wallet_error);
+                }
+            );
+
         } else
             my_nano_php_seed2keypair(0, seed_value).then(
                 (seed2keypair: any) => {
@@ -117,9 +148,9 @@ export function OpenSeed(props: any) {
             <div>
                 {
 
-                    (props.bip39)?
-                    props.language.your_bip39:
+                    (props.bip39)?props.language.your_bip39:
                     (props.keyPair)?props.language.your_keypair:
+                    (props.publicKey)?props.language.your_public_key:
                     props.language.your_seed
 
                 }
@@ -132,7 +163,9 @@ export function OpenSeed(props: any) {
 
                     (props.bip39)?props.language.type_your_bip39_here:
                     (props.keyPair)?props.language.type_your_keypair_here:
+                    (props.publicKey)?props.language.type_your_public_key_here:
                     props.language.type_your_seed_here
+
                 }
 
             />
@@ -145,6 +178,7 @@ export function OpenSeed(props: any) {
                 {
                     (props.bip39)?props.language.open_nano_bip39:
                     (props.keyPair)?props.language.open_keypair:
+                    (props.publicKey)?props.language.open_public_key:
                     props.language.open_nano_seed
                 }
             </button>

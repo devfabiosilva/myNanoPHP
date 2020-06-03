@@ -6,9 +6,9 @@ import {
     my_wallet, 
     WALLET_FROM
 
-} from '../utils/wallet_interface';
+} from '../../utils/wallet_interface';
 
-import { setPublicKey } from '../actions';
+import { setPublicKey } from '../../actions';
 
 export function SelectWallet(props: any) {
 
@@ -51,6 +51,9 @@ export function SelectWallet(props: any) {
                 </option>
                 <option value = { WALLET_FROM.FROM_KEY_PAIR }>
                     { props.language.open_keypair }
+                </option>
+                <option value = { WALLET_FROM.FROM_PUBLIC_KEY }>
+                    { props.language.open_from_public_key }
                 </option>
             </select>
             <button 

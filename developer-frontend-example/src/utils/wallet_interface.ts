@@ -7,6 +7,7 @@ export const WALLET_FROM = {
     FROM_ENCRYPTED_FILE: "4",
     FROM_GENERATING_SEED: "5",
     FROM_KEY_PAIR: "6",
+    FROM_PUBLIC_KEY: "7"
 
 }
 

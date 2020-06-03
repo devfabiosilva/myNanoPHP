@@ -5,16 +5,16 @@ import {
   nano_rpc_account_balance,
   my_nano_php_raw2real
 
-} from '../service';
+} from '../../service';
 
 import { 
 
   UNDEFINED,
 
-} from '../utils';
+} from '../../utils';
 
-import { setMyWallet } from '../actions';
-import { my_wallet } from '../utils/wallet_interface';
+import { setMyWallet } from '../../actions';
+import { my_wallet } from '../../utils/wallet_interface';
 
 export function Wallet(props: any) {
 
