@@ -296,6 +296,14 @@ ZEND_BEGIN_ARG_INFO_EX(My_NanoCEmbedded_Bip39ToNanoKeyPair, 0, 0, 3)
     ZEND_ARG_INFO(0, prefix)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_INFO_EX(My_NanoCEmbedded_BrainwalletToNanoKeyPair, 0, 0, 4)
+    ZEND_ARG_INFO(0, brainwallet)
+    ZEND_ARG_INFO(0, salt)
+    ZEND_ARG_INFO(0, mode)
+    ZEND_ARG_INFO(0, wallet_number)
+    ZEND_ARG_INFO(0, prefix)
+ZEND_END_ARG_INFO()
+
 static zend_class_entry *f_exception_ce;
 
 static zend_object *f_exception_create_object(zend_class_entry *ce) {
@@ -556,6 +564,7 @@ static const zend_function_entry mynanoembedded_functions[] = {
     PHP_FE(php_c_gen_encrypted_stream_to_seed, My_NanoCEmbedded_EncryptedStringToSeedAndBip39)
     PHP_FE(php_c_is_valid_nano_seed_encrypted, My_NanoCEmbedded_ValidEncryptedSeed)
     PHP_FE(php_c_bip39_to_nano_key_pair, My_NanoCEmbedded_Bip39ToNanoKeyPair)
+    PHP_FE(php_c_brainwallet_to_nano_key_pair, My_NanoCEmbedded_BrainwalletToNanoKeyPair)
     PHP_FE_END
 
 };
@@ -2830,52 +2839,61 @@ PHP_FUNCTION(php_c_seed_to_nano_key_pair)
 
 }
 
-/*
-PHP_FUNCTION(php_c_seed_to_nano_key_pair)
+PHP_FUNCTION(php_c_brainwallet_to_nano_key_pair)
 {
 
    int err;
-   char msg[768], *p;
-   unsigned char *seed, *wallet_number_str, *prefix=NANO_PREFIX;
-   size_t seed_len, wallet_number_len, prefix_len=sizeof(NANO_PREFIX)-1;
-   uint64_t wallet_number;
+   char msg[768];
+   unsigned char *brainwallet, *salt, *wallet_number_str, *prefix=NANO_PREFIX;
+   size_t brainwallet_len, salt_len, wallet_number_len, prefix_len=(sizeof(NANO_PREFIX)-1);
+   zend_long type;
 
-   if (zend_parse_parameters(ZEND_NUM_ARGS(), "ss|s", &seed, &seed_len, &wallet_number_str, &wallet_number_len, &prefix, &prefix_len)==FAILURE)
-      return;
+   if (zend_parse_parameters(ZEND_NUM_ARGS(), "ssls|s", &brainwallet, &brainwallet_len, &salt, &salt_len, &type, &wallet_number_str,
+      &wallet_number_len, &prefix, &prefix_len)==FAILURE) return;
 
-   if (seed_len!=64) {
+   if (brainwallet_len>255) {
 
-      sprintf(msg, "Internal error in C function 'php_c_seed_to_nano_wallet' 15600 wrong Nano SEED size '%lu'", (unsigned long int)seed_len);
+      sprintf(msg, "Internal error in C function 'php_c_brainwallet_to_nano_key_pair' 19200 wrong Brainwallet length '%lu'", (unsigned long int)brainwallet_len);
 
-      zend_throw_exception(f_exception_ce, msg, 15600);
-
-      return;
-
-   }
-
-    if (wallet_number_len>13) {
-
-       sprintf(msg, "Internal error in C function 'php_c_seed_to_nano_wallet' 15602 wrong wallet number size '%lu'", (unsigned long int)wallet_number_len);
-
-       zend_throw_exception(f_exception_ce, msg, 15602);
-
-       return;
-
-    }
-
-    if (!wallet_number_len) {
-
-      sprintf(msg, "Internal error in C function 'php_c_seed_to_nano_wallet' 15603 wallet number can not be an empty string");
-
-      zend_throw_exception(f_exception_ce, msg, 15603);
+      zend_throw_exception(f_exception_ce, msg, 19200);
 
       return;
 
    }
 
-   if ((err=f_convert_to_long_int_std((unsigned long int *)&wallet_number, (char *)wallet_number_str, wallet_number_len+1))) {
+   if (!brainwallet_len) {
 
-      sprintf(msg, "Internal error in C function 'f_convert_to_long_int_std' %d. Can't convert unsigned long int to string 'php_c_seed_to_nano_wallet'", err);
+      sprintf(msg, "Internal error in C function 'php_c_brainwallet_to_nano_key_pair' 19201. Brainwallet cannot be empty string");
+
+      zend_throw_exception(f_exception_ce, msg, 19201);
+
+      return;
+
+   }
+
+   if (salt_len>255) {
+
+      sprintf(msg, "Internal error in C function 'php_c_brainwallet_to_nano_key_pair' 19202 wrong Salt length '%lu'", (unsigned long int)salt_len);
+
+      zend_throw_exception(f_exception_ce, msg, 19202);
+
+      return;
+
+   }
+
+   if (!salt_len) {
+
+      sprintf(msg, "Internal error in C function 'php_c_brainwallet_to_nano_key_pair' 19203. Salt cannot be empty string");
+
+      zend_throw_exception(f_exception_ce, msg, 19203);
+
+      return;
+
+   }
+
+   if ((err=f_extract_seed_from_brainwallet((uint8_t *)(msg+128), NULL, (uint32_t)type, (const char *)brainwallet, (const char *)salt))) {
+
+      sprintf(msg, "Internal error in C function 'php_c_brainwallet_to_nano_key_pair' %d. Cannot extract Nano SEED from Brainwallet", err);
 
       zend_throw_exception(f_exception_ce, msg, (zend_long)err);
 
@@ -2883,34 +2901,7 @@ PHP_FUNCTION(php_c_seed_to_nano_key_pair)
 
    }
 
-   if (wallet_number>((uint64_t)((uint32_t)-1))) {
-
-      sprintf(msg, "Internal error in C function 'php_c_seed_to_nano_wallet' 15604 wallet number can't be greater than (2^32-1). Value parsed '%lu'",
-         (unsigned long int)wallet_number);
-
-      zend_throw_exception(f_exception_ce, msg, 15604);
-
-      return;
-
-   }
-
-   if (is_nano_prefix((const char *)prefix, NANO_PREFIX))
-      goto php_c_seed_to_nano_wallet_STEP1;
-
-   if (is_nano_prefix((const char *)prefix, XRB_PREFIX))
-      goto php_c_seed_to_nano_wallet_STEP1;
-
-   sprintf(msg, "Internal error in C function 'php_c_seed_to_nano_wallet' 15601. Unknown Nano prefix '%s'", (const char *)prefix);
-
-   zend_throw_exception(f_exception_ce, msg, (zend_long)15601);
-
-   return;
-
-php_c_seed_to_nano_wallet_STEP1:
-
-   if ((err=f_str_to_hex((uint8_t *)(p=msg+128), (char *)seed))) {
-
-      sprintf(msg, "Internal error in C function 'f_str_to_hex' %d. Cannot convert hex to string in 'php_c_seed_to_nano_wallet' function", err);
+   if ((err=seed_to_nano_key_pair_util(msg, NULL, wallet_number_str, wallet_number_len, prefix, "php_c_brainwallet_to_nano_key_pair"))) {
 
       zend_throw_exception(f_exception_ce, msg, (zend_long)err);
 
@@ -2918,41 +2909,10 @@ php_c_seed_to_nano_wallet_STEP1:
 
    }
 
-   if ((err=f_seed_to_nano_wallet((uint8_t *)msg, (uint8_t *)(msg+64), (uint8_t *)p, (uint32_t)wallet_number))) {
-
-      sprintf(msg, "Internal error in C function 'f_seed_to_nano_wallet' %d. Extract Nano Key pair from seed in 'php_c_seed_to_nano_wallet' function", err);
-
-      zend_throw_exception(f_exception_ce, msg, (zend_long)err);
-
-      return;
-
-   }
-
-
-   strcpy(p, "{\"private_key\":\"");
-   strcat(p, f_nano_key_to_str(msg+512, (unsigned char *)msg));
-   strcat(p, "\",\"public_key\":\"");
-   strcat(p, f_nano_key_to_str(msg+512, (unsigned char *)(msg+64)));
-   sprintf(msg+512, "\",\"wallet_number\":\"%u\",\"wallet\":\"", (unsigned int)wallet_number);
-   strcat(p, msg+512);
-
-   if ((err=pk_to_wallet(msg+512, (char *)prefix, (uint8_t *)(msg+64)))) {
-
-      sprintf(msg, "Internal error in C function 'f_seed_to_nano_wallet' %d. Parse Nano Public Key to wallet in 'php_c_seed_to_nano_wallet' fail", err);
-
-      zend_throw_exception(f_exception_ce, msg, (zend_long)err);
-
-      return;
-
-   }
-
-   strcat(p, msg+512);
-   strcat(p, "\"}");
-
-   RETURN_STR(strpprintf(384, "%s", p));
+   RETURN_STR(strpprintf(384, "%s", msg+128));
 
 }
-*/
+
 PHP_FUNCTION(php_c_bip39_to_nano_seed)
 {
    int err;

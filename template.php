@@ -1129,6 +1129,121 @@ if ($_SERVER['REQUEST_METHOD']==='POST') {
 
     }
 
+    if ($cmd==="brainwallet_2_key_pair") {
+
+       $brainwallet=$_POST['brainwallet'];
+
+       if (!isset($brainwallet)) {
+           http_response_code(404);
+           header($MIME_TYPE);
+           echo '{"error":"127","reason":"Missing Brainwallet string"}';
+           exit(0);
+
+       }
+
+       $salt=$_POST['salt'];
+
+       if (!isset($salt)) {
+           http_response_code(404);
+           header($MIME_TYPE);
+           echo '{"error":"128","reason":"Missing Salt"}';
+           exit(0);
+
+       }
+
+        $mode=$_POST['mode'];
+        $mode_tmp=BRAIN_WALLET_PERFECT;
+
+        if (isset($mode)) {
+
+            switch ($mode) {
+                case "1":
+                    $mode_tmp=BRAIN_WALLET_VERY_POOR;
+                    break;
+
+                case "2":
+                    $mode_tmp=BRAIN_WALLET_POOR;
+                    break;
+
+                case "3":
+                    $mode_tmp=BRAIN_WALLET_VERY_BAD;
+                    break;
+
+                case "4":
+                    $mode_tmp=BRAIN_WALLET_BAD;
+                    break;
+
+                case "5":
+                    $mode_tmp=BRAIN_WALLET_VERY_WEAK;
+                    break;
+
+                case "6":
+                    $mode_tmp=BRAIN_WALLET_WEAK;
+                    break;
+
+                case "7":
+                    $mode_tmp=BRAIN_WALLET_STILL_WEAK;
+                    break;
+
+                case "8":
+                    $mode_tmp=BRAIN_WALLET_MAYBE_GOOD;
+                    break;
+
+                case "9":
+                    $mode_tmp=BRAIN_WALLET_GOOD;
+                    break;
+
+                case "10":
+                    $mode_tmp=BRAIN_WALLET_VERY_GOOD;
+                    break;
+
+                case "11":
+                    $mode_tmp=BRAIN_WALLET_NICE;
+                    break;
+
+                case "12":
+                    break;
+
+                default:
+                    http_response_code(404);
+                    header($MIME_TYPE);
+                    echo '{"error":"129","reason":"Invalid brainwallet mode"}';
+                    exit(0);
+            }
+
+        }
+
+       $wallet_number=$_POST['wallet_number'];
+
+       if (!isset($wallet_number)) {
+           http_response_code(404);
+           header($MIME_TYPE);
+           echo '{"error":"130","reason":"Missing Brainwallet wallet number"}';
+           exit(0);
+
+       }
+
+       try {
+
+           $brainwallet_res=(isset($_POST['prefix']))?php_c_brainwallet_to_nano_key_pair($brainwallet, $salt, $mode_tmp, $wallet_number, $_POST['prefix']):
+              php_c_brainwallet_to_nano_key_pair($brainwallet, $salt, $mode_tmp, $wallet_number);
+
+           echo json_encode(array(
+               "error"=>"0",
+               "reason"=>"Success",
+               "key_pair"=>json_decode($brainwallet_res)
+           ));
+            
+       } catch (Exception $e) {
+           http_response_code(500);
+           header($MIME_TYPE);
+           echo '{"error":"500", "reason":"'.$e->getMessage().' when extracting keypair from Brainwallet.'.$e->getCode().'"}';
+       }
+
+       exit(0);
+
+    }
+
     if ($cmd==="add") {
 
         $valueA=$_POST['valuea'];

@@ -20,6 +20,7 @@ PHP_RINIT_FUNCTION(mynanoembedded);
 PHP_RSHUTDOWN_FUNCTION(mynanoembedded);
 PHP_MINFO_FUNCTION(mynanoembedded);
 
+PHP_FUNCTION(php_c_brainwallet_to_nano_key_pair);
 PHP_FUNCTION(php_c_bip39_to_nano_key_pair);
 PHP_FUNCTION(php_c_is_valid_nano_seed_encrypted);
 PHP_FUNCTION(php_c_gen_encrypted_stream_to_seed);

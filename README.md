@@ -3834,6 +3834,16 @@ Extension [ <persistent> extension #15 mynanoembedded version 1.0 ] {
         Parameter #3 [ <optional> $prefix ]
       }
     }
+    Function [ <internal:mynanoembedded> function php_c_brainwallet_to_nano_key_pair ] {
+
+      - Parameters [5] {
+        Parameter #0 [ <required> $brainwallet ]
+        Parameter #1 [ <required> $salt ]
+        Parameter #2 [ <required> $mode ]
+        Parameter #3 [ <required> $wallet_number ]
+        Parameter #4 [ <optional> $prefix ]
+      }
+    }
   }
 
   - Classes [1] {
