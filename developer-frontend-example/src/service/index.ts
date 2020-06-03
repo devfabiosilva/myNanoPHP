@@ -18,7 +18,8 @@ import {
     MY_NANO_PHP_ERROR, 
     BRAINWALLET_RESPONSE, 
     MY_NANO_PHP_SEED2KEYPAIR,
-    GENERATED_ENCRYPTED_SEED
+    GENERATED_ENCRYPTED_SEED,
+    PUBLIC_KEY_TO_WALLET_RESPONSE
 
 } from '../utils/wallet_interface';
 
@@ -179,6 +180,19 @@ export async function my_nano_php_generate_encrypted_seed(entropy: string, passw
     });
 }
 
+
+export async function my_nano_php_public_key_to_wallet(public_key:string, prefix: string = NANO_PREFIX)
+{
+    let data: PUBLIC_KEY_TO_WALLET_RESPONSE|MY_NANO_PHP_ERROR
+
+    data = await my_nano_php_api(`command=pk2nano&pk=${public_key}&prefix=${prefix}`, "my_nano_php_public_key_to_wallet");
+
+    return new Promise((res, error) => {
+
+        return (data.error === "0")?res(data):error(data);
+
+    });
+}
 
 ////// nano rpc
 

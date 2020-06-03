@@ -5,7 +5,8 @@ export const WALLET_FROM = {
     FROM_BIP39: "2",
     FROM_BRAINWALLET: "3",
     FROM_ENCRYPTED_FILE: "4",
-    FROM_GENERATING_SEED: "5"
+    FROM_GENERATING_SEED: "5",
+    FROM_KEY_PAIR: "6",
 
 }
 
@@ -110,4 +111,11 @@ export interface OPEN_ENCRYPTED_SEED_RESPONSE {
         seed: string,
         bip39: string
     }
+}
+
+export interface PUBLIC_KEY_TO_WALLET_RESPONSE {
+    error: string|number,
+    reason: string,
+    wallet: string,
+    public_key: string
 }

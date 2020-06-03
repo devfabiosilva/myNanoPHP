@@ -19,7 +19,7 @@ export function wallet(
         case NANO_WALLET_ACTIONS.EXTRACT_ADDRESS_FROM_PUBLIC_KEY:
             return Object.assign(state, { wallet: action.address });
         
-        case NANO_WALLET_ACTIONS.SET_MY_WALLET_PARARAM:
+        case NANO_WALLET_ACTIONS.SET_MY_WALLET_PARAM:
             return Object.assign(state, action.wallet_param)
 
         default:

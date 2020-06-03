@@ -49,6 +49,9 @@ export function SelectWallet(props: any) {
                 <option value = { WALLET_FROM.FROM_GENERATING_SEED }>
                     { props.language.open_gen_new_seed }
                 </option>
+                <option value = { WALLET_FROM.FROM_KEY_PAIR }>
+                    { props.language.open_keypair }
+                </option>
             </select>
             <button 
                 className="open-selected-btn"

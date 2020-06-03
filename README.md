@@ -2430,6 +2430,8 @@ D62024C1B1BC333A769AF7D44F28BEFA59878588B34357874899AF7478379679
 
 **On error**
 
+Throws _MyNanoCEmbeddedException_
+
 <h1>- php_c_p2pow_to_json()</h1>
 
 ### Description
@@ -2658,7 +2660,7 @@ Create a file _block2json.php_ and type:
 //tue jun 02 2020 01:58 -03 
 
    /*
-    * EXAMPLE: Parse P2PoW to JSON example
+    * EXAMPLE: Parse Nano block to JSON example
     */
 
    echo "STEP1: Create Nano Block to receive 2.281 Nanos (open block) from link 79640F38102A3728EFC9D2A190CDCAC87011B6EB2BFF9BCD10F12405EC76D8C1\n";
@@ -2859,6 +2861,527 @@ php -r "echo php_c_public_key_to_nano_wallet('98B5E79DBC175AEFB986036AB2E4ECF3E8
 ```sh
 xrb_387owygur7ttxywre1ucpdkgswza4twackjfch9a3autek9oou1fdwtu9knd
 ```
+
+**On error**
+
+Throws _MyNanoCEmbeddedException_
+
+<h1>- php_c_seed_to_nano_key_pair()</h1>
+
+### Description
+
+Returns a Nano keypair given a Nano SEED
+
+```php
+$res = php_c_seed_to_nano_key_pair($seed, $wallet_number, $prefix);
+```
+
+params|type|description
+------|----|-----------
+**_$Nano_**|string|Nano SEED
+**_$wallet_number_**|string|Wallet number
+**_$prefix_**|string|(Optional) Nano prefix. If ommited then _nano__ prefix is used
+
+#### Return value
+
+JSON string format with wallet and keypair
+
+##### Example 1
+
+```sh
+php -r "echo php_c_seed_to_nano_key_pair('00d75b5176b48ccc71d91bcc1d7b90fc2820429b1629b77fd1d5f4c5dcee4f6d', '0');"
+```
+
+**Return value**
+
+```sh
+{
+
+   "private_key":"289067B1E7E53A18520632B5CEB874D71B02C281B838185ADE4CD729E0E6E5C7",
+   "public_key":"0EE36F17F489284FB4C298A8B56B2A6734A0A2D75C1520EEA78D9B0650C7A7A3",
+   "wallet_number":"0",
+   "wallet":"nano_15q5fwdzb4babyte787apooknssnn4jfgq1o65qch5eu1saehbx5tzb5fmm7"
+
+}
+```
+
+##### Example 2
+
+```sh
+php -r "echo php_c_seed_to_nano_key_pair('00d75b5176b48ccc71d91bcc1d7b90fc2820429b1629b77fd1d5f4c5dcee4f6d', '0x20', NANO_PREFIX);"
+```
+
+**Return value**
+
+```sh
+{
+
+   "private_key":"11B43CD23FFC787A6ED6993A3CE96E55CE91626D765CB930487129497483825B",
+   "public_key":"6B69991A3A40393EDDEC60E41BE9B36B3FB64F300046090B1852DBDD379B2F4C",
+   "wallet_number":"32",
+   "wallet":"nano_1tubm6f5ni3s9ugyrr965hnu8tszps9m1148367jinpuunuspdte9wjaowp6"
+
+}
+```
+
+##### Example 3
+
+```sh
+php -r "echo php_c_seed_to_nano_key_pair('00d75b5176b48ccc71d91bcc1d7b90fc2820429b1629b77fd1d5f4c5dcee4f6d', '027', XRB_PREFIX);"
+```
+
+**Return value**
+
+```sh
+{
+
+   "private_key":"8F8C322EEE9A4513C486B16DEC1F3531896684EE3DAEC5AF480D43447A9918F2",
+   "public_key":"40404148158A9095BC947207D200D1CB555993F9C85823830FEA3A624F49F41C",
+   "wallet_number":"23",
+   "wallet":"xrb_1i41a763d4nikpybawi9ta1f5ktod8bzmk4r6g3iztjteb9nmx1wfwysurwf"
+
+}
+```
+
+**On error**
+
+Throws _MyNanoCEmbeddedException_
+
+    Function [ <internal:mynanoembedded> function php_c_set_account_to_block ] {
+
+      - Parameters [2] {
+        Parameter #0 [ <required> &$block ]
+        Parameter #1 [ <required> $wallet ]
+      }
+    }
+
+<h1>- php_c_set_account_to_block()</h1>
+
+### Description
+
+Set/modify an account in a Nano block
+
+```php
+php_c_seed_to_nano_key_pair(&$block, $wallet);
+```
+
+params|type|description
+------|----|-----------
+**_&$block_**|binary|Nano block
+**_$wallet_**|string|Wallet (Nano base32 encoded string) or public key
+
+#### Return value
+
+Modified Nano block
+
+##### Example 1
+
+```php
+<?php
+//tue jun 02 2020 21:07
+
+   /*
+    * EXAMPLE1
+    */
+
+   echo "STEP1: Create Nano Block to receive 2.281 Nanos (open block) from link 79640F38102A3728EFC9D2A190CDCAC87011B6EB2BFF9BCD10F12405EC76D8C1\n";
+
+   $account             = 'nano_37xaiupd5undntrgaogja8huxgjph85a457m6a7g3ghsnp4wisusx1mqkigg';
+   $previous            = 'F9252D12EC2103CAD6B2E7212C617413ADC741D16A465452CA90C504D9F2C278';
+   $representative      = 'nano_1aqkrayihxzdahoxpjrg8o6mxgxfzq46hhcdm1u48w3qexsakx7pzzhjn3fc';
+   $balance             = '16.2300118101';
+   $balance_type        = BALANCE_REAL_STRING;
+   $value_to_send       = '2.281';
+   $value_to_send_type  = VALUE_SEND_RECEIVE_REAL_STRING;
+   $link                = '79640F38102A3728EFC9D2A190CDCAC87011B6EB2BFF9BCD10F12405EC76D8C1';
+   $direction           = VALUE_TO_RECEIVE;
+
+   try {
+
+      $nano_block = php_c_generate_block(
+
+                       $account,
+                       $previous,
+                       $representative,
+                       $balance,
+                       $balance_type,
+                       $value_to_send,
+                       $value_to_send_type,
+                       $link,
+                       $direction
+
+                    );
+
+   } catch (Exception $e) {
+
+      echo 'Error code: '.$e->getCode()."\nError message: ".$e->getMessage();
+      exit(1);
+
+   }
+
+   $new_account        = 'xrb_1i41a763d4nikpybawi9ta1f5ktod8bzmk4r6g3iztjteb9nmx1wfwysurwf';
+
+   echo "\nChanging account ".$account." to ".$new_account."\n\n";
+
+   try {
+
+      php_c_set_account_to_block($nano_block, $new_account);
+
+   } catch (Exception $e) {
+
+      echo 'Error code: '.$e->getCode()."\nError message: ".$e->getMessage();
+      exit(1);
+
+   }
+
+   echo "Success\nAccount ".$account." changed to ".$new_account."\n\nFinally Hello World !";
+
+?>
+```
+
+**Return value**
+
+```sh
+STEP1: Create Nano Block to receive 2.281 Nanos (open block) from link 79640F38102A3728EFC9D2A190CDCAC87011B6EB2BFF9BCD10F12405EC76D8C1
+
+Changing account nano_37xaiupd5undntrgaogja8huxgjph85a457m6a7g3ghsnp4wisusx1mqkigg to xrb_1i41a763d4nikpybawi9ta1f5ktod8bzmk4r6g3iztjteb9nmx1wfwysurwf
+
+Success
+Account nano_37xaiupd5undntrgaogja8huxgjph85a457m6a7g3ghsnp4wisusx1mqkigg changed to xrb_1i41a763d4nikpybawi9ta1f5ktod8bzmk4r6g3iztjteb9nmx1wfwysurwf
+
+Finally Hello World !
+
+# Binary block before
+# 0000000000000000000000000000000000000000000000000000000000000006
+# 97a886ecb1ee8ba6b0e455d1419fbeba367986810cb3220ae0b9f9a585c86779
+# f9252d12ec2103cad6b2e7212c617413adc741d16a465452ca90c504d9f2c278
+# 22f2c23d07f7eb43ebdb470e35493ebbadfdc447bd4b983623703767728974b6
+# 000000e9a44e168ac332b4814c500000
+# 79640f38102a3728efc9d2a190cdcac87011b6eb2bff9bcd10f12405ec76d8c1
+# 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+# 00
+# 0000000000000000
+
+# Human readable block before (JSON equivalent)
+# {
+#   "action": "process",
+#   "json_block": "true",
+#   "block": {
+#     "type": "state",
+#     "account": "nano_37xaiupd5undntrgaogja8huxgjph85a457m6a7g3ghsnp4wisusx1mqkigg",
+#     "previous": "F9252D12EC2103CAD6B2E7212C617413ADC741D16A465452CA90C504D9F2C278",
+#     "representative": "nano_1aqkrayihxzdahoxpjrg8o6mxgxfzq46hhcdm1u48w3qexsakx7pzzhjn3fc",
+#     "balance": "18511011810100000000000000000000",
+#     "link": "79640F38102A3728EFC9D2A190CDCAC87011B6EB2BFF9BCD10F12405EC76D8C1",
+#     "link_as_account": "nano_1yd63ww31cjq75qwmno3k58wok5i48ugpczzmh8j3wb61qp9fp835zfzanwe",
+#     "signature": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+#     "work": "0000000000000000"
+#   }
+# }
+
+# Binary block after
+# 0000000000000000000000000000000000000000000000000000000000000006
+# 40404148158a9095bc947207d200d1cb555993f9c85823830fea3a624f49f41c
+# f9252d12ec2103cad6b2e7212c617413adc741d16a465452ca90c504d9f2c278
+# 22f2c23d07f7eb43ebdb470e35493ebbadfdc447bd4b983623703767728974b6
+# 000000e9a44e168ac332b4814c500000
+# 79640f38102a3728efc9d2a190cdcac87011b6eb2bff9bcd10f12405ec76d8c1
+# 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+# 02
+# 0000000000000000
+
+# Human readable block after (JSON equivalent)
+# {
+#   "action": "process",
+#   "json_block": "true",
+#   "block": {
+#     "type": "state",
+#     "account": "xrb_1i41a763d4nikpybawi9ta1f5ktod8bzmk4r6g3iztjteb9nmx1wfwysurwf",
+#     "previous": "F9252D12EC2103CAD6B2E7212C617413ADC741D16A465452CA90C504D9F2C278",
+#     "representative": "nano_1aqkrayihxzdahoxpjrg8o6mxgxfzq46hhcdm1u48w3qexsakx7pzzhjn3fc",
+#     "balance": "18511011810100000000000000000000",
+#     "link": "79640F38102A3728EFC9D2A190CDCAC87011B6EB2BFF9BCD10F12405EC76D8C1",
+#     "link_as_account": "nano_1yd63ww31cjq75qwmno3k58wok5i48ugpczzmh8j3wb61qp9fp835zfzanwe",
+#     "signature": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+#     "work": "0000000000000000"
+#   }
+# }
+
+```
+
+##### Example 2
+
+```php
+<?php
+//tue jun 02 2020 21:07
+
+   /*
+    * EXAMPLE2
+    */
+
+   echo "STEP1: Create Nano Block to receive 2.281 Nanos (open block) from link 79640F38102A3728EFC9D2A190CDCAC87011B6EB2BFF9BCD10F12405EC76D8C1\n";
+
+   $account             = 'nano_37xaiupd5undntrgaogja8huxgjph85a457m6a7g3ghsnp4wisusx1mqkigg';
+   $previous            = 'F9252D12EC2103CAD6B2E7212C617413ADC741D16A465452CA90C504D9F2C278';
+   $representative      = 'nano_1aqkrayihxzdahoxpjrg8o6mxgxfzq46hhcdm1u48w3qexsakx7pzzhjn3fc';
+   $balance             = '16.2300118101';
+   $balance_type        = BALANCE_REAL_STRING;
+   $value_to_send       = '2.281';
+   $value_to_send_type  = VALUE_SEND_RECEIVE_REAL_STRING;
+   $link                = '79640F38102A3728EFC9D2A190CDCAC87011B6EB2BFF9BCD10F12405EC76D8C1';
+   $direction           = VALUE_TO_RECEIVE;
+
+   try {
+
+      $nano_block = php_c_generate_block(
+
+                       $account,
+                       $previous,
+                       $representative,
+                       $balance,
+                       $balance_type,
+                       $value_to_send,
+                       $value_to_send_type,
+                       $link,
+                       $direction
+
+                    );
+
+   } catch (Exception $e) {
+
+      echo 'Error code: '.$e->getCode()."\nError message: ".$e->getMessage();
+      exit(1);
+
+   }
+
+   $new_account        = 'nano_1nxx3pham5o6ufatmrzzp47raozthsdb3n9xwtfaeic8bgfaw9bhth31qmru';
+
+   echo "\nChanging account ".$account." to ".$new_account."\n\n";
+
+   try {
+
+      php_c_set_account_to_block($nano_block, $new_account);
+
+   } catch (Exception $e) {
+
+      echo 'Error code: '.$e->getCode()."\nError message: ".$e->getMessage();
+      exit(1);
+
+   }
+
+   echo "Success\nAccount ".$account." changed to ".$new_account."\n\nFinally Hello World !";
+
+?>
+```
+
+**Return value**
+
+```sh
+STEP1: Create Nano Block to receive 2.281 Nanos (open block) from link 79640F38102A3728EFC9D2A190CDCAC87011B6EB2BFF9BCD10F12405EC76D8C1
+
+Changing account nano_37xaiupd5undntrgaogja8huxgjph85a457m6a7g3ghsnp4wisusx1mqkigg to nano_1nxx3pham5o6ufatmrzzp47raozthsdb3n9xwtfaeic8bgfaw9bhth31qmru
+
+Success
+Account nano_37xaiupd5undntrgaogja8huxgjph85a457m6a7g3ghsnp4wisusx1mqkigg changed to nano_1nxx3pham5o6ufatmrzzp47raozthsdb3n9xwtfaeic8bgfaw9bhth31qmru
+
+Finally Hello World !
+
+# Binary block before
+# 0000000000000000000000000000000000000000000000000000000000000006
+# 97a886ecb1ee8ba6b0e455d1419fbeba367986810cb3220ae0b9f9a585c86779
+# f9252d12ec2103cad6b2e7212c617413adc741d16a465452ca90c504d9f2c278
+# 22f2c23d07f7eb43ebdb470e35493ebbadfdc447bd4b983623703767728974b6
+# 000000e9a44e168ac332b4814c500000
+# 79640f38102a3728efc9d2a190cdcac87011b6eb2bff9bcd10f12405ec76d8c1
+# 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+# 00
+# 0000000000000000
+
+# Human readable block before (JSON equivalent)
+# {
+#   "action": "process",
+#   "json_block": "true",
+#   "block": {
+#     "type": "state",
+#     "account": "nano_37xaiupd5undntrgaogja8huxgjph85a457m6a7g3ghsnp4wisusx1mqkigg",
+#     "previous": "F9252D12EC2103CAD6B2E7212C617413ADC741D16A465452CA90C504D9F2C278",
+#     "representative": "nano_1aqkrayihxzdahoxpjrg8o6mxgxfzq46hhcdm1u48w3qexsakx7pzzhjn3fc",
+#     "balance": "18511011810100000000000000000000",
+#     "link": "79640F38102A3728EFC9D2A190CDCAC87011B6EB2BFF9BCD10F12405EC76D8C1",
+#     "link_as_account": "nano_1yd63ww31cjq75qwmno3k58wok5i48ugpczzmh8j3wb61qp9fp835zfzanwe",
+#     "signature": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+#     "work": "0000000000000000"
+#   }
+# }
+
+# Binary block after
+# 0000000000000000000000000000000000000000000000000000000000000006
+# 53bd0d9e898ea4db51a9e3ffb08b8457fa7e5690d0fde69a8641464b9a8e1d2f
+# f9252d12ec2103cad6b2e7212c617413adc741d16a465452ca90c504d9f2c278
+# 22f2c23d07f7eb43ebdb470e35493ebbadfdc447bd4b983623703767728974b6
+# 000000e9a44e168ac332b4814c500000
+# 79640f38102a3728efc9d2a190cdcac87011b6eb2bff9bcd10f12405ec76d8c1
+# 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+# 00
+# 0000000000000000
+
+# Human readable block after (JSON equivalent)
+# {
+#  {
+#   "action": "process",
+#   "json_block": "true",
+#   "block": {
+#     "type": "state",
+#     "account": "nano_1nxx3pham5o6ufatmrzzp47raozthsdb3n9xwtfaeic8bgfaw9bhth31qmru",
+#     "previous": "F9252D12EC2103CAD6B2E7212C617413ADC741D16A465452CA90C504D9F2C278",
+#     "representative": "nano_1aqkrayihxzdahoxpjrg8o6mxgxfzq46hhcdm1u48w3qexsakx7pzzhjn3fc",
+#     "balance": "18511011810100000000000000000000",
+#     "link": "79640F38102A3728EFC9D2A190CDCAC87011B6EB2BFF9BCD10F12405EC76D8C1",
+#     "link_as_account": "nano_1yd63ww31cjq75qwmno3k58wok5i48ugpczzmh8j3wb61qp9fp835zfzanwe",
+#     "signature": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+#     "work": "0000000000000000"
+#   }
+# }
+```
+
+##### Example 3
+
+```php
+<?php
+//tue jun 02 2020 21:07
+
+   /*
+    * EXAMPLE3
+    */
+
+   echo "STEP1: Create Nano Block to receive 2.281 Nanos (open block) from link 79640F38102A3728EFC9D2A190CDCAC87011B6EB2BFF9BCD10F12405EC76D8C1\n";
+
+   $account             = 'nano_37xaiupd5undntrgaogja8huxgjph85a457m6a7g3ghsnp4wisusx1mqkigg';
+   $previous            = 'F9252D12EC2103CAD6B2E7212C617413ADC741D16A465452CA90C504D9F2C278';
+   $representative      = 'nano_1aqkrayihxzdahoxpjrg8o6mxgxfzq46hhcdm1u48w3qexsakx7pzzhjn3fc';
+   $balance             = '16.2300118101';
+   $balance_type        = BALANCE_REAL_STRING;
+   $value_to_send       = '2.281';
+   $value_to_send_type  = VALUE_SEND_RECEIVE_REAL_STRING;
+   $link                = '79640F38102A3728EFC9D2A190CDCAC87011B6EB2BFF9BCD10F12405EC76D8C1';
+   $direction           = VALUE_TO_RECEIVE;
+
+   try {
+
+      $nano_block = php_c_generate_block(
+
+                       $account,
+                       $previous,
+                       $representative,
+                       $balance,
+                       $balance_type,
+                       $value_to_send,
+                       $value_to_send_type,
+                       $link,
+                       $direction
+
+                    );
+
+   } catch (Exception $e) {
+
+      echo 'Error code: '.$e->getCode()."\nError message: ".$e->getMessage();
+      exit(1);
+
+   }
+
+   $new_account        = '51BD5E2C122A7D505838A2165338BDCE48940B1E66AE0682799EFD39BD7DD618';
+
+   echo "\nChanging account ".$account." to ".$new_account."\n\n";
+
+   try {
+
+      php_c_set_account_to_block($nano_block, $new_account);
+
+   } catch (Exception $e) {
+
+      echo 'Error code: '.$e->getCode()."\nError message: ".$e->getMessage();
+      exit(1);
+
+   }
+
+   echo "Success\nAccount ".$account." changed to ".$new_account."\n\nFinally Hello World !";
+
+?>
+```
+
+**Return value**
+
+```sh
+STEP1: Create Nano Block to receive 2.281 Nanos (open block) from link 79640F38102A3728EFC9D2A190CDCAC87011B6EB2BFF9BCD10F12405EC76D8C1
+
+Changing account nano_37xaiupd5undntrgaogja8huxgjph85a457m6a7g3ghsnp4wisusx1mqkigg to 51BD5E2C122A7D505838A2165338BDCE48940B1E66AE0682799EFD39BD7DD618
+
+Success
+Account nano_37xaiupd5undntrgaogja8huxgjph85a457m6a7g3ghsnp4wisusx1mqkigg changed to 51BD5E2C122A7D505838A2165338BDCE48940B1E66AE0682799EFD39BD7DD618
+
+Finally Hello World !
+
+
+# Binary block before
+# 0000000000000000000000000000000000000000000000000000000000000006
+# 97a886ecb1ee8ba6b0e455d1419fbeba367986810cb3220ae0b9f9a585c86779
+# f9252d12ec2103cad6b2e7212c617413adc741d16a465452ca90c504d9f2c278
+# 22f2c23d07f7eb43ebdb470e35493ebbadfdc447bd4b983623703767728974b6
+# 000000e9a44e168ac332b4814c500000
+# 79640f38102a3728efc9d2a190cdcac87011b6eb2bff9bcd10f12405ec76d8c1
+# 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+# 00
+# 0000000000000000
+
+# Human readable block before (JSON equivalent)
+# {
+#   "action": "process",
+#   "json_block": "true",
+#   "block": {
+#     "type": "state",
+#     "account": "nano_37xaiupd5undntrgaogja8huxgjph85a457m6a7g3ghsnp4wisusx1mqkigg",
+#     "previous": "F9252D12EC2103CAD6B2E7212C617413ADC741D16A465452CA90C504D9F2C278",
+#     "representative": "nano_1aqkrayihxzdahoxpjrg8o6mxgxfzq46hhcdm1u48w3qexsakx7pzzhjn3fc",
+#     "balance": "18511011810100000000000000000000",
+#     "link": "79640F38102A3728EFC9D2A190CDCAC87011B6EB2BFF9BCD10F12405EC76D8C1",
+#     "link_as_account": "nano_1yd63ww31cjq75qwmno3k58wok5i48ugpczzmh8j3wb61qp9fp835zfzanwe",
+#     "signature": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+#     "work": "0000000000000000"
+#   }
+# }
+
+# Binary block after
+# 0000000000000000000000000000000000000000000000000000000000000006
+# 51bd5e2c122a7d505838a2165338bdce48940b1e66ae0682799efd39bd7dd618
+# f9252d12ec2103cad6b2e7212c617413adc741d16a465452ca90c504d9f2c278
+# 22f2c23d07f7eb43ebdb470e35493ebbadfdc447bd4b983623703767728974b6
+# 000000e9a44e168ac332b4814c500000
+# 79640f38102a3728efc9d2a190cdcac87011b6eb2bff9bcd10f12405ec76d8c1
+# 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+# 00
+# 0000000000000000
+
+# Human readable block after (JSON equivalent)
+# {
+#   "action": "process",
+#   "json_block": "true",
+#   "block": {
+#     "type": "state",
+#     "account": "nano_1nfxdrp36cmxc3e5jaipcewdumkaki7jwsog1t39m9qx98yquoirow9mb1ad",
+#     "previous": "F9252D12EC2103CAD6B2E7212C617413ADC741D16A465452CA90C504D9F2C278",
+#     "representative": "nano_1aqkrayihxzdahoxpjrg8o6mxgxfzq46hhcdm1u48w3qexsakx7pzzhjn3fc",
+#     "balance": "18511011810100000000000000000000",
+#     "link": "79640F38102A3728EFC9D2A190CDCAC87011B6EB2BFF9BCD10F12405EC76D8C1",
+#     "link_as_account": "nano_1yd63ww31cjq75qwmno3k58wok5i48ugpczzmh8j3wb61qp9fp835zfzanwe",
+#     "signature": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+#     "work": "0000000000000000"
+#   }
+# }
+```
+
+**On error**
+
+Throws _MyNanoCEmbeddedException
 
 **On error**
 

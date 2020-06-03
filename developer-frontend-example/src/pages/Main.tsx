@@ -31,6 +31,11 @@ export function Main(props: any) {
                     <OpenSeed bip39 />
                 );
 
+            case WALLET_FROM.FROM_KEY_PAIR:
+                return (
+                    <OpenSeed keyPair />
+                );
+
             case WALLET_FROM.FROM_ENCRYPTED_FILE:
                 return (
                     <OpenEncryptedWalletFile />

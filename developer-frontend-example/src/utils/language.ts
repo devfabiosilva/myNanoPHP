@@ -22,7 +22,7 @@ export const LANG_PT_BR = {
     open_nano_seed: "Abrir Nano SEED",
     type_your_seed_here: "Digite sua SEED aqui",
     your_seed: "Sua SEED NANO",
-    msg_empty_seed: "A SEED está vazia",
+    msg_empty_seed: "A SEED|BIP39|Par de chaves está vazia",
     open_selected: "Abrir selecionado",
     open_with_seed: "Abrir com a semente",
     open_with_bip39: "Abrir com Bip39",
@@ -47,7 +47,11 @@ export const LANG_PT_BR = {
     msg_done_seed_and_bip39: "Sua semente: '%d' e seu Bip39: '%e'. Guarde com segurança e não conte pra ninguém",
     your_bip39: "Seu menemonico Bip39",
     type_your_bip39_here: "Digite seu menemonico aqui",
-    open_nano_bip39: "Extrair par de chaves do Bip39"
+    open_nano_bip39: "Extrair par de chaves do Bip39",
+    msg_invalid_keypair_size: "Tamanho do par de chaves inválidos",
+    open_keypair: "Abrir carteira com par de chaves",
+    your_keypair: "Seu par de chaves",
+    type_your_keypair_here: "Digite seu par de chaves aqui"
 
 }
 
@@ -72,7 +76,7 @@ export const LANG_EN_US = {
     open_nano_seed: "Open Nano SEED",
     type_your_seed_here: "Type your SEED here",
     your_seed: "Your NANO SEED",
-    msg_empty_seed: "SEED is empty",
+    msg_empty_seed: "SEED|BIP39|KeyPair is empty",
     open_selected: "Open selected",
     open_with_seed: "Open with seed",
     open_with_bip39: "Open with Bip39",
@@ -97,6 +101,10 @@ export const LANG_EN_US = {
     msg_done_seed_and_bip39: "Your SEED: '%d' and your Bip39: '%e'. Keep it safe and don't tell it to anybody",
     your_bip39: "Your Bip39 menemonic",
     type_your_bip39_here: "Type your menemonic here",
-    open_nano_bip39: "Extract KeyPair from Bip39"
+    open_nano_bip39: "Extract KeyPair from Bip39",
+    msg_invalid_keypair_size: "Invalid keypair size",
+    open_keypair: "Open wallet with keypair",
+    your_keypair: "Your KeyPair",
+    type_your_keypair_here: "Type your keypair here"
 
 }

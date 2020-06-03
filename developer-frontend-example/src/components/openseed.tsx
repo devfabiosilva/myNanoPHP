@@ -4,16 +4,23 @@ import { connect } from 'react-redux';
 import { 
 
     my_nano_php_seed2keypair,
-    my_nano_php_extract_key_pair_from_bip39
+    my_nano_php_extract_key_pair_from_bip39,
+    my_nano_php_public_key_to_wallet
 
 } from '../service';
 
-import { setPublicKey } from '../actions';
+import { 
+
+    setPublicKey
+
+} from '../actions';
+
 import { 
 
     my_wallet,
     NANO_KEY_PAIR,
-    WALLET_FROM
+    WALLET_FROM,
+    PUBLIC_KEY_TO_WALLET_RESPONSE
 
 } from '../utils/wallet_interface';
 
@@ -51,8 +58,38 @@ export function OpenSeed(props: any) {
                 (error) => {
                     console.log(error);
                 }
+            );
+        else if (props.keyPair) {
+
+            if (seed_value.length!==128) {
+
+                alert(props.language.msg_invalid_keypair_size);
+                return;
+
+            }
+
+            my_nano_php_public_key_to_wallet(seed_value.substr(64)).then(
+                (public_key_to_wallet_res: any) => {
+                    console.log(public_key_to_wallet_res);
+                    props.wallet_public_key(
+
+                        {
+
+                            origin: WALLET_FROM.FROM_KEY_PAIR,
+                            public_key: (public_key_to_wallet_res as PUBLIC_KEY_TO_WALLET_RESPONSE).public_key,
+                            wallet_number: 0,
+                            wallet: (public_key_to_wallet_res as PUBLIC_KEY_TO_WALLET_RESPONSE).wallet
+
+                        }
+
+                    );
+
+                },
+                (public_key_to_wallet_error: any) => {
+                    console.log(public_key_to_wallet_error);
+                }
             )
-        else
+        } else
             my_nano_php_seed2keypair(0, seed_value).then(
                 (seed2keypair: any) => {
 
@@ -78,13 +115,25 @@ export function OpenSeed(props: any) {
     return (
         <div>
             <div>
-                { (props.bip39)?props.language.your_bip39:props.language.your_seed }
+                {
+
+                    (props.bip39)?
+                    props.language.your_bip39:
+                    (props.keyPair)?props.language.your_keypair:
+                    props.language.your_seed
+
+                }
             </div>
             <input
 
-                className="seed-input"
-                id="seed-input-id"
-                placeholder={ (props.bip39)?props.language.type_your_bip39_here:props.language.type_your_seed_here }
+                className = "seed-input"
+                id = "seed-input-id"
+                placeholder = {
+
+                    (props.bip39)?props.language.type_your_bip39_here:
+                    (props.keyPair)?props.language.type_your_keypair_here:
+                    props.language.type_your_seed_here
+                }
 
             />
             <button
@@ -93,7 +142,11 @@ export function OpenSeed(props: any) {
                 onClick={ openNanoSeed }
 
             >
-                { (props.bip39)?props.language.open_nano_bip39:props.language.open_nano_seed }
+                {
+                    (props.bip39)?props.language.open_nano_bip39:
+                    (props.keyPair)?props.language.open_keypair:
+                    props.language.open_nano_seed
+                }
             </button>
         </div>
     );
