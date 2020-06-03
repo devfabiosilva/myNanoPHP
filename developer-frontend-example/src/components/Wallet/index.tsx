@@ -9,7 +9,7 @@ import {
 
 import { 
 
-  UNDEFINED,
+  UNDEFINED, MAX_FEE,
 
 } from '../../utils';
 
@@ -18,8 +18,10 @@ import { my_wallet } from '../../utils/wallet_interface';
 
 export function Wallet(props: any) {
 
-  const [balance, setBalance] = useState("");
-  const [pendingAccount, setPendingAccount ] = useState("");
+  const [ balance, setBalance] = useState("");
+  const [ pendingAccount, setPendingAccount ] = useState("");
+  const [ fee, setFee ] = useState(true);
+  //const [ feeValue, setFeeValue ] = useState(MAX_FEE);
 
   useEffect(
     () => {
@@ -87,6 +89,14 @@ export function Wallet(props: any) {
       </div>
       <div className="pending-account">
         { props.language.pending_account }: { (pendingAccount)?pendingAccount:props.language.loading_pending }
+      </div>
+      <div className="fee-container">
+        <label>{ props.language.label_allow_p2pow_dpow_label }</label>
+        <input type="checkbox" checked={ fee } onChange={() => setFee(!fee)} />
+        <div className="fee-label-value-container" style={{display:(fee)?"inline-block":"none"}}>
+          <label>{ props.language.label_fee }</label>
+          <input type="text" defaultValue={ MAX_FEE } />
+        </div>
       </div>
       <div className="button-container">
         <button className="send-button">
