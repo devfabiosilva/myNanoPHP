@@ -1,5 +1,7 @@
 import React, { useEffect, useState} from 'react';
 import { connect } from 'react-redux';
+import QRCode from 'qrcode.react';
+
 import {
 
   nano_rpc_account_balance,
@@ -26,6 +28,7 @@ export function Wallet(props: any) {
 
   useEffect(
     () => {
+      console.log(props.state);
       nano_rpc_account_balance(props.state.wallet).then(
         (data: any) => {
           (data)?
@@ -104,6 +107,9 @@ export function Wallet(props: any) {
         <button className="send-button">
           { props.language.send }
         </button>
+      </div>
+      <div className="qr-code-container">
+        <QRCode value={ props.state.wallet }/>
       </div>
 
     </div>

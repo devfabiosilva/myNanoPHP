@@ -229,12 +229,12 @@ ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(My_NanoCEmbedded_SetPrefixesToBlock, 0, 0, 2)
     ZEND_ARG_INFO(1, block)
-    ZEND_ARG_INFO(0, signature)
+    ZEND_ARG_INFO(0, prefixes)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(My_NanoCEmbedded_SetWorkToBlock, 0, 0, 2)
     ZEND_ARG_INFO(1, block)
-    ZEND_ARG_INFO(0, signature)
+    ZEND_ARG_INFO(0, work)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(My_NanoCEmbedded_CalculateWorkFromBlock, 0, 0, 2)

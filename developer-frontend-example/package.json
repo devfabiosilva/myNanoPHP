@@ -12,6 +12,7 @@
     "@types/react-dom": "^16.9.0",
     "axios": "^0.19.2",
     "lorem-ipsum": "^2.0.3",
+    "qrcode.react": "^1.0.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-feather": "^2.0.8",
@@ -45,6 +46,7 @@
     ]
   },
   "devDependencies": {
+    "@types/qrcode.react": "^1.0.1",
     "@types/react-redux": "^7.1.9",
     "@types/react-router-dom": "^5.1.5"
   }

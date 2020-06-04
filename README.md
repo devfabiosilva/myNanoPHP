@@ -3381,11 +3381,123 @@ Finally Hello World !
 
 **On error**
 
-Throws _MyNanoCEmbeddedException
+Throws _MyNanoCEmbeddedException_
+
+<h1>- php_c_set_balance()</h1>
+
+### Description
+
+Set/modify an account balance
+
+```php
+php_c_set_balance(&$block, $balance, $balance_type);
+```
+
+params|type|description
+------|----|-----------
+**_&$block_**|binary|Nano block
+**_$balance_**|string|Nano big number balance
+**_$balance_type_**|integer|Balance type (See below)
+
+**_$balance_type_** type|description
+------------------------|-----------
+**BALANCE_REAL_STRING**|Real string value
+**BALANCE_RAW_STRING**|Raw string value
+**BALANCE_RAW_128**|Hex string value
+
+#### Return value
+
+Nano block reference **_&$block_** with modified balance
+
+##### Example
+
+```php
+// Assuming $block1, $block2 and $block3 variables are already created
+php_c_set_balance($block1, '12702.18726458194', BALANCE_REAL_STRING); // Assigns real value 12702.18726458194 to $block1
+php_c_set_balance($block2, '254000000000000000000000000000000', BALANCE_RAW_STRING); // Assigns raw value (254) to $block2
+php_c_set_balance($block3, '000011d126edc439aee12bdec7800000', BALANCE_RAW_128); // Assigns hex value (361.3716971) to $block3
+```
 
 **On error**
 
 Throws _MyNanoCEmbeddedException_
+
+**See also**
+
+- _php_c_get_balance_from_block()_
+
+<h1>- php_c_set_link_to_block()</h1>
+
+### Description
+
+Set/modify a link or Nano account
+
+```php
+php_c_set_link_to_block(&$block, $link);
+```
+
+params|type|description
+------|----|-----------
+**_&$block_**|binary|Nano block
+**_$link_**|string|Nano link or Nano account (Base32 encoded string)
+
+#### Return value
+
+Nano block reference **_&$block_** with modified link or Nano account
+
+##### Example
+
+```php
+// Assuming $block1, $block2 and $block3 variables are already created
+php_c_set_link_to_block($block1, 'E0AF835D2257133F507DE787728ABB48C644E950BB7894CB822A5768E01F91D2'); // Assigns link to $block1
+php_c_set_link_to_block($block2, 'nano_3bgfqdzh6kcpysiqczsiox6zufnj7bdtqndt9e4wgbjo4pdwp7irdrnz5inm'); // Assigns Nano account to $block2
+php_c_set_link_to_block($block3, 'xrb_3p4cc397w9zqz8otcft181wm9utrz94kc9xku5fu1wh7p43h1cpk7pju3ebs'); // Assigns Nano account to $block3
+```
+
+**On error**
+
+Throws _MyNanoCEmbeddedException_
+
+**See also**
+
+- _php_c_get_link_from_block()_
+
+<h1>- php_c_set_prefixes()</h1>
+
+### Description
+
+Set/modifies Block wallets prefixes
+
+```php
+php_c_set_prefixes(&$block, $prefixes);
+```
+
+params|type|description
+------|----|-----------
+**_&$block_**|binary|Nano block
+**_$prefixes_**|integer|Prefixes 
+
+#### Return value
+
+Nano block reference **_&$block_** with modified prefix(es)
+
+##### Example
+
+```php
+// Assuming $block1, $block2, $block3 and $block4 variables are already created
+php_c_set_prefixes($block1, REP_XRB); // Changes representative prefix _nano__ to _xrb__ in $block1
+php_c_set_prefixes($block2, SENDER_XRB); // Changes sender (account) prefix _nano__ to _xrb__ in $block2
+php_c_set_prefixes($block3, DEST_XRB|REP_XRB); // Changes destination and representative prefixes _nano__ to _xrb__ in $block3
+php_c_set_prefixes($block1, 0); // Changes all wallets (account, representative and destination) to _nano__ prefixes in $block1
+```
+
+**On error**
+
+Throws _MyNanoCEmbeddedException_
+
+**See also**
+
+- _php_c_get_prefixes_from_block()_
 
 **Documentation on progress ...**
 
@@ -3739,14 +3851,14 @@ Extension [ <persistent> extension #15 mynanoembedded version 1.0 ] {
 
       - Parameters [2] {
         Parameter #0 [ <required> &$block ]
-        Parameter #1 [ <required> $signature ]
+        Parameter #1 [ <required> $prefixes ]
       }
     }
     Function [ <internal:mynanoembedded> function php_c_set_work ] {
 
       - Parameters [2] {
         Parameter #0 [ <required> &$block ]
-        Parameter #1 [ <required> $signature ]
+        Parameter #1 [ <required> $work ]
       }
     }
     Function [ <internal:mynanoembedded> function php_c_calculate_work_from_block ] {
