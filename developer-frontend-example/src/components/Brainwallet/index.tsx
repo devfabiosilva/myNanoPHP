@@ -18,6 +18,7 @@ import {
 } from '../../utils/wallet_interface';
 
 import { setPublicKey } from '../../actions';
+import LanguageTool from '../LanguageTool';
 
 export function Brainwallet(props: any) {
 
@@ -63,10 +64,12 @@ export function Brainwallet(props: any) {
 
                         props.wallet_public_key(
                             {
+
                                 origin: WALLET_FROM.FROM_BRAINWALLET,
                                 public_key: (seed2keypair.key_pair as NANO_KEY_PAIR).public_key,
                                 wallet_number: (seed2keypair.key_pair as NANO_KEY_PAIR).wallet_number,
                                 wallet: (seed2keypair.key_pair as NANO_KEY_PAIR).wallet
+
                             }
                         );
                     },
@@ -88,6 +91,7 @@ export function Brainwallet(props: any) {
 
     return (
         <div className="brainwallet-container">
+            <LanguageTool />
             <div className="word-phrases-container">
                 <div className="word-phrases-title">
                     { props.language.brainwallet }
@@ -130,7 +134,7 @@ const mapStateToProps = (state: any, ownProps: any) => ({
 });
   
 const mapDispatchToProps = (dispatch: any, ownProps: any) => ({
-    wallet_public_key: (public_key: my_wallet) => dispatch(setPublicKey(public_key))
+    wallet_public_key: (public_key: my_wallet) => dispatch(setPublicKey(public_key)),
 });
   
 export default connect(mapStateToProps, mapDispatchToProps)(Brainwallet);

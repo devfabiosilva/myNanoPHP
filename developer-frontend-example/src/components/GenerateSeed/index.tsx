@@ -21,6 +21,7 @@ import {
 } from '../../service';
 
 import { setPublicKey, setMyWallet } from '../../actions';
+import LanguageTool from '../LanguageTool';
 
 export function GenerateSeed(props: any) {
 
@@ -102,6 +103,7 @@ export function GenerateSeed(props: any) {
 
     return (
         <div>
+            <LanguageTool />
             <div className="gen-seed-options-title">
                 { props.language.gen_select_new_seed_title }
             </div>

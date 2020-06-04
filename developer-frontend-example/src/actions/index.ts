@@ -24,6 +24,6 @@ export function setMyWallet(wallet_param: my_wallet) {
     return { type: SET_MY_WALLET_PARAM, wallet_param };
 }
 
-export function setLanguage(language: number){
+export function setLanguage(language: string) {
     return { type: SET_LANGUAGE, language }
 }

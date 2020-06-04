@@ -9,6 +9,7 @@ import {
 } from '../../utils/wallet_interface';
 
 import { setPublicKey } from '../../actions';
+import LanguageTool from '../LanguageTool';
 
 export function SelectWallet(props: any) {
 
@@ -26,9 +27,8 @@ export function SelectWallet(props: any) {
     }
 
     return (
-        <div
-            className="option-container"
-        >
+        <div className="option-container">
+            <LanguageTool />
             <select
                 className="options"
                 id="options-id"
@@ -74,7 +74,7 @@ const mapStateToProps = (state: any, ownProps: any) => ({
 });
 
 const mapDispatchToProps = (dispatch: any, ownProps: any) => ({
-    wallet_public_key: (public_key: my_wallet) => dispatch(setPublicKey(public_key))
+    wallet_public_key: (public_key: my_wallet) => dispatch(setPublicKey(public_key)),
 });
   
 export default connect(mapStateToProps, mapDispatchToProps)(SelectWallet);

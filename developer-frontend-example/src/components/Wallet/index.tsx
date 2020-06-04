@@ -15,6 +15,7 @@ import {
 
 import { setMyWallet } from '../../actions';
 import { my_wallet } from '../../utils/wallet_interface';
+import LanguageTool from '../LanguageTool';
 
 export function Wallet(props: any) {
 
@@ -72,6 +73,7 @@ export function Wallet(props: any) {
 
   return (
     <div className="wallet-container">
+      <LanguageTool />
       <div className="wallet-number-container">
         <div className="wallet-number-title">{ props.language.wallet_number }:</div>
         <div className="wallet-number">

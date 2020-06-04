@@ -1,5 +1,6 @@
-export const PORTUGUESE_LANGUAGE = 1;
-export const ENGLISH_LANGUAGE = 2;
+export const PORTUGUESE_LANGUAGE = "pt-br";
+export const ENGLISH_LANGUAGE = "en-us";
+export const MY_PHP_LANGUAGE = "myphplanguage";
 
 export const LANG_PT_BR = {
     
@@ -120,5 +121,28 @@ export const LANG_EN_US = {
     open_public_key: "Open wallet with public key",
     label_allow_p2pow_dpow_label: "Allow Proof of Work fee (P2PoW or DPoW)",
     label_fee: "Fee"
+
+}
+
+export function getLanguageFromLocalStorage() {
+
+    let language = localStorage.getItem(MY_PHP_LANGUAGE);
+
+    if ( ( language === null ) || ( language === undefined ) ) {
+
+        localStorage.setItem(MY_PHP_LANGUAGE, ENGLISH_LANGUAGE);
+        language = localStorage.getItem(MY_PHP_LANGUAGE);
+
+    }
+
+    return language;
+
+}
+
+export function setLanguageToLocalStorage(lang: string) {
+
+    localStorage.setItem(MY_PHP_LANGUAGE, lang);
+
+    return localStorage.getItem(MY_PHP_LANGUAGE);
 
 }

@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import OpenEncryptedWalletFile from '../components/OpenEncryptedFile';
+
 import {
 
     NANO_KEY_PAIR,
@@ -14,9 +15,20 @@ import Brainwallet from '../components/Brainwallet';
 import OpenSeed from '../components/OpenSeed';
 import SelectWallet from '../components/WalletOptions';
 import GenerateSeed from '../components/GenerateSeed';
+import { setLanguage } from '../actions';
+import { getLanguageFromLocalStorage } from '../utils/language';
 
 //dom 2020 05 24 20:30
 export function Main(props: any) {
+
+    useEffect(
+        () => {
+            props.modifyLang(getLanguageFromLocalStorage());
+        },
+        [
+            props
+        ]
+    );
 
     if ((props.nano_wallet_state as NANO_KEY_PAIR).public_key === "")
         switch ((props.nano_wallet_state as my_wallet).origin) {
@@ -74,7 +86,7 @@ const mapStateToProps = (state: any, ownProps: any) => ({
 });
 
 const mapDispatchToProps = (dispatch: any, ownProps: any) => ({
-
+    modifyLang: (lang: any) => dispatch(setLanguage(lang))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Main);
