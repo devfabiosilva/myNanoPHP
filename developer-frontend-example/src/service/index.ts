@@ -195,6 +195,7 @@ export async function my_nano_php_public_key_to_wallet(public_key:string, prefix
 }
 
 ////// nano rpc
+///https://docs.nano.org/commands/rpc-protocol/
 
 export async function nano_rpc_account_balance(account: string) {
     let data: any = null, err: any;
@@ -208,4 +209,19 @@ export async function nano_rpc_account_balance(account: string) {
     );
     
     return new Promise((resolve, reject) => (data)?(data.error)?reject({error: data.error}):resolve(data):reject(err));
+}
+
+export async function nano_rpc_account_representative(account: string) {
+    let data: any = null, err: any;
+
+    await api_rpc.post('/', {
+        action: "account_representative",
+        account 
+    }).then(
+        (d) => data = d.data,
+        (e) => err = e.data
+    );
+    
+    return new Promise((resolve, reject) => (data)?(data.error)?reject({error: data.error}):resolve(data):reject(err));
+
 }

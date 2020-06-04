@@ -5,13 +5,15 @@ import QRCode from 'qrcode.react';
 import {
 
   nano_rpc_account_balance,
-  my_nano_php_raw2real
+  my_nano_php_raw2real,
+  nano_rpc_account_representative
 
 } from '../../service';
 
 import { 
 
   UNDEFINED, MAX_FEE,
+  DEFAULT_REPRESENTATIVE,
 
 } from '../../utils';
 
@@ -24,10 +26,13 @@ export function Wallet(props: any) {
   const [ balance, setBalance] = useState("");
   const [ pendingAccount, setPendingAccount ] = useState("");
   const [ fee, setFee ] = useState(true);
+  const [ representative, setRepresentative ] = useState("");
+  const [ walletReady, setWalletReady ] = useState(false);
   //const [ feeValue, setFeeValue ] = useState(MAX_FEE);
 
   useEffect(
     () => {
+
       console.log(props.state);
       nano_rpc_account_balance(props.state.wallet).then(
         (data: any) => {
@@ -67,6 +72,36 @@ export function Wallet(props: any) {
         (error) => {
           console.log(error)
         }
+      ).then(
+        () => {
+          nano_rpc_account_representative(props.state.wallet).then(
+            (data: any) => {
+              console.log(data);
+              if (data) {
+                if (data.representative) {
+                  props.setMyWallet({
+                    wallet_representative: data.representative
+                  });
+                  setRepresentative(props.state.wallet_representative);
+                  setWalletReady(true);
+                } else
+                  setRepresentative("No representative found");
+                
+              } else
+                setRepresentative("Unknown Nano RPC JSON data");
+
+            },
+            (e) => {
+
+              if (e.error) {
+                setRepresentative(DEFAULT_REPRESENTATIVE);
+                setWalletReady(true);
+              } else
+                setRepresentative("Unknown Error");
+
+            }
+          )
+        }
       );
     },
     [
@@ -89,11 +124,23 @@ export function Wallet(props: any) {
       <div className="wallet-public-key">
         { props.language.pk } { props.state.public_key }
       </div>
+      <div className="representative-wallet-container">
+        <div className="prepresentative-label">
+          Representativo:
+        </div>
+        <div className="representative-wallet" >
+          { representative }
+        </div>
+      </div>
       <div className="balance">
         { props.language.balance }: { (balance)?balance:props.language.loading_balance }
       </div>
       <div className="pending-account">
         { props.language.pending_account }: { (pendingAccount)?pendingAccount:props.language.loading_pending }
+      </div>
+      <div className="value-to-send">
+        <label>Valor: </label>
+        <input type="text" className="value-to-send" />
       </div>
       <div className="fee-container">
         <label>{ props.language.label_allow_p2pow_dpow_label }</label>
@@ -103,7 +150,9 @@ export function Wallet(props: any) {
           <input type="text" defaultValue={ MAX_FEE } />
         </div>
       </div>
-      <div className="button-container">
+      <div className="button-container"
+        style={{display:(walletReady)?"inline-block":"none"}}
+      >
         <button className="send-button">
           { props.language.send }
         </button>
