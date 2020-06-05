@@ -8,7 +8,7 @@ import {
 
 import {
 
-    NANO_PREFIX
+    NANO_PREFIX, UNKNOWN_MY_NANO_PHP_SERVER_ERROR
 
 } from '../utils';
 
@@ -19,7 +19,9 @@ import {
     BRAINWALLET_RESPONSE, 
     MY_NANO_PHP_SEED2KEYPAIR,
     GENERATED_ENCRYPTED_SEED,
-    PUBLIC_KEY_TO_WALLET_RESPONSE
+    PUBLIC_KEY_TO_WALLET_RESPONSE,
+    my_wallet,
+    BLOCK_RESPONSE
 
 } from '../utils/wallet_interface';
 
@@ -194,6 +196,123 @@ export async function my_nano_php_public_key_to_wallet(public_key:string, prefix
     });
 }
 
+export async function my_nano_php_send_receive_money(
+    wallet: my_wallet, 
+    destination_wallet: string, 
+    amount_to_send: string,
+    private_key: string,
+    direction: string
+)
+{
+
+    let data: any;
+    let has_fee: boolean;
+
+    if (( has_fee = ((wallet.fee !== undefined) || (wallet.fee !== "")) )) {
+        my_nano_php_api(`command=create_block=${wallet.wallet}&previous=${wallet.frontier}&representative=${wallet.wallet_representative}&balance=${wallet.balance}&val_send_rec=${amount_to_send}&link=${destination_wallet}&direction=${direction}`, "my_nano_php_send_money").then(
+            (d: any) => {
+                if (d.error === "0") {
+                    if (d.block){
+                        my_nano_php_api(`command=block_to_p2pow&block=${d.block}&wallet=${wallet.worker_wallet}&fee=${wallet.fee}`, "my_nano_php_send_money").then(
+                            (worker: any) => {
+                                if (worker.error === "0") {
+                                    if (worker.block) {
+                                        my_nano_php_api(`command=sign_p2pow_block&block=${worker.block}&private_key=${private_key}`, "my_nano_php_send_money").then(
+                                            (signed_p2pow_block: any) => {
+                                                if (signed_p2pow_block.error === "0") {
+                                                    if (signed_p2pow_block.block) {
+                                                        my_nano_php_api(`command=p2pow_to_json&block=${signed_p2pow_block.block}`, "my_nano_php_send_money").then(
+                                                            (p2pow_to_json: any) => {
+                                                                if (p2pow_to_json.error === "0") 
+                                                                    data = p2pow_to_json;
+                                                                else if (p2pow_to_json.error)
+                                                                    return new Promise((res, err) => err(p2pow_to_json));
+                                                                else
+                                                                    return new Promise((res, err) => err({error:"-16", reason: UNKNOWN_MY_NANO_PHP_SERVER_ERROR}));
+                                                            }
+                                                        )
+                                                    } else
+                                                        return new Promise((res, err) => err({error:"-15", reason: UNKNOWN_MY_NANO_PHP_SERVER_ERROR}));
+                                                } else if (signed_p2pow_block.error)
+                                                    return new Promise((res, err) => err(signed_p2pow_block))
+                                                else
+                                                    return new Promise((res, err) => err({error:"-14", reason: UNKNOWN_MY_NANO_PHP_SERVER_ERROR}));
+                                            }
+                                        );
+                                    } else
+                                        return new Promise((res, err) => err({error:"-13", reason: UNKNOWN_MY_NANO_PHP_SERVER_ERROR}));
+
+                                } else if (worker.error)
+                                    return new Promise((res, err) => err(worker));
+                                else
+                                    return new Promise((res, err) =>  err({error:"-12", reason: UNKNOWN_MY_NANO_PHP_SERVER_ERROR}));
+                            }
+                        );
+                    } else
+                        return new Promise((res, err) => err({error:"-11", reason: UNKNOWN_MY_NANO_PHP_SERVER_ERROR}));
+                } else if (d.error) {
+                    return new Promise((res, err) => err(d));
+                } else
+                    return new Promise((res, err) => err({error:"-10", reason: UNKNOWN_MY_NANO_PHP_SERVER_ERROR}))
+            }
+        );
+    } else
+        my_nano_php_api(`command=create_block=${wallet.wallet}&previous=${wallet.frontier}&representative=${wallet.wallet_representative}&balance=${wallet.balance}&val_send_rec=${amount_to_send}&link=${destination_wallet}&direction=${direction}`, "my_nano_php_send_money").then(
+            (d: any) => {
+                if (d.error === "0") {
+                    if (d.block)
+                        my_nano_php_api(`command=sign_block&block=${d.block}&private_key=${private_key}`, "my_nano_php_send_money").then(
+                            (signed_block: any) => {
+                                if (signed_block.error === "0") {
+                                    if (signed_block.block) {
+                                        my_nano_php_api(`command=calculate_work_from_block&block=${signed_block}&n_thr=4`, "my_nano_php_send_money").then(
+                                            (proof_of_work: any) => {
+                                                if (proof_of_work.error === "0") {
+                                                    if (proof_of_work.block)
+                                                        my_nano_php_api(`command=block_to_json&block=${proof_of_work.block}`, "my_nano_php_send_money").then(
+                                                            (block_to_json: any) => {
+                                                                if (block_to_json.error === "0")
+                                                                    data = block_to_json as BLOCK_RESPONSE;
+                                                                else if (block_to_json.error)
+                                                                    return new Promise((res, err) => err(block_to_json));
+                                                                else
+                                                                    return new Promise((res, err) => err({error:"-7", reason: UNKNOWN_MY_NANO_PHP_SERVER_ERROR}));
+                                                            }
+                                                        )
+                                                    else
+                                                        return new Promise((res, err) => err({error:"-6", reason: UNKNOWN_MY_NANO_PHP_SERVER_ERROR}));
+                                                } else if (proof_of_work.error)
+                                                    return new Promise((res, err) => err(proof_of_work));
+                                                else
+                                                    return new Promise((res, err) => err({error:"-5", reason: UNKNOWN_MY_NANO_PHP_SERVER_ERROR}));
+                                            }
+                                        );
+                                    } else
+                                        return new Promise((res, err) => { 
+                                            return err({error:"-4", reason: UNKNOWN_MY_NANO_PHP_SERVER_ERROR})
+                                        });
+                                } else
+                                    return new Promise((res, err) => {
+                                        return err({error:"-3", reason: UNKNOWN_MY_NANO_PHP_SERVER_ERROR});
+                                    });
+                            }
+                        )
+                    else
+                        return new Promise((res, err) => err({error:"-2", reason: UNKNOWN_MY_NANO_PHP_SERVER_ERROR}));
+                } else if (d.error)
+                    return new Promise((res, err) => err(d));
+                else
+                    return new Promise((res, err) => err({error:"-1", reason: UNKNOWN_MY_NANO_PHP_SERVER_ERROR}));
+            }
+        );
+
+    if (has_fee)
+        return new Promise((res) => res(data));
+
+    return await nano_rpc_account_send_signed_block(data.block);
+
+}
+
 ////// nano rpc
 ///https://docs.nano.org/commands/rpc-protocol/
 
@@ -216,12 +335,12 @@ export async function nano_rpc_account_representative(account: string) {
 
     await api_rpc.post('/', {
         action: "account_representative",
-        account 
+        account
     }).then(
         (d) => data = d.data,
         (e) => err = e.data
     );
-    
+
     return new Promise((resolve, reject) => (data)?(data.error)?reject({error: data.error}):resolve(data):reject(err));
 
 }
@@ -240,3 +359,19 @@ export async function nano_rpc_account_frontier(account: string) {
     return new Promise((resolve, reject) => (data)?(data.error)?reject({error: data.error}):resolve(data):reject(err));
 
 }
+
+export async function nano_rpc_account_send_signed_block(block: any) {
+    let data: any = null, err: any;
+
+    await api_rpc.post('/', block).then(
+        (d) => data = d.data,
+        (e) => err = e.data
+    );
+    
+    return new Promise((resolve, reject) => (data)?(data.error)?reject({error: data.error}):resolve(data):reject(err));
+
+}
+
+///// p2pow server
+
+/// Will be implemented

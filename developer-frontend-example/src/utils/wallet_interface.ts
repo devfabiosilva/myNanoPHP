@@ -64,7 +64,9 @@ export interface my_wallet {
     balance?: string,
     bip39?: string  //SECURITY: Fire and forget. Extract public key from (encrypted file|brainwallet|Bip39) and forget private key immediately
     encrypted_block?: string,
-    frontier?: string
+    frontier?: string,
+    fee?: string,
+    worker_wallet?: string
 
 }
 
@@ -88,6 +90,7 @@ export interface PUBLIC_KEY2ADDRESS {
 }
 
 export interface BRAINWALLET_RESPONSE {
+
     error: string|number,
     reason: string,
     text: string,
@@ -100,26 +103,42 @@ export interface BRAINWALLET_RESPONSE {
       warning_msg: string
     },
     warning: string
+
 }
 
 export interface GENERATED_ENCRYPTED_SEED {
+
     error: string|number,
     reason: string,
     encrypted_seed: string
+
 }
 
 export interface OPEN_ENCRYPTED_SEED_RESPONSE {
+
     error: string|number,
     reason: string,
     result: {
         seed: string,
         bip39: string
     }
+
 }
 
 export interface PUBLIC_KEY_TO_WALLET_RESPONSE {
+
     error: string|number,
     reason: string,
     wallet: string,
     public_key: string
+
 }
+
+export interface BLOCK_RESPONSE {
+
+    error: string|number,
+    reason: string,
+    block: string
+
+}
+ 

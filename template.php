@@ -208,7 +208,7 @@ if ($_SERVER['REQUEST_METHOD']==='POST') {
             http_response_code(200);
             header($MIME_TYPE);
 
-            echo '{"data":"'.$block_hex.'"}';
+            echo '{"error":"0","reason":"Success","block":"'.$block_hex.'"}';
 
         } catch (Exception $e) {
 
@@ -305,7 +305,7 @@ if ($_SERVER['REQUEST_METHOD']==='POST') {
             http_response_code(200);
             header($MIME_TYPE);
 
-            echo '{"data":"'.$block_hex.'"}';
+            echo '{"error":"0","reason":"Success","block":"'.$block_hex.'"}';
 
         } catch (Exception $e) {
 
@@ -2556,7 +2556,7 @@ if ($_SERVER['REQUEST_METHOD']==='POST') {
 
             $res=php_c_parse_block_to_json($block_bin);
 
-            echo $res;
+            echo '{"error":"0","reason":"Success","block":'.$res.'}';
 
         } catch (Exception $e) {
 
@@ -2660,7 +2660,7 @@ if ($_SERVER['REQUEST_METHOD']==='POST') {
 
             $p2pow_block_hex=bin2hex($p2pow_block);
 
-            echo '{"block":"'.$p2pow_block_hex.'"}';
+            echo '{"error":"0","reason":"Success","block":"'.$p2pow_block_hex.'"}';
 
         } catch (Exception $e) {
 
@@ -2771,7 +2771,7 @@ if ($_SERVER['REQUEST_METHOD']==='POST') {
             $block_hex=bin2hex($block_bin);
 
             header($MIME_TYPE);
-            echo '{"block":"'.$block_hex.'"}';
+            echo '{"error":"0","reason":"Success","block":"'.$block_hex.'"}';
 
         } catch (Exception $e) {
 
@@ -2853,7 +2853,7 @@ if ($_SERVER['REQUEST_METHOD']==='POST') {
             $block_hex=bin2hex($block_bin);
 
             header($MIME_TYPE);
-            echo '{"block":"'.$block_hex.'"}';
+            echo '{"error:"0","reason":"Success","block":"'.$block_hex.'"}';
 
         } catch (Exception $e) {
 
@@ -2942,7 +2942,7 @@ if ($_SERVER['REQUEST_METHOD']==='POST') {
             $res=php_c_p2pow_to_json($block_bin);
 
             header($MIME_TYPE);
-            echo $res;
+            echo '{"error":"0","reason":"Success","block":'.$res.'}';
 
         } catch (Exception $e) {
             http_response_code(500);
