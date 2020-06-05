@@ -6,7 +6,8 @@ import {
 
   nano_rpc_account_balance,
   my_nano_php_raw2real,
-  nano_rpc_account_representative
+  nano_rpc_account_representative,
+  nano_rpc_account_frontier
 
 } from '../../service';
 
@@ -28,84 +29,109 @@ export function Wallet(props: any) {
   const [ fee, setFee ] = useState(true);
   const [ representative, setRepresentative ] = useState("");
   const [ walletReady, setWalletReady ] = useState(false);
-  //const [ feeValue, setFeeValue ] = useState(MAX_FEE);
 
   useEffect(
     () => {
 
       console.log(props.state);
-      nano_rpc_account_balance(props.state.wallet).then(
-        (data: any) => {
-          (data)?
-            (data.balance)?
-              my_nano_php_raw2real(data.balance).then(
-                (d: any) => {
-                  my_nano_php_raw2real(data.pending).then(
-                    (pending_balance: any) => {
-                      props.setMyWallet({
-                        balance: d.real_balance,
-                        pending: pending_balance.real_balance
-                      });
-                      setBalance(props.state.balance);
-                      setPendingAccount(props.state.pending);
-                    },
-                    (error: any) => console.log(error)
-                  );
-                },
-                (e: any) => {
-                  props.setMyWallet({
-                    balance: e.reason
-                  });
+      if (!walletReady)
+        nano_rpc_account_balance(props.state.wallet).then(
+          (data: any) => {
+            (data)?
+              (data.balance)?
+                my_nano_php_raw2real(data.balance).then(
+                  (d: any) => {
+                    my_nano_php_raw2real(data.pending).then(
+                      (pending_balance: any) => {
+                        props.setMyWallet({
+                          balance: d.real_balance,
+                          pending: pending_balance.real_balance
+                        });
+                        setBalance(props.state.balance);
+                        setPendingAccount(props.state.pending);
+                      },
+                      (error: any) => console.log(error)
+                    );
+                  },
+                  (e: any) => {
+                    props.setMyWallet({
+                      balance: e.reason
+                    });
+                  }
+                )
+              :props.setMyWallet(
+                {
+                  balance:UNDEFINED
                 }
               )
             :props.setMyWallet(
               {
                 balance:UNDEFINED
               }
-            )
-          :props.setMyWallet(
-            {
-              balance:UNDEFINED
-            }
-          );
-        },
-        (error) => {
-          console.log(error)
-        }
-      ).then(
-        () => {
-          nano_rpc_account_representative(props.state.wallet).then(
-            (data: any) => {
-              console.log(data);
-              if (data) {
-                if (data.representative) {
-                  props.setMyWallet({
-                    wallet_representative: data.representative
-                  });
-                  setRepresentative(props.state.wallet_representative);
+            );
+          },
+          (error) => {
+            console.log(error)
+          }
+        ).then(
+          () => {
+            nano_rpc_account_representative(props.state.wallet).then(
+              (data: any) => {
+                console.log(data);
+                if (data) {
+                  if (data.representative) {
+                    props.setMyWallet({
+                      wallet_representative: data.representative
+                    });
+                    setRepresentative(props.state.wallet_representative);
+                    setWalletReady(true);
+                  } else
+                    setRepresentative("No representative found");
+                  
+                } else
+                  setRepresentative("Unknown Nano RPC JSON data");
+
+              },
+              (e) => {
+
+                if (e.error) {
+                  setRepresentative(DEFAULT_REPRESENTATIVE);
                   setWalletReady(true);
                 } else
-                  setRepresentative("No representative found");
-                
-              } else
-                setRepresentative("Unknown Nano RPC JSON data");
+                  setRepresentative("Unknown Error");
 
-            },
-            (e) => {
+              }
+            );
+          }
+        ).then(
+          () => {
+            nano_rpc_account_frontier(props.state.wallet).then(
+              (data: any) => {
+                if (data.frontiers) {
+                  if (data.frontiers[props.state.wallet])
+                    props.setMyWallet({
+                      frontier: data.frontiers[props.state.wallet]
+                    });
+                }
 
-              if (e.error) {
-                setRepresentative(DEFAULT_REPRESENTATIVE);
-                setWalletReady(true);
-              } else
-                setRepresentative("Unknown Error");
+                if (props.state.frontier === undefined)
+                  props.setMyWallet({
+                    frontier: ""
+                  });
 
-            }
-          )
-        }
-      );
+              },
+              () => {
+                props.setMyWallet({
+                  frontier: ""
+                });
+              }
+            )
+          }
+        );
     },
     [
-      props
+      props,
+      walletReady
     ]
   );
 
@@ -126,7 +152,7 @@ export function Wallet(props: any) {
       </div>
       <div className="representative-wallet-container">
         <div className="prepresentative-label">
-          Representativo:
+          { props.language.representative_title }:
         </div>
         <div className="representative-wallet" >
           { representative }
@@ -138,8 +164,12 @@ export function Wallet(props: any) {
       <div className="pending-account">
         { props.language.pending_account }: { (pendingAccount)?pendingAccount:props.language.loading_pending }
       </div>
+      <div className="destination-wallet-container">
+        <label>{ props.language.destination_wallet_label }: </label>
+        <input type="text" className="destination-wallet" />
+      </div>
       <div className="value-to-send">
-        <label>Valor: </label>
+        <label>{ props.language.amount }: </label>
         <input type="text" className="value-to-send" />
       </div>
       <div className="fee-container">
@@ -160,7 +190,6 @@ export function Wallet(props: any) {
       <div className="qr-code-container">
         <QRCode value={ props.state.wallet }/>
       </div>
-
     </div>
   );
 

@@ -225,3 +225,18 @@ export async function nano_rpc_account_representative(account: string) {
     return new Promise((resolve, reject) => (data)?(data.error)?reject({error: data.error}):resolve(data):reject(err));
 
 }
+
+export async function nano_rpc_account_frontier(account: string) {
+    let data: any = null, err: any;
+
+    await api_rpc.post('/', {
+        action: "accounts_frontiers",
+        accounts: [ account ]
+    }).then(
+        (d) => data = d.data,
+        (e) => err = e.data
+    );
+    
+    return new Promise((resolve, reject) => (data)?(data.error)?reject({error: data.error}):resolve(data):reject(err));
+
+}

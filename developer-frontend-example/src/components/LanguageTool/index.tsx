@@ -17,13 +17,15 @@ export function LanguageTool(props: any) {
             <button
                 onClick={() => {
 
-                        (getLanguageFromLocalStorage()===PORTUGUESE_LANGUAGE)?
+                        (getLanguageFromLocalStorage() === PORTUGUESE_LANGUAGE)?
                             props.modifyLang(ENGLISH_LANGUAGE):
                             props.modifyLang(PORTUGUESE_LANGUAGE);
 
                     }
                 }
-            >Language/Idioma</button>
+            >
+                Language/Idioma
+            </button>
         </div>
     );
 }

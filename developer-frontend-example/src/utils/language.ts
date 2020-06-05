@@ -59,7 +59,10 @@ export const LANG_PT_BR = {
     type_your_public_key_here: "Digite sua chave pública aqui",
     open_public_key: "Abrir carteira com a chave pública",
     label_allow_p2pow_dpow_label: "Permitir taxa da Prova de Trabalho (P2PoW or DPoW)",
-    label_fee: "Taxa"
+    label_fee: "Taxa",
+    representative_title: "Representativo",
+    amount: "Valor",
+    destination_wallet_label: "Carteira de destino"
 
 }
 
@@ -120,7 +123,10 @@ export const LANG_EN_US = {
     type_your_public_key_here: "Type your public key here",
     open_public_key: "Open wallet with public key",
     label_allow_p2pow_dpow_label: "Allow Proof of Work fee (P2PoW or DPoW)",
-    label_fee: "Fee"
+    label_fee: "Fee",
+    representative_title: "Representative",
+    amount: "Amount",
+    destination_wallet_label: "Destination wallet"
 
 }
 
