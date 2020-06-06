@@ -7,6 +7,7 @@ const SET_MY_WALLET_PARAM = 3;
 const SET_LANGUAGE = 4;
 const OPEN_WALLET_DIALOG = 5;
 const CLOSE_WALLET_DIALOG = 6;
+const DIALOG_STATUS = 7;
 
 export const NANO_WALLET_ACTIONS = {
 
@@ -16,7 +17,8 @@ export const NANO_WALLET_ACTIONS = {
     SET_MY_WALLET_PARAM,
     SET_LANGUAGE,
     OPEN_WALLET_DIALOG,
-    CLOSE_WALLET_DIALOG
+    CLOSE_WALLET_DIALOG,
+    DIALOG_STATUS
     
 }
 
@@ -38,4 +40,8 @@ export function openWalletDialog() {
 
 export function closeWalletDialog() {
     return { type: CLOSE_WALLET_DIALOG }
+}
+
+export function dialogStatus(status: string = ""){
+    return { type: DIALOG_STATUS, status }
 }

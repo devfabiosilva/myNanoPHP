@@ -21,7 +21,7 @@ import {
     GENERATED_ENCRYPTED_SEED,
     PUBLIC_KEY_TO_WALLET_RESPONSE,
     my_wallet,
-    BLOCK_RESPONSE
+    //BLOCK_RESPONSE
 
 } from '../utils/wallet_interface';
 
@@ -200,16 +200,16 @@ export async function my_nano_php_send_receive_money(
     wallet: my_wallet, 
     destination_wallet: string, 
     amount_to_send: string,
-    private_key: string,
     direction: string
 )
 {
 
-    let data: any;
-    let has_fee: boolean;
+    //let data: any;
+    ///let has_fee: boolean;
+    let private_key: string = `${(wallet.private_key as string)}${wallet.public_key as string}`;
 
-    if (( has_fee = ((wallet.fee !== undefined) || (wallet.fee !== "")) )) {
-        my_nano_php_api(`command=create_block=${wallet.wallet}&previous=${wallet.frontier}&representative=${wallet.wallet_representative}&balance=${wallet.balance}&val_send_rec=${amount_to_send}&link=${destination_wallet}&direction=${direction}`, "my_nano_php_send_money").then(
+    if ((wallet.fee !== undefined) && (wallet.fee !== "")) {
+        my_nano_php_api(`command=create_block&account=${wallet.wallet}&previous=${wallet.frontier}&representative=${wallet.wallet_representative}&balance=${wallet.balance}&val_send_rec=${amount_to_send}&link=${destination_wallet}&direction=${direction}`, "my_nano_php_send_money").then(
             (d: any) => {
                 if (d.error === "0") {
                     if (d.block){
@@ -224,7 +224,8 @@ export async function my_nano_php_send_receive_money(
                                                         my_nano_php_api(`command=p2pow_to_json&block=${signed_p2pow_block.block}`, "my_nano_php_send_money").then(
                                                             (p2pow_to_json: any) => {
                                                                 if (p2pow_to_json.error === "0") 
-                                                                    data = p2pow_to_json;
+                                                                    return new Promise((res) => res(p2pow_to_json));
+                                                                    //data = p2pow_to_json;
                                                                 else if (p2pow_to_json.error)
                                                                     return new Promise((res, err) => err(p2pow_to_json));
                                                                 else
@@ -257,7 +258,7 @@ export async function my_nano_php_send_receive_money(
             }
         );
     } else
-        my_nano_php_api(`command=create_block=${wallet.wallet}&previous=${wallet.frontier}&representative=${wallet.wallet_representative}&balance=${wallet.balance}&val_send_rec=${amount_to_send}&link=${destination_wallet}&direction=${direction}`, "my_nano_php_send_money").then(
+        my_nano_php_api(`command=create_block&account=${wallet.wallet}&previous=${wallet.frontier}&representative=${wallet.wallet_representative}&balance=${wallet.balance}&val_send_rec=${amount_to_send}&link=${destination_wallet}&direction=${direction}`, "my_nano_php_send_money").then(
             (d: any) => {
                 if (d.error === "0") {
                     if (d.block)
@@ -265,14 +266,19 @@ export async function my_nano_php_send_receive_money(
                             (signed_block: any) => {
                                 if (signed_block.error === "0") {
                                     if (signed_block.block) {
-                                        my_nano_php_api(`command=calculate_work_from_block&block=${signed_block}&n_thr=4`, "my_nano_php_send_money").then(
+                                        my_nano_php_api(`command=calculate_work_from_block&block=${signed_block.block}&n_thr=4`, "my_nano_php_send_money").then(
                                             (proof_of_work: any) => {
                                                 if (proof_of_work.error === "0") {
+                                                    console.log("Trabalho");
+                                                    console.log(proof_of_work);
                                                     if (proof_of_work.block)
                                                         my_nano_php_api(`command=block_to_json&block=${proof_of_work.block}`, "my_nano_php_send_money").then(
                                                             (block_to_json: any) => {
+                                                                console.log("Bloco em JSON")
+                                                                console.log(block_to_json)
                                                                 if (block_to_json.error === "0")
-                                                                    data = block_to_json as BLOCK_RESPONSE;
+                                                                    return new Promise((res) => res(block_to_json));
+                                                                    //data = block_to_json as BLOCK_RESPONSE;
                                                                 else if (block_to_json.error)
                                                                     return new Promise((res, err) => err(block_to_json));
                                                                 else
@@ -306,11 +312,11 @@ export async function my_nano_php_send_receive_money(
             }
         );
 
-    if (has_fee)
-        return new Promise((res) => res(data));
+    //if (has_fee)
+    //    return new Promise((res) => res(data));
 
     //return await nano_rpc_account_send_signed_block(data.block);
-    return new Promise((res) => res(data));
+    //return new Promise((res) => res(data));
 
 }
 

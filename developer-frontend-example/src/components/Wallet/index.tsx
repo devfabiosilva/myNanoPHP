@@ -8,7 +8,8 @@ import {
   nano_rpc_account_balance,
   my_nano_php_raw2real,
   nano_rpc_account_representative,
-  nano_rpc_account_frontier
+  nano_rpc_account_frontier,
+  my_nano_php_send_receive_money
 
 } from '../../service';
 
@@ -19,7 +20,7 @@ import {
 
 } from '../../utils';
 
-import { setMyWallet, openWalletDialog } from '../../actions';
+import { setMyWallet, openWalletDialog, dialogStatus } from '../../actions';
 import { my_wallet } from '../../utils/wallet_interface';
 import LanguageTool from '../LanguageTool';
 
@@ -34,7 +35,51 @@ export function Wallet(props: any) {
   useEffect(
     () => {
 
+      console.log(props.dialog_status);
       console.log(props.state);
+
+      let obj_dest_wallet: any;
+      let obj_amount_to_send_receive: any;
+      let dest_wallet: string;
+      let amount_to_send_receive: string;
+
+      if (props.dialog_status === "send") {
+
+        obj_amount_to_send_receive = document.getElementById('value-to-send-id');
+
+        if (( amount_to_send_receive = obj_amount_to_send_receive.value.trim() ) === "") {
+
+          alert("Amount is empty");
+          props.dialogStatus();
+          return;
+
+        }
+
+        obj_dest_wallet = document.getElementById('destination-wallet-id');
+
+        if (( dest_wallet = obj_dest_wallet.value.trim() ) === "") {
+
+          alert("Destination wallet is empty");
+          props.dialogStatus();
+          return;
+
+        }
+
+        my_nano_php_send_receive_money(props.state as my_wallet, dest_wallet, amount_to_send_receive, "send").then(
+          (transaction_result: any) => {
+            console.log("RESULTADO")
+            console.log(transaction_result);
+            props.dialogStatus();
+          },
+          (transaction_result_error) => {
+            console.log("ERRO");
+            console.log(transaction_result_error);
+            props.dialogStatus();
+          }
+        );
+
+      }
+
       if (!walletReady)
         nano_rpc_account_balance(props.state.wallet).then(
           (data: any) => {
@@ -136,18 +181,13 @@ export function Wallet(props: any) {
     },
     [
       props,
-      walletReady
+      walletReady,
     ]
   );
 
-  function sendAmount() {
-    console.log(props.state);
-    props.openDialog()
-  }
-
   return (
     <div className="wallet-container">
-      <Dialog dialogVisible={false} />
+      <Dialog dialogVisible = { false } />
       <LanguageTool />
       <div className="wallet-number-container">
         <div className="wallet-number-title">{ props.language.wallet_number }:</div>
@@ -177,11 +217,23 @@ export function Wallet(props: any) {
       </div>
       <div className="destination-wallet-container">
         <label>{ props.language.destination_wallet_label }: </label>
-        <input type="text" className="destination-wallet" />
+        <input 
+
+          type = "text" 
+          id = "destination-wallet-id"
+          className = "destination-wallet" 
+
+        />
       </div>
       <div className="value-to-send">
         <label>{ props.language.amount }: </label>
-        <input type="text" className="value-to-send" />
+        <input 
+
+          type = "text"
+          id = "value-to-send-id"
+          className = "value-to-send" 
+
+        />
       </div>
       <div className="fee-container">
         <label>{ props.language.label_allow_p2pow_dpow_label }</label>
@@ -196,7 +248,7 @@ export function Wallet(props: any) {
       >
         <button 
           className="send-button"
-          onClick={() => sendAmount()}
+          onClick={ () => props.openDialog() }
         >
           { props.language.send }
         </button>
@@ -212,14 +264,16 @@ export function Wallet(props: any) {
 const mapStateToProps = (state: any, ownProps: any) => ({
 
   state: state.wallet,
-  language: state.lang
+  language: state.lang,
+  dialog_status: state.transactionDialogStatus
 
 });
 
 const mapDispatchToProps = (dispatch: any, ownProps: any) => ({
 
   setMyWallet: (param: my_wallet) => dispatch(setMyWallet(param)),
-  openDialog: () => dispatch(openWalletDialog())
+  openDialog: () => dispatch(openWalletDialog()),
+  dialogStatus: (param: string) => dispatch(dialogStatus(param))
 
 });
 

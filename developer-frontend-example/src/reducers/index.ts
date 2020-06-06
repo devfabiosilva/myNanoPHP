@@ -1,14 +1,21 @@
 import { combineReducers, createStore} from 'redux';
 import { wallet } from './wallet_state';
 import { lang } from './lang_interface';
-import { openTransactionDialog } from './dialog_state';
+
+import {
+
+    openTransactionDialog,
+    transactionDialogStatus 
+    
+} from './dialog_state';
 
 const nano_wallet_rootReducer = combineReducers(
 
     { 
         wallet,
         lang,
-        openTransactionDialog
+        openTransactionDialog,
+        transactionDialogStatus
     }
 
 );

@@ -16,3 +16,17 @@ export function openTransactionDialog(state: boolean = false, action: any) {
     }
 
 }
+
+export function transactionDialogStatus(state: string = "", action: any) {
+ 
+    switch (action.type) {
+
+        case NANO_WALLET_ACTIONS.DIALOG_STATUS:
+            return action.status;
+
+        default:
+            return state;
+
+    }
+
+}
