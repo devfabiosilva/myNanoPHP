@@ -1,6 +1,7 @@
 import React, { useEffect, useState} from 'react';
 import { connect } from 'react-redux';
 import QRCode from 'qrcode.react';
+import Dialog from '../Dialog';
 
 import {
 
@@ -18,7 +19,7 @@ import {
 
 } from '../../utils';
 
-import { setMyWallet } from '../../actions';
+import { setMyWallet, openWalletDialog } from '../../actions';
 import { my_wallet } from '../../utils/wallet_interface';
 import LanguageTool from '../LanguageTool';
 
@@ -94,11 +95,15 @@ export function Wallet(props: any) {
               },
               (e) => {
 
-                if (e.error) {
-                  setRepresentative(DEFAULT_REPRESENTATIVE);
-                  setWalletReady(true);
-                } else
-                  setRepresentative("Unknown Error");
+                if (e) {
+                  if (e.error) {
+                    setRepresentative(DEFAULT_REPRESENTATIVE);
+                    setWalletReady(true);
+                  } else
+                    setRepresentative("Unknown Error");
+                } else {
+                  setRepresentative("Unknown response");
+                }
 
               }
             );
@@ -135,8 +140,14 @@ export function Wallet(props: any) {
     ]
   );
 
+  function sendAmount() {
+    console.log(props.state);
+    props.openDialog()
+  }
+
   return (
     <div className="wallet-container">
+      <Dialog dialogVisible={false} />
       <LanguageTool />
       <div className="wallet-number-container">
         <div className="wallet-number-title">{ props.language.wallet_number }:</div>
@@ -183,7 +194,10 @@ export function Wallet(props: any) {
       <div className="button-container"
         style={{display:(walletReady)?"inline-block":"none"}}
       >
-        <button className="send-button">
+        <button 
+          className="send-button"
+          onClick={() => sendAmount()}
+        >
           { props.language.send }
         </button>
       </div>
@@ -204,7 +218,8 @@ const mapStateToProps = (state: any, ownProps: any) => ({
 
 const mapDispatchToProps = (dispatch: any, ownProps: any) => ({
 
-  setMyWallet: (param: my_wallet) => dispatch(setMyWallet(param))
+  setMyWallet: (param: my_wallet) => dispatch(setMyWallet(param)),
+  openDialog: () => dispatch(openWalletDialog())
 
 });
 

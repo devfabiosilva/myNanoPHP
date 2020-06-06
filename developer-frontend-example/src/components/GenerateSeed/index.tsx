@@ -142,9 +142,7 @@ export function GenerateSeed(props: any) {
                 <div className="seed-and-bip39-container-txt">
                     { myconsole }
                 </div>
-                <button
-                    className="save-to-encrypted-file-btn"
-                >
+                <button className="save-to-encrypted-file-btn">
                     { props.language.save_to_enc_btn }
                 </button>
             </div>

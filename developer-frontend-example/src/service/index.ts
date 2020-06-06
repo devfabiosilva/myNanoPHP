@@ -309,7 +309,8 @@ export async function my_nano_php_send_receive_money(
     if (has_fee)
         return new Promise((res) => res(data));
 
-    return await nano_rpc_account_send_signed_block(data.block);
+    //return await nano_rpc_account_send_signed_block(data.block);
+    return new Promise((res) => res(data));
 
 }
 

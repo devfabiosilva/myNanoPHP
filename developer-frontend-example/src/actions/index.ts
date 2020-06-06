@@ -5,6 +5,8 @@ const EXTRACT_PUBLIC_KEY = 1;
 const EXTRACT_ADDRESS_FROM_PUBLIC_KEY = 2;
 const SET_MY_WALLET_PARAM = 3;
 const SET_LANGUAGE = 4;
+const OPEN_WALLET_DIALOG = 5;
+const CLOSE_WALLET_DIALOG = 6;
 
 export const NANO_WALLET_ACTIONS = {
 
@@ -12,7 +14,9 @@ export const NANO_WALLET_ACTIONS = {
     EXTRACT_PUBLIC_KEY,
     EXTRACT_ADDRESS_FROM_PUBLIC_KEY,
     SET_MY_WALLET_PARAM,
-    SET_LANGUAGE
+    SET_LANGUAGE,
+    OPEN_WALLET_DIALOG,
+    CLOSE_WALLET_DIALOG
     
 }
 
@@ -26,4 +30,12 @@ export function setMyWallet(wallet_param: my_wallet) {
 
 export function setLanguage(language: string) {
     return { type: SET_LANGUAGE, language }
+}
+
+export function openWalletDialog() {
+    return { type: OPEN_WALLET_DIALOG }
+}
+
+export function closeWalletDialog() {
+    return { type: CLOSE_WALLET_DIALOG }
 }

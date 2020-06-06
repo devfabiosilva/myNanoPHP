@@ -62,7 +62,8 @@ export const LANG_PT_BR = {
     label_fee: "Taxa",
     representative_title: "Representativo",
     amount: "Valor",
-    destination_wallet_label: "Carteira de destino"
+    destination_wallet_label: "Carteira de destino",
+    cancel_button: "Cancelar"
 
 }
 
@@ -126,7 +127,8 @@ export const LANG_EN_US = {
     label_fee: "Fee",
     representative_title: "Representative",
     amount: "Amount",
-    destination_wallet_label: "Destination wallet"
+    destination_wallet_label: "Destination wallet",
+    cancel_button: "Cancel"
 
 }
 

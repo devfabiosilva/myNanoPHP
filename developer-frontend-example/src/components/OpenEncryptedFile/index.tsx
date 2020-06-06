@@ -34,13 +34,12 @@ export function OpenEncryptedWalletFile(props: any) {
     let password:any = document.getElementById('file-password');
     let reader = new FileReader();
     let fileUploader:any = document.getElementById('file-uploader-id');
-    let txt: any;
+    let encrypted_data: string;
 
     reader.onloadend = function () {
-      txt = reader.result;
-      console.log(txt);
-      console.log(Buffer.from(txt).toString('hex'));
-      my_nano_php_open_encrypted_seed(Buffer.from(txt).toString('hex'), password.value).then(
+
+      encrypted_data = Buffer.from(reader.result as any).toString('hex');
+      my_nano_php_open_encrypted_seed(encrypted_data, password.value).then(
         (d: any) =>
         {
           my_nano_php_seed2keypair(0, d.result.seed).then(
@@ -51,10 +50,13 @@ export function OpenEncryptedWalletFile(props: any) {
 
                   props.wallet_public_key(
                     {
+
                       origin: WALLET_FROM.FROM_ENCRYPTED_FILE,
                       wallet: (wallet_address as PUBLIC_KEY2ADDRESS).wallet,
                       public_key: (key_pair as MY_NANO_PHP_SEED2KEYPAIR).key_pair.public_key,
-                      wallet_number: 0
+                      wallet_number: 0,
+                      encrypted_block: encrypted_data
+
                     }
                   )
                 },
