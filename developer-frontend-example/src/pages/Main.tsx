@@ -18,7 +18,7 @@ import GenerateSeed from '../components/GenerateSeed';
 import { setLanguage } from '../actions';
 import { getLanguageFromLocalStorage } from '../utils/language';
 
-//dom 2020 05 24 20:30
+//sun 2020 05 24 20:30
 export function Main(props: any) {
 
     useEffect(

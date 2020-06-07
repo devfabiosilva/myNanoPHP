@@ -9,7 +9,7 @@ import {
   my_nano_php_raw2real,
   nano_rpc_account_representative,
   nano_rpc_account_frontier,
-  my_nano_php_send_receive_money
+  my_nano_php_send_receive_money,
 
 } from '../../service';
 
@@ -20,7 +20,13 @@ import {
 
 } from '../../utils';
 
-import { setMyWallet, openWalletDialog, dialogStatus } from '../../actions';
+import { 
+  
+  setMyWallet, 
+  openWalletDialog, 
+  dialogStatus 
+
+} from '../../actions';
 import { my_wallet } from '../../utils/wallet_interface';
 import LanguageTool from '../LanguageTool';
 
@@ -71,7 +77,7 @@ export function Wallet(props: any) {
             console.log(transaction_result);
             props.dialogStatus();
           },
-          (transaction_result_error) => {
+          (transaction_result_error: any) => {
             console.log("ERRO");
             console.log(transaction_result_error);
             props.dialogStatus();

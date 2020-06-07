@@ -1,26 +1,39 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 
 import { 
-    closeWalletDialog, setMyWallet, dialogStatus
+
+    closeWalletDialog,
+    setMyWallet,
+    dialogStatus
+
 } from '../../actions';
 
 import './style.css';
-import { WALLET_FROM, my_wallet, MY_NANO_PHP_SEED2KEYPAIR } from '../../utils/wallet_interface';
-import { my_nano_php_open_encrypted_seed, my_nano_php_extract_key_pair_from_nano_seed } from '../../service';
+
+import { 
+
+    WALLET_FROM, 
+    my_wallet, 
+    MY_NANO_PHP_SEED2KEYPAIR 
+
+} from '../../utils/wallet_interface';
+
+import { 
+
+    my_nano_php_open_encrypted_seed,
+    my_nano_php_extract_key_pair_from_nano_seed
+
+} from '../../service';
 
 function Dialog(props: any) {
 
-    useEffect(
+    function closeDialog() {
 
-        () => {
-            console.log( props.nano_wallet );
-        },
-        [
-            props.nano_wallet
-        ]
+        props.dialogStatus();
+        props.closeMyDialog();
 
-    );
+    }
 
     function extractPrivateKeyFromOrigin( props: any ) {
 
@@ -34,7 +47,7 @@ function Dialog(props: any) {
 
             if (password === "") {
 
-                alert("Password to decrypt file stream must be not null");
+                alert( props.language.dialog_password_empty );
                 return;
 
             }
@@ -103,7 +116,7 @@ function Dialog(props: any) {
                     <OriginSelection wallet = { props.nano_wallet }/>
                     <button
                         className = "dialog-button-cancel"
-                        onClick = { props.closeMyDialog } 
+                        onClick = { closeDialog } 
                     >
                         { props.language.cancel_button }
                     </button>

@@ -42,6 +42,6 @@ export function closeWalletDialog() {
     return { type: CLOSE_WALLET_DIALOG }
 }
 
-export function dialogStatus(status: string = ""){
+export function dialogStatus(status: string = "") {
     return { type: DIALOG_STATUS, status }
 }

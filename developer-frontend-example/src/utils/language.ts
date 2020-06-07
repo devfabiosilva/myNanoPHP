@@ -63,7 +63,8 @@ export const LANG_PT_BR = {
     representative_title: "Representativo",
     amount: "Valor",
     destination_wallet_label: "Carteira de destino",
-    cancel_button: "Cancelar"
+    cancel_button: "Cancelar",
+    dialog_password_empty: "Senha para desemcriptar o stream não deve estar vazio"
 
 }
 
@@ -128,7 +129,8 @@ export const LANG_EN_US = {
     representative_title: "Representative",
     amount: "Amount",
     destination_wallet_label: "Destination wallet",
-    cancel_button: "Cancel"
+    cancel_button: "Cancel",
+    dialog_password_empty: "Password to decrypt file stream must be not empty"
 
 }
 
