@@ -64,7 +64,11 @@ export const LANG_PT_BR = {
     amount: "Valor",
     destination_wallet_label: "Carteira de destino",
     cancel_button: "Cancelar",
-    dialog_password_empty: "Senha para desemcriptar o stream não deve estar vazio"
+    dialog_password_empty: "Senha para desemcriptar o stream não deve estar vazio",
+    dialog_seed_empty: "A semente é necessária",
+    dialog_bip39_required: "Bip 39 é requerido para extrair seu par de chaves",
+    dialog_brainwallet_empty: "A Braiwallet não pode estar vazia",
+    dialog_salt_empty: "O Salt não deve estar vazio"
 
 }
 
@@ -130,7 +134,11 @@ export const LANG_EN_US = {
     amount: "Amount",
     destination_wallet_label: "Destination wallet",
     cancel_button: "Cancel",
-    dialog_password_empty: "Password to decrypt file stream must be not empty"
+    dialog_password_empty: "Password to decrypt file stream must be not empty",
+    dialog_seed_empty: "SEED can not be an empty string",
+    dialog_bip39_required: "Required Bip39 to extract key pair to sign transaction",
+    dialog_brainwallet_empty: "Braiwallet must be not empty",
+    dialog_salt_empty: "Salt must be not empty string"
 
 }
 

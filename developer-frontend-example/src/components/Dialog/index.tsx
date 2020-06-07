@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 
 import { 
@@ -22,11 +22,22 @@ import {
 import { 
 
     my_nano_php_open_encrypted_seed,
-    my_nano_php_extract_key_pair_from_nano_seed
+    my_nano_php_extract_key_pair_from_nano_seed,
+    my_nano_php_seed2keypair,
+    my_nano_php_extract_key_pair_from_bip39,
+    my_nano_php_brainwallet_to_keypair
 
 } from '../../service';
+import { UNKNOWN_MY_NANO_PHP_SERVER_ERROR } from '../../utils';
 
 function Dialog(props: any) {
+
+    useEffect(
+        () => {
+            console.log(props.nano_wallet);
+        },
+        [ props ]
+    )
 
     function closeDialog() {
 
@@ -35,10 +46,28 @@ function Dialog(props: any) {
 
     }
 
-    function extractPrivateKeyFromOrigin( props: any ) {
+    // WARNING FOR DEVELOPERS
+    // SENSIBLE DATA HERE !!!!
+    // -----------------------
+    // KEY PAIR, SEED, BIP39, Brainwallet, Salt, Passwords
+    // 1- They are ALWAYS stored in a temporary variable and discarded after assign a block to send/receive money
+    // 2- They are ALWAYS request when perform transaction or open a block in Nano Blockchain
+    // 3- REMEMBER: KEEP THESE DATA SAFE !!!
 
-        let obj: any;
+    /**
+     * @description This function extracts Private Key to assign given block (send/receive money). This application NEVER stores this sensive data permanently
+     * @param props Parent objects
+     */
+    function extractPrivateKeyFromOrigin( props: any ) {
+        
+        let obj: any
+        let obj_seed: any
+        let obj_salt: any;
         let password: string;
+        let seed: string;
+        let bip39: string;
+        let brainwallet: string;
+        let salt: string;
 
         if (props.nano_wallet.origin === WALLET_FROM.FROM_ENCRYPTED_FILE) {
 
@@ -78,6 +107,120 @@ function Dialog(props: any) {
                 }
             );
 
+        } else if (props.nano_wallet.origin === WALLET_FROM.FROM_SEED) {
+
+            obj_seed = document.getElementById('origin-seed-value-id');
+
+            if ((seed = obj_seed.value.trim()) === "") {
+
+                alert( props.language.dialog_seed_empty );
+                return;
+
+            }
+
+            my_nano_php_seed2keypair((props.nano_wallet as my_wallet).wallet_number as number, seed).then(
+                (keypair_res: any) => {
+                    if (keypair_res) {
+                        if ((keypair_res as MY_NANO_PHP_SEED2KEYPAIR).error === "0") {
+
+                            props.setMyWallet({
+
+                                private_key: (keypair_res as MY_NANO_PHP_SEED2KEYPAIR).key_pair.private_key,
+                                public_key: (keypair_res as MY_NANO_PHP_SEED2KEYPAIR).key_pair.public_key
+
+                            } as my_wallet);
+
+                            props.dialogStatus("send");
+
+                        } else
+                            console.log(keypair_res);
+                    } else
+                        console.log(UNKNOWN_MY_NANO_PHP_SERVER_ERROR);
+                },
+                (key_pair_error) => {
+                    console.log(key_pair_error);
+                }
+            );
+
+        } else if (props.nano_wallet.origin === WALLET_FROM.FROM_BIP39) {
+
+            obj = document.getElementById('origin-bip39-value-id');
+
+            if ((bip39 = obj.value.trim()) === "") {
+
+                alert( props.language.dialog_bip39_required )
+                return;
+
+            }
+
+            my_nano_php_extract_key_pair_from_bip39((props.nano_wallet as my_wallet).wallet_number as number, bip39).then(
+                (keypair_res: any) => {
+                    if (keypair_res) {
+                        if ((keypair_res as MY_NANO_PHP_SEED2KEYPAIR).error === "0") {
+
+                            props.setMyWallet({
+
+                                private_key: (keypair_res as MY_NANO_PHP_SEED2KEYPAIR).key_pair.private_key,
+                                public_key: (keypair_res as MY_NANO_PHP_SEED2KEYPAIR).key_pair.public_key
+
+                            } as my_wallet);
+
+                            props.dialogStatus("send");
+
+                        } else
+                            console.log(keypair_res);
+                    } else
+                        console.log(UNKNOWN_MY_NANO_PHP_SERVER_ERROR);
+                },
+                (key_pair_error) => {
+                    console.log(key_pair_error);
+                }
+            );
+
+        } else if (props.nano_wallet.origin === WALLET_FROM.FROM_BRAINWALLET) {
+
+            obj = document.getElementById('origin-brainwallet-id');
+
+            if ( (brainwallet = obj.value.trim()) === "") {
+
+                alert( props.language.dialog_brainwallet_empty );
+                return;
+
+            }
+
+            obj_salt = document.getElementById('origin-salt-id');
+
+            if ( (salt = obj_salt.value.trim() ) === "" ) {
+
+                alert( props.language.dialog_salt_empty );
+                return;
+
+            }
+
+            my_nano_php_brainwallet_to_keypair((props.nano_wallet as my_wallet).wallet_number as number, brainwallet, salt).then(
+                (keypair_res: any) => {
+                    if (keypair_res) {
+                        if ((keypair_res as MY_NANO_PHP_SEED2KEYPAIR).error === "0") {
+
+                            props.setMyWallet({
+
+                                private_key: (keypair_res as MY_NANO_PHP_SEED2KEYPAIR).key_pair.private_key,
+                                public_key: (keypair_res as MY_NANO_PHP_SEED2KEYPAIR).key_pair.public_key
+
+                            } as my_wallet);
+
+                            props.dialogStatus("send");
+
+                        } else
+                            console.log(keypair_res);
+                    } else
+                        console.log(UNKNOWN_MY_NANO_PHP_SERVER_ERROR);
+                },
+                (key_pair_error) => {
+                    console.log(key_pair_error);
+                }  
+            );
+
         }
 
     }
@@ -96,6 +239,53 @@ function Dialog(props: any) {
                             placeholder="Type your password to decrypt file"
 
                         />
+                    </div>
+                );
+
+            case WALLET_FROM.FROM_SEED:
+                return (
+                    <div className="origin-seed-container">
+                        <input
+
+                            type="text"
+                            id="origin-seed-value-id"
+                            className="origin-number-value"
+
+                        />
+                    </div>
+                );
+
+            case WALLET_FROM.FROM_BIP39:
+                return (
+                    <div className="origin-bip39-container">
+                        <input
+
+                            type="text"
+                            id="origin-bip39-value-id"
+                            className="origin-bip39-value"
+
+                        />
+                    </div>
+                );
+
+            case WALLET_FROM.FROM_BRAINWALLET:
+                return (
+                    <div className="origin-brainwallet-container">
+
+                        <input
+
+                            type="text"
+                            id="origin-brainwallet-id"
+                            className="origin-brainwallet"
+
+                        />
+                        <input
+
+                            type="text"
+                            id="origin-salt-id"
+                            className="origin-salt"
+                        />
+
                     </div>
                 );
 
@@ -142,9 +332,11 @@ const mapStateToProps = (state: any, ownProps: any) => ({
 });
   
 const mapDispatchToProps = (dispatch: any, ownProps: any) => ({
+
     closeMyDialog: () => dispatch(closeWalletDialog()),
     setMyWallet: (param: my_wallet) => dispatch(setMyWallet(param)),
     dialogStatus: (param: string) => dispatch(dialogStatus(param))
+
 });
   
 export default connect(mapStateToProps, mapDispatchToProps)(Dialog);

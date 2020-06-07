@@ -8,7 +8,8 @@ import {
 
 import {
 
-    NANO_PREFIX, UNKNOWN_MY_NANO_PHP_SERVER_ERROR
+    NANO_PREFIX,
+    UNKNOWN_MY_NANO_PHP_SERVER_ERROR
 
 } from '../utils';
 
@@ -36,6 +37,8 @@ const api = axios.create({
     }
 });
 
+// Nano NODE RPC API
+// Documentation: https://docs.nano.org/commands/rpc-protocol/
 const api_rpc = axios.create(
     {
         baseURL: NANO_NODE_URL,
@@ -195,6 +198,19 @@ export async function my_nano_php_public_key_to_wallet(public_key:string, prefix
     });
 }
 
+export async function my_nano_php_brainwallet_to_keypair(wallet_number: number, brainwallet:string, salt: string, prefix: string = NANO_PREFIX)
+{
+    let data: MY_NANO_PHP_SEED2KEYPAIR|MY_NANO_PHP_ERROR;
+
+    data = await my_nano_php_api(`command=brainwallet_2_key_pair&wallet_number=${wallet_number.toString()}&brainwallet=${brainwallet}&salt=${salt}&prefix=${prefix}`, "my_nano_php_brainwallet_to_keypair");
+
+    return new Promise((res, error) => {
+
+        return (data.error === "0")?res(data):error(data);
+
+    });
+}
+
 export async function my_nano_php_send_receive_money(
     wallet: my_wallet, 
     destination_wallet: string, 
@@ -280,8 +296,6 @@ export async function my_nano_php_send_receive_money(
                                                                             (err) => reject(err)
 
                                                                         );
-                                                                        //return new Promise((res) => res(block_to_json));
-                                                                        //resolve(block_to_json as BLOCK_RESPONSE);
                                                                     else if (block_to_json.error)
                                                                         reject(block_to_json);
                                                                     else

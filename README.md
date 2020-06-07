@@ -3499,6 +3499,110 @@ Throws _MyNanoCEmbeddedException_
 
 - _php_c_get_prefixes_from_block()_
 
+<h1>- php_c_set_previous()</h1>
+
+### Description
+
+Set/modify a previous hash in Nano Block
+
+```php
+php_c_set_previous(&$block, $previous);
+```
+
+params|type|description
+------|----|-----------
+**_&$block_**|binary|Nano block
+**_$previous_**|string|Previous block
+
+#### Return value
+
+Nano block reference **_&$block_** with modified previous hash
+
+##### Example
+
+```php
+// Assuming $block1 is already created
+php_c_set_previous($block1, 'E2455BE7630528084F3B43AFE7F65335D6FEEF88798BE717523979DE4B93C28F'); // Assigns previous hash to $block1
+```
+
+**On error**
+
+Throws _MyNanoCEmbeddedException_
+
+**See also**
+
+- _php_c_get_previous_from_block()_
+
+<h1>- php_c_set_representative_to_block()</h1>
+
+### Description
+
+Set/modify a representative Nano account or public key in Nano block
+
+```php
+php_c_set_representative_to_block(&$block, $representative);
+```
+
+params|type|description
+------|----|-----------
+**_&$block_**|binary|Nano block
+**_$representative_**|string|Nano representative coded in Base32 or representative public key
+
+#### Return value
+
+Nano block reference **_&$block_** with modified representative account
+
+##### Example
+
+```php
+// Assuming $block1, $block2 and $block3 variables are already created
+php_c_set_representative_to_block$block1, '3AFA0DF128384B227CBD319C1D2F794A2B5097306B1CCB9412E113317D2C512A'); // Assigns representative to $block1
+php_c_set_representative_to_block($block2, 'nano_396sch48s3jmzq1bk31pxxpz64rn7joj38emj4ueypkb9p9mzrym34obze6c'); // Assigns Nano account representative to $block2
+php_c_set_representative_to_block($block3, 'xrb_3rw4un6ys57hrb39sy1qx8qy5wukst1iiponztrz9qiz6qqa55kxzx4491or'); // Assigns Nano account representative to $block3
+```
+
+**On error**
+
+Throws _MyNanoCEmbeddedException_
+
+**See also**
+
+- _php_c_get_representative_from_block()_
+
+<h1>- php_c_set_signature()</h1>
+
+### Description
+
+Set/modify a signature to a Nano block
+
+```php
+php_c_set_signature(&$block, $signature);
+```
+
+params|type|description
+------|----|-----------
+**_&$block_**|binary|Nano block
+**_$signature_**|string|Signature to be assigned in Nano block
+
+#### Return value
+
+Nano block reference **_&$block_** with modified signature
+
+##### Example
+
+```php
+// Assuming $block1 is already created
+php_c_set_signature($block1, '2C67CCE89396C62A1D8ACCDD27478DF27FC2180A10CFB8866B5B4EB14BEE5FD9D431FCD13B59DF28674571FF128080C770890B3E26CC2943308A9E4C87F9B004'); // Assigns signature to $block1
+```
+
+**On error**
+
+Throws _MyNanoCEmbeddedException_
+
+**See also**
+
+- _php_c_get_signature_from_block()_
+
 **Documentation on progress ...**
 
 ## SUMMARY: Constants, Functions and Classes

@@ -350,6 +350,9 @@ static zend_object *f_exception_create_object(zend_class_entry *ce) {
 #define VALUE_SEND_RECEIVE_RAW_128 F_NANO_B_RAW_128
 #define VALUE_SEND_RECEIVE_REAL_STRING F_NANO_B_REAL_STRING
 #define VALUE_SEND_RECEIVE_RAW_STRING F_NANO_B_RAW_STRING
+#define WORKER_FEE_HEX F_NANO_B_RAW_128
+#define WORKER_FEE_REAL F_NANO_B_REAL_STRING
+#define WORKER_FEE_RAW F_NANO_B_RAW_STRING
 
 PHP_MINIT_FUNCTION(mynanoembedded)
 {
@@ -642,6 +645,7 @@ PHP_FUNCTION(php_c_block_to_p2pow)
    zval *z_block;
    unsigned char *worker_wallet, *worker_representative, *worker_fee;
    size_t worker_wallet_len, worker_representative_len, worker_fee_len;
+   uint32_t compare;
    zend_long worker_fee_type=F_NANO_B_REAL_STRING;
    F_BLOCK_TRANSFER *block;
 
@@ -678,20 +682,9 @@ PHP_FUNCTION(php_c_block_to_p2pow)
 
    }
 
-   if (worker_representative_len>MAX_STR_NANO_CHAR) {
+   if (!worker_wallet_len) {
 
-      sprintf(msg, "Internal error in C function 'php_c_block_to_p2pow' 18502. Invalid worker representative wallet with length '%lu'",
-         (unsigned long int)worker_representative_len);
-
-      zend_throw_exception(f_exception_ce, msg, 18502);
-
-      return;
-
-   }
-
-   if ((uint32_t)worker_fee_type&(~(F_NANO_B_RAW_128|F_NANO_B_REAL_STRING|F_NANO_B_RAW_STRING))) {
-
-      sprintf(msg, "Internal error in C function 'php_c_block_to_p2pow' 18503. Invalid worker fee type '%lu'", (unsigned long int)worker_fee_type);
+      sprintf(msg, "Internal error in C function 'php_c_block_to_p2pow' 18503. Invalid worker wallet with length 0");
 
       zend_throw_exception(f_exception_ce, msg, 18503);
 
@@ -699,11 +692,42 @@ PHP_FUNCTION(php_c_block_to_p2pow)
 
    }
 
+   if (!worker_fee_len) {
+
+      sprintf(msg, "Internal error in C function 'php_c_block_to_p2pow' 18504. Invalid worker fee length 0");
+
+      zend_throw_exception(f_exception_ce, msg, 18504);
+
+      return;
+
+   }
+
+   if (worker_representative_len>MAX_STR_NANO_CHAR) {
+
+      sprintf(msg, "Internal error in C function 'php_c_block_to_p2pow' 18505. Invalid worker representative wallet with length '%lu'",
+         (unsigned long int)worker_representative_len);
+
+      zend_throw_exception(f_exception_ce, msg, 18506);
+
+      return;
+
+   }
+
+   if ((uint32_t)worker_fee_type&(~(F_NANO_B_RAW_128|F_NANO_B_REAL_STRING|F_NANO_B_RAW_STRING))) {
+
+      sprintf(msg, "Internal error in C function 'php_c_block_to_p2pow' 18507. Invalid worker fee type '%lu'", (unsigned long int)worker_fee_type);
+
+      zend_throw_exception(f_exception_ce, msg, 18507);
+
+      return;
+
+   }
+
    if (!f_nano_is_valid_block((F_BLOCK_TRANSFER *)memcpy(msg, Z_STRVAL_P(z_block), sizeof(F_BLOCK_TRANSFER)))) {
 
-      sprintf(msg, "Internal error in C function 'php_c_block_to_p2pow' 16507. Invalid Nano block");
+      sprintf(msg, "Internal error in C function 'php_c_block_to_p2pow' 16508. Invalid Nano block");
 
-      zend_throw_exception(f_exception_ce, msg, 16507);
+      zend_throw_exception(f_exception_ce, msg, 16508);
 
       return;
 
@@ -747,10 +771,10 @@ php_c_block_to_p2pow_EXIT1:
 
    } else {
 
-      sprintf(msg, "Internal error in C function 'php_c_block_to_p2pow' 16504. Can't parse hex string to binary. Invalid length %lu", 
+      sprintf(msg, "Internal error in C function 'php_c_block_to_p2pow' 16509. Can't parse hex string to binary. Invalid length %lu", 
          (unsigned long int)worker_wallet_len);
 
-      zend_throw_exception(f_exception_ce, msg, 16504);
+      zend_throw_exception(f_exception_ce, msg, 16509);
 
       return;
 
@@ -796,7 +820,7 @@ php_c_block_to_p2pow_EXIT2:
 
    } else {
 
-      sprintf(msg, "Internal error in C function 'php_c_block_to_p2pow' 16506. Can't parse hex string to binary. Invalid length %lu", 
+      sprintf(msg, "Internal error in C function 'php_c_block_to_p2pow' 16510. Can't parse hex string to binary. Invalid length %lu", 
          (unsigned long int)worker_representative_len);
 
       zend_throw_exception(f_exception_ce, msg, 16505);
@@ -821,9 +845,9 @@ php_c_block_to_p2pow_EXIT2:
 
       if (worker_fee_len!=32) {
 
-         sprintf(msg, "Internal error in C function 'php_c_block_to_p2pow' 16507. Invalid fee hex length '%lu'", err, worker_fee_len);
+         sprintf(msg, "Internal error in C function 'php_c_block_to_p2pow' 16511. Invalid fee hex length '%lu'", err, worker_fee_len);
 
-         zend_throw_exception(f_exception_ce, msg, 16507);
+         zend_throw_exception(f_exception_ce, msg, 16511);
 
          return;
 
@@ -841,6 +865,28 @@ php_c_block_to_p2pow_EXIT2:
 
    } else 
       p=(char *)worker_fee;
+
+   compare=((uint32_t)worker_fee_type&(WORKER_FEE_HEX|WORKER_FEE_REAL|WORKER_FEE_RAW))|F_NANO_A_RAW_128;
+
+   if ((err=f_nano_value_compare_value(memset(msg+sizeof(msg)-sizeof(f_uint128_t), 0, sizeof(f_uint128_t)), p, &compare))) {
+
+      sprintf(msg, "Internal error in C function 'php_c_block_to_p2pow' %d. Can't compare worker fee big number value", err);
+
+      zend_throw_exception(f_exception_ce, msg, (zend_long)err);
+
+      return;
+
+   }
+
+   if (compare&F_NANO_COMPARE_EQ) {
+
+      sprintf(msg, "Internal error in C function 'php_c_block_to_p2pow' 16512. Worker fee value is zero");
+
+      zend_throw_exception(f_exception_ce, msg, 16512);
+
+      return;
+
+   }
 
    if ((err=f_nano_add_sub(block->balance, ((F_BLOCK_TRANSFER *)msg)->balance, p, 
       (F_NANO_SUB_A_B|F_NANO_RES_RAW_128|F_NANO_A_RAW_128|(uint32_t)worker_fee_type)))) {
@@ -1815,7 +1861,7 @@ PHP_FUNCTION(php_c_generate_block)
    char msg[512];
    unsigned char *account, *previous, *representative, *balance, *value_send_rec, *link;
    size_t account_len, previous_len, representative_len, balance_len, value_send_rec_len, link_len;
-   uint32_t add_sub_type;
+   uint32_t add_sub_type, compare;
    char *pA, *pB;
    zend_long balance_type, value_send_rec_type, direction;
    F_BLOCK_TRANSFER block;
@@ -1939,6 +1985,28 @@ PHP_FUNCTION(php_c_generate_block)
 
    } else
       pB=(char *)value_send_rec;
+
+   compare=((uint32_t)value_send_rec_type&(VALUE_SEND_RECEIVE_RAW_128|VALUE_SEND_RECEIVE_REAL_STRING|VALUE_SEND_RECEIVE_RAW_STRING))|F_NANO_A_RAW_128;
+
+   if ((err=f_nano_value_compare_value(memset(msg+128, 0, sizeof(f_uint128_t)), pB, &compare))) {
+
+      sprintf(msg, "Internal error in C function 'php_c_generate_block' %d. Can't compare send/receive big number value", err);
+
+      zend_throw_exception(f_exception_ce, msg, (zend_long)err);
+
+      return;
+
+   }
+
+   if (compare&F_NANO_COMPARE_EQ) {
+
+      sprintf(msg, "Internal error in C function 'php_c_generate_block' 16116. Value to send/receive is zero");
+
+      zend_throw_exception(f_exception_ce, msg, 16116);
+
+      return;
+
+   }
 
    add_sub_type|=(F_NANO_RES_RAW_128|(uint32_t)balance_type|(uint32_t)value_send_rec_type);
    memset(block.preamble, 0, (sizeof(block.preamble)-1));

@@ -33,7 +33,6 @@ export function SelectWallet(props: any) {
                 className="options"
                 id="options-id"
             >
-
                 <option defaultValue = { WALLET_FROM.FROM_SEED } value={ WALLET_FROM.FROM_SEED }>
                     { props.language.open_with_seed }
                 </option>

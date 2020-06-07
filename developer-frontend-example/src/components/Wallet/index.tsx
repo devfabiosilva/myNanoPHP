@@ -41,9 +41,6 @@ export function Wallet(props: any) {
   useEffect(
     () => {
 
-      console.log(props.dialog_status);
-      console.log(props.state);
-
       let obj_dest_wallet: any;
       let obj_amount_to_send_receive: any;
       let dest_wallet: string;
@@ -137,8 +134,12 @@ export function Wallet(props: any) {
                     });
                     setRepresentative(props.state.wallet_representative);
                     setWalletReady(true);
-                  } else
-                    setRepresentative("No representative found");
+                  } else {
+                    //setRepresentative("No representative found");
+                    props.setMyWallet({
+                      wallet_representative: DEFAULT_REPRESENTATIVE
+                    });
+                  }
                   
                 } else
                   setRepresentative("Unknown Nano RPC JSON data");
@@ -148,6 +149,11 @@ export function Wallet(props: any) {
 
                 if (e) {
                   if (e.error) {
+
+                    props.setMyWallet({
+                      wallet_representative: DEFAULT_REPRESENTATIVE
+                    });
+
                     setRepresentative(DEFAULT_REPRESENTATIVE);
                     setWalletReady(true);
                   } else
