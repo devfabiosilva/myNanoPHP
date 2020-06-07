@@ -1424,6 +1424,36 @@ if ($_SERVER['REQUEST_METHOD']==='POST') {
 
         }
 
+        $compare = $_POST['compare'];
+
+        if (!isset($compare)) {
+
+            http_response_code(404);
+            header($MIME_TYPE);
+            echo '{"error":"131","reason":"Missing compare condition"}';
+            exit(0);
+
+        }
+
+        if ($compare==="eq")
+            $compare_type=NANO_COMPARE_EQ;
+        else if ($compare==="lt")
+            $compare_type=NANO_COMPARE_LT;
+        else if ($compare==="leq")
+            $compare_type=NANO_COMPARE_LEQ;
+        else if ($compare==="gt")
+            $compare_type=NANO_COMPARE_GT;
+        else if ($compare==="geq")
+            $compare_type=NANO_COMPARE_GEQ;
+        else {
+
+            http_response_code(404);
+            header($MIME_TYPE);
+            echo '{"error":"132","reason":"Unknown compare condition"}';
+            exit(0);
+
+        }
+
         $type=0;
         $typeA=$_POST['typea'];
         $typeB=$_POST['typeb'];
@@ -1448,14 +1478,14 @@ if ($_SERVER['REQUEST_METHOD']==='POST') {
 
         try {
 
-            $comp=php_c_compare($valueA, $valueB, $type);
+            $comp=php_c_compare($valueA, $valueB, $type, $compare_type);
 
             echo json_encode(array(
                 "error"=>"0",
                 "reason"=>"Success",
                 "value_a"=>$valueA,
                 "value_b"=>$valueB,
-                "result"=>($comp!==NANO_COMPARE_EQ)?($comp===NANO_COMPARE_LT)?"-1":"1":"0"
+                "result"=>($comp)?"1":"0"
             ));
             
         } catch (Exception $e) {
