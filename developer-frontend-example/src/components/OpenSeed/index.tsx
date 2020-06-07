@@ -23,6 +23,7 @@ import {
     PUBLIC_KEY_TO_WALLET_RESPONSE
 
 } from '../../utils/wallet_interface';
+
 import LanguageTool from '../LanguageTool';
 
 export function OpenSeed(props: any) {

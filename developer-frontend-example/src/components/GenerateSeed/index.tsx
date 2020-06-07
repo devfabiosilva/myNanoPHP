@@ -20,7 +20,13 @@ import {
 
 } from '../../service';
 
-import { setPublicKey, setMyWallet } from '../../actions';
+import { 
+
+    setPublicKey, 
+    setMyWallet 
+
+} from '../../actions';
+
 import LanguageTool from '../LanguageTool';
 
 export function GenerateSeed(props: any) {

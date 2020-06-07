@@ -1,4 +1,10 @@
-import { combineReducers, createStore} from 'redux';
+import { 
+
+    combineReducers, 
+    createStore
+
+} from 'redux';
+
 import { wallet } from './wallet_state';
 import { lang } from './lang_interface';
 

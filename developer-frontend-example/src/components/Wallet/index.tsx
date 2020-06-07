@@ -27,6 +27,7 @@ import {
   dialogStatus 
 
 } from '../../actions';
+
 import { my_wallet } from '../../utils/wallet_interface';
 import LanguageTool from '../LanguageTool';
 

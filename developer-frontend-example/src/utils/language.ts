@@ -28,7 +28,7 @@ export const LANG_PT_BR = {
     open_with_seed: "Abrir com a semente",
     open_with_bip39: "Abrir com Bip39",
     open_with_encrypted_file: "Abrir com o arquivo criptografado *.nse",
-    open_with_brainwallet: "Abrir com usa Brainwallet",
+    open_with_brainwallet: "Abrir com sua Brainwallet",
     open_gen_new_seed: "Gerar uma nova semente",
     gen_select_new_seed_title: "Seleciona uma opção para gerar uma nova Semente NANO",
     gen_opt_paranoic: "Paranóico (Muito lento mas recomendável)",
@@ -68,7 +68,9 @@ export const LANG_PT_BR = {
     dialog_seed_empty: "A semente é necessária",
     dialog_bip39_required: "Bip 39 é requerido para extrair seu par de chaves",
     dialog_brainwallet_empty: "A Braiwallet não pode estar vazia",
-    dialog_salt_empty: "O Salt não deve estar vazio"
+    dialog_salt_empty: "O Salt não deve estar vazio",
+    dialog_missing_keypair: "É necessário o par de chaves",
+    dialog_wrong_keypair_length: "Tamanho do par de chaves inválido"
 
 }
 
@@ -138,7 +140,9 @@ export const LANG_EN_US = {
     dialog_seed_empty: "SEED can not be an empty string",
     dialog_bip39_required: "Required Bip39 to extract key pair to sign transaction",
     dialog_brainwallet_empty: "Braiwallet must be not empty",
-    dialog_salt_empty: "Salt must be not empty string"
+    dialog_salt_empty: "Salt must be not empty string",
+    dialog_missing_keypair: "Missing keypair",
+    dialog_wrong_keypair_length: "Wrong keypair length"
 
 }
 

@@ -1,5 +1,10 @@
 import { NANO_WALLET_ACTIONS } from '../actions';
-import { my_wallet, WALLET_FROM } from '../utils/wallet_interface';
+import { 
+    
+    my_wallet, 
+    WALLET_FROM 
+
+} from '../utils/wallet_interface';
 
 export function wallet(
     state: my_wallet = {

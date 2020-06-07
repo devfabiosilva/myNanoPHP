@@ -3556,7 +3556,7 @@ Nano block reference **_&$block_** with modified representative account
 
 ```php
 // Assuming $block1, $block2 and $block3 variables are already created
-php_c_set_representative_to_block$block1, '3AFA0DF128384B227CBD319C1D2F794A2B5097306B1CCB9412E113317D2C512A'); // Assigns representative to $block1
+php_c_set_representative_to_block($block1, '3AFA0DF128384B227CBD319C1D2F794A2B5097306B1CCB9412E113317D2C512A'); // Assigns representative to $block1
 php_c_set_representative_to_block($block2, 'nano_396sch48s3jmzq1bk31pxxpz64rn7joj38emj4ueypkb9p9mzrym34obze6c'); // Assigns Nano account representative to $block2
 php_c_set_representative_to_block($block3, 'xrb_3rw4un6ys57hrb39sy1qx8qy5wukst1iiponztrz9qiz6qqa55kxzx4491or'); // Assigns Nano account representative to $block3
 ```

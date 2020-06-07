@@ -22,8 +22,7 @@ export function SelectWallet(props: any) {
             public_key: "",
             origin
         });
-        console.log(props.nano_wallet)
-
+        
     }
 
     return (

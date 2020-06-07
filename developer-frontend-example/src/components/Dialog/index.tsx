@@ -68,6 +68,7 @@ function Dialog(props: any) {
         let bip39: string;
         let brainwallet: string;
         let salt: string;
+        let keypair: string;
 
         if (props.nano_wallet.origin === WALLET_FROM.FROM_ENCRYPTED_FILE) {
 
@@ -107,7 +108,7 @@ function Dialog(props: any) {
                 }
             );
 
-        } else if (props.nano_wallet.origin === WALLET_FROM.FROM_SEED) {
+        } else if ( (props.nano_wallet.origin === WALLET_FROM.FROM_SEED) || (props.nano_wallet.origin === WALLET_FROM.FROM_GENERATING_SEED) ) {
 
             obj_seed = document.getElementById('origin-seed-value-id');
 
@@ -221,6 +222,33 @@ function Dialog(props: any) {
                 }  
             );
 
+        } else if ( props.nano_wallet.origin === WALLET_FROM.FROM_KEY_PAIR ) {
+            
+            obj = document.getElementById('origin-keypair-value-id');
+
+            if ( ( keypair = obj.value.trim() ) === "" ) {
+
+                alert( props.language.dialog_missing_keypair );
+                return;
+
+            }
+
+            if (keypair.length !== 128) {
+
+                alert( props.language.dialog_wrong_keypair_length );
+                return;
+
+            }
+
+            props.setMyWallet({
+
+                private_key: keypair.substr(0, 64),
+                public_key: keypair.substr(64, 64)
+
+            });
+
+            props.dialogStatus("send");
+
         }
 
     }
@@ -242,6 +270,7 @@ function Dialog(props: any) {
                     </div>
                 );
 
+            case WALLET_FROM.FROM_GENERATING_SEED:
             case WALLET_FROM.FROM_SEED:
                 return (
                     <div className="origin-seed-container">
@@ -286,6 +315,19 @@ function Dialog(props: any) {
                             className="origin-salt"
                         />
 
+                    </div>
+                );
+
+            case WALLET_FROM.FROM_KEY_PAIR:
+                return (
+                    <div className="origin-keypair-container">
+                        <input
+
+                            id="origin-keypair-value-id"
+                            type="password"
+                            className="origin-keypair-value"
+
+                        />
                     </div>
                 );
 
