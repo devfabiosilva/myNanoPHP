@@ -1,5 +1,4 @@
 import { NANO_WALLET_ACTIONS } from "../actions";
-import { clearInterval } from "timers";
 
 const REFRESH_INTERVAL = 3000;
 
@@ -17,11 +16,10 @@ export function monitore_pending_amount(
             return { pending_function: (state.pending_function)?state.pending_function:setInterval( action.func,  REFRESH_INTERVAL) }
 
         case NANO_WALLET_ACTIONS.CLEAR_PENDING_AMOUNT:
-            if (state.pending_function) {
 
+            if (state.pending_function !== null) {
                 clearInterval( state.pending_function );
                 return { pending_function: null };
-
             }
 
             return state;

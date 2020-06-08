@@ -253,7 +253,7 @@ function Dialog(props: any) {
 
     }
 
-    function OriginSelection(props: any) {
+    function OriginSelection(props: any, lang: any) {
     
         switch (props.wallet.origin) {
 
@@ -264,7 +264,7 @@ function Dialog(props: any) {
 
                             type="password"
                             id="origin-enc-file-password"
-                            placeholder = { props.language.send_enc_file_passwd_placeholder }
+                            placeholder = { lang.send_enc_file_passwd_placeholder }
 
                         />
                     </div>
@@ -345,7 +345,7 @@ function Dialog(props: any) {
         <div className="dialog-container">
             <div className="dialog-window">
                 <div className="dialog-button-container">
-                    <OriginSelection wallet = { props.nano_wallet }/>
+                    <OriginSelection wallet = { props.nano_wallet } lang = { props.language } />
                     <button
                         className = "dialog-button-cancel"
                         onClick = { closeDialog } 

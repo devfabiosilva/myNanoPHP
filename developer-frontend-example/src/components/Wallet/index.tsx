@@ -40,6 +40,7 @@ export function Wallet(props: any) {
   const [ fee, setFee ] = useState(true);
   const [ representative, setRepresentative ] = useState("");
   const [ walletReady, setWalletReady ] = useState(false);
+  const [ lockInputs, setLockInputs ] = useState(true);
 
   useEffect(
     () => {
@@ -86,7 +87,27 @@ export function Wallet(props: any) {
 
       }
 
-      if (!walletReady)
+      if (walletReady) {
+
+        if (props.dialog_is_open) {
+
+          if (!lockInputs)
+            setLockInputs(true);
+
+        } else {
+
+          if (lockInputs)
+            setLockInputs(false);
+        
+          if (!props.monitore_pending.pending_function)
+            props.enablePendingMonitor(verifyPending);
+
+        }
+
+      } else {
+
+        props.disablePendingMonitor();
+        setLockInputs(true);
         nano_rpc_account_balance(props.state.wallet).then(
           (data: any) => {
             (data)?
@@ -136,7 +157,6 @@ export function Wallet(props: any) {
                       wallet_representative: data.representative
                     });
                     setRepresentative(props.state.wallet_representative);
-                    setWalletReady(true);
                   } else {
                     //setRepresentative("No representative found");
                     props.setMyWallet({
@@ -159,6 +179,7 @@ export function Wallet(props: any) {
 
                     setRepresentative(DEFAULT_REPRESENTATIVE);
                     setWalletReady(true);
+                    setLockInputs(false);
                   } else
                     setRepresentative("Unknown Error");
                 } else {
@@ -184,6 +205,9 @@ export function Wallet(props: any) {
                     frontier: ""
                   });
 
+                  setWalletReady(true);
+                  setLockInputs(false);
+
               },
               () => {
                 props.setMyWallet({
@@ -193,16 +217,34 @@ export function Wallet(props: any) {
             )
           }
         );
+
+      }
     },
     [
       props,
       walletReady,
+      lockInputs
     ]
   );
 
+  function verifyPending() {
+    console.log("TIC-TAC");
+  }
+
+  function beginSendAmount() {
+
+    if (props.dialog_status === "") {
+
+      props.disablePendingMonitor();
+      props.openDialog();
+
+    }
+
+  }
+
   return (
     <div className="wallet-container">
-      <Dialog dialogVisible = { false } />
+      <Dialog />
       <LanguageTool />
       <div className="wallet-number-container">
         <div className="wallet-number-title">{ props.language.wallet_number }:</div>
@@ -259,11 +301,11 @@ export function Wallet(props: any) {
         </div>
       </div>
       <div className="button-container"
-        style={{display:(walletReady)?"inline-block":"none"}}
+        style={{display:(lockInputs)?"none":"inline-block"}}
       >
         <button 
           className="send-button"
-          onClick={ () => props.openDialog() }
+          onClick={ () => beginSendAmount() }
         >
           { props.language.send }
         </button>
@@ -280,7 +322,9 @@ const mapStateToProps = (state: any, ownProps: any) => ({
 
   state: state.wallet,
   language: state.lang,
-  dialog_status: state.transactionDialogStatus
+  dialog_status: state.transactionDialogStatus,
+  monitore_pending: state.monitore_pending_amount,
+  dialog_is_open: state.openTransactionDialog
 
 });
 
