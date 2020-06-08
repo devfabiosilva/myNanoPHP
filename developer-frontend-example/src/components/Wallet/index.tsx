@@ -24,7 +24,9 @@ import {
   
   setMyWallet, 
   openWalletDialog, 
-  dialogStatus 
+  dialogStatus, 
+  setPendingAmount,
+  clearPendingAmout
 
 } from '../../actions';
 
@@ -53,7 +55,7 @@ export function Wallet(props: any) {
 
         if (( amount_to_send_receive = obj_amount_to_send_receive.value.trim() ) === "") {
 
-          alert("Amount is empty");
+          alert( props.language.msg_amount_is_empty );
           props.dialogStatus();
           return;
 
@@ -63,7 +65,7 @@ export function Wallet(props: any) {
 
         if (( dest_wallet = obj_dest_wallet.value.trim() ) === "") {
 
-          alert("Destination wallet is empty");
+          alert( props.language.msg_destination_wallet_empty );
           props.dialogStatus();
           return;
 
@@ -286,7 +288,9 @@ const mapDispatchToProps = (dispatch: any, ownProps: any) => ({
 
   setMyWallet: (param: my_wallet) => dispatch(setMyWallet(param)),
   openDialog: () => dispatch(openWalletDialog()),
-  dialogStatus: (param: string) => dispatch(dialogStatus(param))
+  dialogStatus: (param: string) => dispatch(dialogStatus(param)),
+  enablePendingMonitor: (monitorCallback: any) => dispatch(setPendingAmount(monitorCallback)),
+  disablePendingMonitor: () => dispatch(clearPendingAmout())
 
 });
 

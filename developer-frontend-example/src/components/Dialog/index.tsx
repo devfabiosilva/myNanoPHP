@@ -264,7 +264,7 @@ function Dialog(props: any) {
 
                             type="password"
                             id="origin-enc-file-password"
-                            placeholder="Type your password to decrypt file"
+                            placeholder = { props.language.send_enc_file_passwd_placeholder }
 
                         />
                     </div>

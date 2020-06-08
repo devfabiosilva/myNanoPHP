@@ -15,13 +15,16 @@ import {
     
 } from './dialog_state';
 
+import { monitore_pending_amount } from './monitore_pending_amount';
+
 const nano_wallet_rootReducer = combineReducers(
 
     { 
         wallet,
         lang,
         openTransactionDialog,
-        transactionDialogStatus
+        transactionDialogStatus,
+        monitore_pending_amount
     }
 
 );

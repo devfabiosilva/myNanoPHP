@@ -70,7 +70,11 @@ export const LANG_PT_BR = {
     dialog_brainwallet_empty: "A Braiwallet não pode estar vazia",
     dialog_salt_empty: "O Salt não deve estar vazio",
     dialog_missing_keypair: "É necessário o par de chaves",
-    dialog_wrong_keypair_length: "Tamanho do par de chaves inválido"
+    dialog_wrong_keypair_length: "Tamanho do par de chaves inválido",
+    msg_missing_file_password: "É necessário a senha para abrir o arquivo %d",
+    msg_amount_is_empty: "Valor para enviar está vazio",
+    msg_destination_wallet_empty: "Carteira de destino está vazia",
+    send_enc_file_passwd_placeholder: "Digite sua senha para desencriptar semente e enviar quantia"
 
 }
 
@@ -142,7 +146,11 @@ export const LANG_EN_US = {
     dialog_brainwallet_empty: "Braiwallet must be not empty",
     dialog_salt_empty: "Salt must be not empty string",
     dialog_missing_keypair: "Missing keypair",
-    dialog_wrong_keypair_length: "Wrong keypair length"
+    dialog_wrong_keypair_length: "Wrong keypair length",
+    msg_missing_file_password: "Password required to open file %d",
+    msg_amount_is_empty: "Amount is empty",
+    msg_destination_wallet_empty: "Destination wallet is empty",
+    send_enc_file_passwd_placeholder: "Type your password to decrypt file"
 
 }
 

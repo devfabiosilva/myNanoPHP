@@ -8,6 +8,9 @@ const SET_LANGUAGE = 4;
 const OPEN_WALLET_DIALOG = 5;
 const CLOSE_WALLET_DIALOG = 6;
 const DIALOG_STATUS = 7;
+const SET_PENDING_AMOUNT = 8;
+//const GET_PENDING_AMOUNT = 9;
+const CLEAR_PENDING_AMOUNT = 10;
 
 export const NANO_WALLET_ACTIONS = {
 
@@ -18,7 +21,10 @@ export const NANO_WALLET_ACTIONS = {
     SET_LANGUAGE,
     OPEN_WALLET_DIALOG,
     CLOSE_WALLET_DIALOG,
-    DIALOG_STATUS
+    DIALOG_STATUS,
+    SET_PENDING_AMOUNT,
+//    GET_PENDING_AMOUNT
+    CLEAR_PENDING_AMOUNT
     
 }
 
@@ -44,4 +50,16 @@ export function closeWalletDialog() {
 
 export function dialogStatus(status: string = "") {
     return { type: DIALOG_STATUS, status }
+}
+
+export function setPendingAmount(func: any) {
+    return { type: SET_PENDING_AMOUNT, func }
+}
+/*
+export function getPendingAmount() {
+    return { type: GET_PENDING_AMOUNT }
+}
+*/
+export function clearPendingAmout() {
+    return { type: CLEAR_PENDING_AMOUNT }
 }
