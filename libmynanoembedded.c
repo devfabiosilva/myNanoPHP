@@ -1946,7 +1946,7 @@ PHP_FUNCTION(php_c_generate_block)
 
       }
 
-      if ((err=f_str_to_hex((uint8_t *)(pA=msg), (char *)balance))) {
+      if ((err=f_str_to_hex((uint8_t *)(pA=(msg+196)), (char *)balance))) {
 
          sprintf(msg, "Internal error in C function 'php_c_generate_block' %d. Can not parse balance '%s' raw Nano big number", err, (const char *)balance);
 
@@ -1972,7 +1972,7 @@ PHP_FUNCTION(php_c_generate_block)
 
       }
 
-      if ((err=f_str_to_hex((uint8_t *)(pB=msg+32), (char *)value_send_rec))) {
+      if ((err=f_str_to_hex((uint8_t *)(pB=msg+196+32), (char *)value_send_rec))) {
 
          sprintf(msg, "Internal error in C function 'php_c_generate_block' %d. Can not parse value to send/receive '%s' raw Nano big number",
             err, (const char *)value_send_rec);
