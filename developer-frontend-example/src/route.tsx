@@ -8,8 +8,8 @@ import {
 
 } from 'react-router-dom';
 
-import Main from './pages/Main';
-import NotFound from './pages/NotFound';
+import Main from './pages/Main/main';
+import NotFound from './pages/NotFound/main';
 
 export default function Routes () {
     return (

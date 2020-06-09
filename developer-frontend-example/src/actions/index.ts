@@ -55,11 +55,7 @@ export function dialogStatus(status: string = "") {
 export function setPendingAmount(func: any) {
     return { type: SET_PENDING_AMOUNT, func }
 }
-/*
-export function getPendingAmount() {
-    return { type: GET_PENDING_AMOUNT }
-}
-*/
+
 export function clearPendingAmout() {
     return { type: CLEAR_PENDING_AMOUNT }
 }

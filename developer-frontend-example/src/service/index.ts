@@ -21,7 +21,8 @@ import {
     MY_NANO_PHP_SEED2KEYPAIR,
     GENERATED_ENCRYPTED_SEED,
     PUBLIC_KEY_TO_WALLET_RESPONSE,
-    my_wallet
+    my_wallet,
+    BIG_NUMBER_COMPARE_RESPONSE
 
 } from '../utils/wallet_interface';
 
@@ -203,6 +204,19 @@ export async function my_nano_php_brainwallet_to_keypair(wallet_number: number, 
     let data: MY_NANO_PHP_SEED2KEYPAIR|MY_NANO_PHP_ERROR;
 
     data = await my_nano_php_api(`command=brainwallet_2_key_pair&wallet_number=${wallet_number.toString()}&brainwallet=${brainwallet}&salt=${salt}&prefix=${prefix}`, "my_nano_php_brainwallet_to_keypair");
+
+    return new Promise((res, error) => {
+
+        return (data.error === "0")?res(data):error(data);
+
+    });
+}
+
+export async function my_nano_php_compare(valueA: string, valueB: string, typeA: string, typeB: string, condition: string)
+{
+    let data: BIG_NUMBER_COMPARE_RESPONSE|MY_NANO_PHP_ERROR;
+
+    data = await my_nano_php_api(`command=compare&valuea=${valueA}&typea=${typeA}&valueb=${valueB}&typeb=${typeB}&compare=${condition}`, "my_nano_php_compare");
 
     return new Promise((res, error) => {
 

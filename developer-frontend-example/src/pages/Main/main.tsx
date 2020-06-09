@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import OpenEncryptedWalletFile from '../components/OpenEncryptedFile';
+import OpenEncryptedWalletFile from '../../components/OpenEncryptedFile';
 
 import {
 
@@ -8,15 +8,15 @@ import {
     WALLET_FROM,
     my_wallet
 
-} from '../utils/wallet_interface';
+} from '../../utils/wallet_interface';
 
-import Wallet from '../components/Wallet';
-import Brainwallet from '../components/Brainwallet';
-import OpenSeed from '../components/OpenSeed';
-import SelectWallet from '../components/WalletOptions';
-import GenerateSeed from '../components/GenerateSeed';
-import { setLanguage } from '../actions';
-import { getLanguageFromLocalStorage } from '../utils/language';
+import Wallet from '../../components/Wallet';
+import Brainwallet from '../../components/Brainwallet';
+import OpenSeed from '../../components/OpenSeed';
+import SelectWallet from '../../components/WalletOptions';
+import GenerateSeed from '../../components/GenerateSeed';
+import { setLanguage } from '../../actions';
+import { getLanguageFromLocalStorage } from '../../utils/language';
 
 //sun 2020 05 24 20:30
 export function Main(props: any) {

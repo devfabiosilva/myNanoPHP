@@ -1,4 +1,4 @@
-import React, { useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import QRCode from 'qrcode.react';
 import Dialog from '../Dialog';
@@ -10,6 +10,7 @@ import {
   nano_rpc_account_representative,
   nano_rpc_account_frontier,
   my_nano_php_send_receive_money,
+  //my_nano_php_compare,
 
 } from '../../service';
 
@@ -25,8 +26,8 @@ import {
   setMyWallet, 
   openWalletDialog, 
   dialogStatus, 
-  setPendingAmount,
-  clearPendingAmout
+  clearPendingAmout,
+  setPendingAmount
 
 } from '../../actions';
 
@@ -43,6 +44,7 @@ export function Wallet(props: any) {
   const [ lockInputs, setLockInputs ] = useState(true);
 
   useEffect(
+
     () => {
 
       let obj_dest_wallet: any;
@@ -225,6 +227,7 @@ export function Wallet(props: any) {
       walletReady,
       lockInputs
     ]
+  
   );
 
   function verifyPending() {
