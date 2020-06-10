@@ -660,6 +660,16 @@ Throws _MyNanoCEmbeddedException_
 
 <h1>- php_c_convert_balance()</h1>
 
+```php
+    Function [ <internal:mynanoembedded> function php_c_convert_balance ] {
+
+      - Parameters [2] {
+        Parameter #0 [ <required> $balance ]
+        Parameter #1 [ <required> $type ]
+      }
+    }
+```
+
 ### Description
 
 Converts one Nano balance to another
@@ -1670,6 +1680,16 @@ Throws _MyNanoCEmbeddedException_
 
 <h1>- php_c_get_balance_from_block()</h1>
 
+```sh
+    Function [ <internal:mynanoembedded> function php_c_get_balance_from_block ] {
+
+      - Parameters [2] {
+        Parameter #0 [ <required> $block ]
+        Parameter #1 [ <optional> $balance_type ]
+      }
+    }
+```
+
 ### Description
 
 Extracts balances from binary nano block
@@ -1741,6 +1761,15 @@ Throws _MyNanoCEmbeddedException_
 
 <h1>- php_c_get_block_hash()</h1>
 
+```sh
+    Function [ <internal:mynanoembedded> function php_c_get_block_hash ] {
+
+      - Parameters [1] {
+        Parameter #0 [ <required> $block ]
+      }
+    }
+```
+
 ### Description
 
 Calculates block hash in Nano Block
@@ -1794,6 +1823,17 @@ Finally Hello World
 Throws _MyNanoCEmbeddedException_
 
 <h1>- php_c_get_difficulty()</h1>
+
+```sh
+    Function [ <internal:mynanoembedded> function php_c_get_difficulty ] {
+
+      - Parameters [3] {
+        Parameter #0 [ <required> $hash ]
+        Parameter #1 [ <required> $work ]
+        Parameter #2 [ <optional> $threshold ]
+      }
+    }
+```
 
 ### Description
 
@@ -1887,6 +1927,15 @@ Throws _MyNanoCEmbeddedException_
 
 <h1>- php_c_get_entropy_name()</h1>
 
+```sh
+    Function [ <internal:mynanoembedded> function php_c_get_entropy_name ] {
+
+      - Parameters [1] {
+        Parameter #0 [ <required> $entropy ]
+      }
+    }
+```
+
 ### Description
 
 Get a entropy name string given a index or entropy value
@@ -1953,6 +2002,17 @@ F_ENTROPY_TYPE_GOOD
 
 <h1>- php_c_get_link_from_block()</h1>
 
+```sh
+    Function [ <internal:mynanoembedded> function php_c_get_link_from_block ] {
+
+      - Parameters [3] {
+        Parameter #0 [ <required> $block ]
+        Parameter #1 [ <optional> $type ]
+        Parameter #2 [ <optional> $prefix ]
+      }
+    }
+```sh
+
 ### Description
 
 Extracts link with encoded Nano Base32 string or link hex string
@@ -2016,6 +2076,15 @@ Throws _MyNanoCEmbeddedException_
 
 <h1>- php_c_get_prefixes_from_block()</h1>
 
+```sh
+    Function [ <internal:mynanoembedded> function php_c_get_prefixes_from_block ] {
+
+      - Parameters [1] {
+        Parameter #0 [ <required> $block ]
+      }
+    }
+```
+
 ### Description
 
 Extracts prefixes from Nano block
@@ -2067,6 +2136,15 @@ echo "\n";
 Throws _MyNanoCEmbeddedException_
 
 <h1>- php_c_get_previous_from_block()</h1>
+
+```sh
+    Function [ <internal:mynanoembedded> function php_c_get_previous_from_block ] {
+
+      - Parameters [1] {
+        Parameter #0 [ <required> $block ]
+      }
+    }
+```
 
 ### Description
 
@@ -3116,7 +3194,7 @@ Throws _MyNanoCEmbeddedException_
 Set/modify an account in a Nano block
 
 ```php
-php_c_seed_to_nano_key_pair(&$block, $wallet);
+php_c_set_account_to_block(&$block, $wallet);
 ```
 
 params|type|description
@@ -3689,6 +3767,16 @@ Throws _MyNanoCEmbeddedException_
 
 <h1>- php_c_set_representative_to_block()</h1>
 
+```sh
+    Function [ <internal:mynanoembedded> function php_c_set_representative_to_block ] {
+
+      - Parameters [2] {
+        Parameter #0 [ <required> &$block ]
+        Parameter #1 [ <required> $representative ]
+      }
+    }
+```
+
 ### Description
 
 Set/modify a representative Nano account or public key in Nano block
@@ -3725,6 +3813,16 @@ Throws _MyNanoCEmbeddedException_
 
 <h1>- php_c_set_signature()</h1>
 
+```sh
+    Function [ <internal:mynanoembedded> function php_c_set_signature ] {
+
+      - Parameters [2] {
+        Parameter #0 [ <required> &$block ]
+        Parameter #1 [ <required> $signature ]
+      }
+    }
+```
+
 ### Description
 
 Set/modify a signature to a Nano block
@@ -3759,6 +3857,16 @@ Throws _MyNanoCEmbeddedException_
 
 <h1>- php_c_set_work()</h1>
 
+```sh
+    Function [ <internal:mynanoembedded> function php_c_set_work ] {
+
+      - Parameters [2] {
+        Parameter #0 [ <required> &$block ]
+        Parameter #1 [ <required> $work ]
+      }
+    }
+```
+
 ### Description
 
 Set/modify work in Nano Block
@@ -3792,6 +3900,17 @@ Throws _MyNanoCEmbeddedException_
 - _php_c_get_work_from_block()_
 
 <h1>- php_c_sign_block()</h1>
+
+```sh
+    Function [ <internal:mynanoembedded> function php_c_sign_block ] {
+
+      - Parameters [3] {
+        Parameter #0 [ <required> $user_block ]
+        Parameter #1 [ <required> $fee_block ]
+        Parameter #2 [ <required> $private_key ]
+      }
+    }
+```
 
 ### Description
 
@@ -4980,6 +5099,22 @@ Extension [ <persistent> extension #15 mynanoembedded version 1.0 ] {
 
 ```
 
+## DONATIONS
+
+Donation are welcome :)
+
+Coin | Wallet
+---- | ------
+Bitcoin:   | 1JDckpLRJGhp46LTcjY1vsW19wurZ3L1d5
+Nano:      | nano_1cb5fs7xmixqzpitfn9ouy4j1g3hjmdfudc1igt5xhwwps7qdku5htqxmznb
+Litecoin:  | LRjEiKadFzPCoGorWvSVUnWPsFyPZGt97f
+Dogecoin:  | DRrWWMdwY6AN8rdz7zH2cp3qaK8vSgDTau
+
 ## LICENSE
-MIT
+
+This project is under MIT license see [LICENSE](/LICENSE)
+
+## CONTACT
+
+You can contact me at [fabioegel@gmail.com](mailto:fabioegel@gmail.com) or [fabioegel@protonmail.com](mailto:fabioegel@protonmail.com)
 
