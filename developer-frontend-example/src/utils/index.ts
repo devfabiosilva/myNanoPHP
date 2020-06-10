@@ -13,3 +13,4 @@ export function changeToNanoPrefix(wallet: string): string {
     return wallet;
 
 }
+
