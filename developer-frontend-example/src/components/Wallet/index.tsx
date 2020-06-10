@@ -1,4 +1,11 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { 
+
+  useEffect, 
+  useState, 
+  useRef 
+
+} from 'react';
+
 import { connect } from 'react-redux';
 import QRCode from 'qrcode.react';
 import Dialog from '../Dialog';
@@ -16,8 +23,12 @@ import {
 
 import { 
 
-  UNDEFINED, MAX_FEE,
+  UNDEFINED,
+  MAX_FEE,
   DEFAULT_REPRESENTATIVE,
+  SEND_COMMAND,
+  RECEIVE_COMMAND,
+  OPEN_BLOCK_TO_RECEIVE,
 
 } from '../../utils';
 
@@ -27,11 +38,18 @@ import {
   openWalletDialog, 
   dialogStatus, 
   clearPendingAmout,
-  setPendingAmount
+  setPendingAmount,
+  closeWalletDialog
 
 } from '../../actions';
 
-import { my_wallet } from '../../utils/wallet_interface';
+import { 
+
+  my_wallet, 
+  PENDING_AMOUNT_TO_POCKET 
+
+} from '../../utils/wallet_interface';
+
 import LanguageTool from '../LanguageTool';
 
 export function Wallet(props: any) {
@@ -42,6 +60,14 @@ export function Wallet(props: any) {
   const [ representative, setRepresentative ] = useState("");
   const [ walletReady, setWalletReady ] = useState(false);
   const [ lockInputs, setLockInputs ] = useState(true);
+
+  const [ openPendingBlock, setOpenPendingBlock ] = useState({
+
+    amount: "", // in Real value
+    block: ""
+
+  } as PENDING_AMOUNT_TO_POCKET);
+
   const verifyPendingRef = useRef(verifyPending);
 
   useEffect(
@@ -50,40 +76,53 @@ export function Wallet(props: any) {
 
       let obj_dest_wallet: any;
       let obj_amount_to_send_receive: any;
-      let dest_wallet: string;
+      let dest_wallet: string; // destination wallet or link
       let amount_to_send_receive: string;
 
-      if (props.dialog_status === "send") {
+      if ( (props.dialog_status === SEND_COMMAND) || (props.dialog_status === RECEIVE_COMMAND) ) {
 
-        obj_amount_to_send_receive = document.getElementById('value-to-send-id');
+        if (props.dialog_status === SEND_COMMAND) {
 
-        if (( amount_to_send_receive = obj_amount_to_send_receive.value.trim() ) === "") {
+          obj_amount_to_send_receive = document.getElementById('value-to-send-id');
 
-          alert( props.language.msg_amount_is_empty );
-          props.dialogStatus();
-          return;
+          if (( amount_to_send_receive = obj_amount_to_send_receive.value.trim() ) === "") {
+
+            alert( props.language.msg_amount_is_empty );
+            props.dialogStatus();
+            return;
+
+          }
+
+          obj_dest_wallet = document.getElementById('destination-wallet-id');
+
+          if (( dest_wallet = obj_dest_wallet.value.trim() ) === "") {
+
+            alert( props.language.msg_destination_wallet_empty );
+            props.dialogStatus();
+            return;
+
+          }
+
+        } else {
+
+          dest_wallet = openPendingBlock.block;
+          amount_to_send_receive = openPendingBlock.amount
 
         }
 
-        obj_dest_wallet = document.getElementById('destination-wallet-id');
-
-        if (( dest_wallet = obj_dest_wallet.value.trim() ) === "") {
-
-          alert( props.language.msg_destination_wallet_empty );
-          props.dialogStatus();
-          return;
-
-        }
-
-        my_nano_php_send_receive_money(props.state as my_wallet, dest_wallet, amount_to_send_receive, "send").then(
+        my_nano_php_send_receive_money(props.state as my_wallet, dest_wallet, amount_to_send_receive, props.dialog_status).then(
           (transaction_result: any) => {
             console.log("RESULTADO")
             console.log(transaction_result);
+            setWalletReady(false);
+            props.closeDialog();
             props.dialogStatus();
           },
           (transaction_result_error: any) => {
             console.log("ERRO");
             console.log(transaction_result_error);
+            setWalletReady(false);
+            props.closeDialog();
             props.dialogStatus();
           }
         );
@@ -102,8 +141,9 @@ export function Wallet(props: any) {
           if (lockInputs)
             setLockInputs(false);
         
-          if (!props.monitore_pending.pending_function)
-            props.enablePendingMonitor(verifyPendingRef.current);
+          if (props.dialog_status === "")
+            if (!props.monitore_pending.pending_function)
+              props.enablePendingMonitor(verifyPendingRef.current);
 
         }
 
@@ -226,25 +266,61 @@ export function Wallet(props: any) {
     [
       props,
       walletReady,
-      lockInputs
+      lockInputs,
+      openPendingBlock
     ]
   
   );
 
   function verifyPending() {
-    console.log("TIC-TAC");
+
     let pending_value: any = (props.state as my_wallet).pending;
+    let block: string;
+    let amount: string;
 
     if ( (pending_value !== '0.0') ) {
       props.disablePendingMonitor();
       nano_rpc_get_pending( (props.state as my_wallet).wallet as string ).then(
         (pending_res: any) => {
-          console.log(pending_res);
-          //props.enablePendingMonitor(verifyPendingRef.current());
+          if (pending_res.amount_raw) {
+
+            if ( (block = pending_res.block ) ) 
+              my_nano_php_raw2real(pending_res.amount_raw).then(
+                (raw2real_res: any) => {
+                    if ( (amount = raw2real_res.real_balance)) {
+                      setOpenPendingBlock({
+
+                        amount,
+                        block
+
+                      });
+
+                      if (props.dialog_status === "") {
+
+                        props.dialogStatus(OPEN_BLOCK_TO_RECEIVE);
+                        props.disablePendingMonitor();
+                        props.openDialog();
+                  
+                      }
+
+                    } else
+                      console.log("Missing balance");
+
+                    console.log(raw2real_res.real_balance);
+                    console.log(pending_res.block);
+                  },
+                  (raw2real_err: any) => {
+                    console.log("my_nano_php_raw2real error");
+                  }
+                )
+            else
+              console.log("Can't find block");
+          } else
+            console.log("Error big number amount raw not found");
         },
         (pending_err: any) => {
           console.log(pending_err);
-          //props.enablePendingMonitor(verifyPendingRef.current());
+
         }
       )
 
@@ -352,9 +428,10 @@ const mapDispatchToProps = (dispatch: any, ownProps: any) => ({
 
   setMyWallet: (param: my_wallet) => dispatch(setMyWallet(param)),
   openDialog: () => dispatch(openWalletDialog()),
+  closeDialog: () => dispatch(closeWalletDialog()),
   dialogStatus: (param: string) => dispatch(dialogStatus(param)),
   enablePendingMonitor: (monitorCallback: any) => dispatch(setPendingAmount(monitorCallback)),
-  disablePendingMonitor: () => dispatch(clearPendingAmout())
+  disablePendingMonitor: () => dispatch(clearPendingAmout()),
 
 });
 

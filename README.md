@@ -4400,7 +4400,6 @@ Throws _MyNanoCEmbeddedException_
 
 - _php_c_from_multiplier()_
 
-===========================
 <h1>- php_c_verify_token()</h1>
 
 ```sh

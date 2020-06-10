@@ -416,7 +416,7 @@ export async function nano_rpc_get_pending(account: string) {
         source: "true"
     }).then(
         (d: any) => {
-            console.log(d.data);
+            //console.log(d.data);
             if (d) {
                 if ( (tmp1 = d.data['blocks']) ) {
 

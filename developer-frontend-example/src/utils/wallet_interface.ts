@@ -153,4 +153,10 @@ export interface BIG_NUMBER_COMPARE_RESPONSE {
 export interface NEXT_PENDING_BLOCK_RESPONSE {
     block: string,
     amount_raw: string,
+    amount_real: string
+}
+
+export interface PENDING_AMOUNT_TO_POCKET {
+    amount: string,
+    block: string
 }

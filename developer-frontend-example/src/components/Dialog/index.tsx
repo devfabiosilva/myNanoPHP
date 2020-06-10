@@ -28,7 +28,15 @@ import {
     my_nano_php_brainwallet_to_keypair
 
 } from '../../service';
-import { UNKNOWN_MY_NANO_PHP_SERVER_ERROR } from '../../utils';
+
+import { 
+
+    UNKNOWN_MY_NANO_PHP_SERVER_ERROR, 
+    SEND_COMMAND,
+    OPEN_BLOCK_TO_RECEIVE,
+    RECEIVE_COMMAND
+
+} from '../../utils';
 
 function Dialog(props: any) {
 
@@ -95,7 +103,10 @@ function Dialog(props: any) {
 
                             } as my_wallet);
 
-                            props.dialogStatus("send");
+                            if ( props.transaction_command === OPEN_BLOCK_TO_RECEIVE )
+                                props.dialogStatus(RECEIVE_COMMAND);
+                            else
+                                props.dialogStatus(SEND_COMMAND);
 
                         },
                         (error_keypair) => {
@@ -131,7 +142,10 @@ function Dialog(props: any) {
 
                             } as my_wallet);
 
-                            props.dialogStatus("send");
+                            if ( props.transaction_command === OPEN_BLOCK_TO_RECEIVE )
+                                props.dialogStatus(RECEIVE_COMMAND);
+                            else
+                                props.dialogStatus(SEND_COMMAND);
 
                         } else
                             console.log(keypair_res);
@@ -166,7 +180,10 @@ function Dialog(props: any) {
 
                             } as my_wallet);
 
-                            props.dialogStatus("send");
+                            if ( props.transaction_command === OPEN_BLOCK_TO_RECEIVE )
+                                props.dialogStatus(RECEIVE_COMMAND);
+                            else
+                                props.dialogStatus(SEND_COMMAND);
 
                         } else
                             console.log(keypair_res);
@@ -210,7 +227,10 @@ function Dialog(props: any) {
 
                             } as my_wallet);
 
-                            props.dialogStatus("send");
+                            if ( props.transaction_command === OPEN_BLOCK_TO_RECEIVE )
+                                props.dialogStatus(RECEIVE_COMMAND);
+                            else
+                                props.dialogStatus(SEND_COMMAND);
 
                         } else
                             console.log(keypair_res);
@@ -247,7 +267,10 @@ function Dialog(props: any) {
 
             });
 
-            props.dialogStatus("send");
+            if ( props.transaction_command === OPEN_BLOCK_TO_RECEIVE )
+                props.dialogStatus(RECEIVE_COMMAND);
+            else
+                props.dialogStatus(SEND_COMMAND);
 
         }
 
@@ -334,7 +357,7 @@ function Dialog(props: any) {
             default:
                 return (
                     <div>
-                        default testing
+                        Something went wrong. It would never should happen
                     </div>
                 );
 
@@ -369,7 +392,8 @@ const mapStateToProps = (state: any, ownProps: any) => ({
 
     nano_wallet: state.wallet,
     language: state.lang,
-    dialogVisible: state.openTransactionDialog
+    dialogVisible: state.openTransactionDialog,
+    transaction_command: state.transactionDialogStatus
 
 });
   

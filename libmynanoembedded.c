@@ -2176,6 +2176,14 @@ PHP_FUNCTION(php_c_generate_block)
 
       }
 
+   } else if (direction&VALUE_TO_SEND) {
+
+      sprintf(msg, "Internal error in C function 'php_c_generate_block' 16110. Can't create block to send Nano. Open block first with receiving amount");
+
+      zend_throw_exception(f_exception_ce, msg, 16110);
+
+      return;
+
    } else
       memset(block.previous, 0, sizeof(block.previous));
 
