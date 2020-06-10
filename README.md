@@ -28,6 +28,17 @@ In Development ...
 
 <h1>- php_c_add_sub_balance()</h1>
 
+```sh
+    Function [ <internal:mynanoembedded> function php_c_add_sub_balance ] {
+
+      - Parameters [3] {
+        Parameter #0 [ <required> $valueA ]
+        Parameter #1 [ <required> $valueB ]
+        Parameter #2 [ <required> $type ]
+      }
+    }
+```
+
 ### Description
 
 Adds or Subtracts two Nano big numbers
@@ -114,6 +125,16 @@ Throws _MyNanoCEmbeddedException_
 
 <h1>- php_c_bip39_to_nano_seed()</h1>
 
+```sh
+    Function [ <internal:mynanoembedded> function php_c_bip39_to_nano_seed ] {
+
+      - Parameters [2] {
+        Parameter #0 [ <required> $bip39 ]
+        Parameter #1 [ <required> $dictionary_path ]
+      }
+    }
+```
+
 ### Description
 
 Extract Nano SEED from Bip39 menemonic
@@ -152,6 +173,19 @@ php -r "echo php_c_bip39_to_nano_seed('mesh clap laptop idea vocal stadium spoil
 Throws _MyNanoCEmbeddedException_
 
 <h1>- php_c_block_to_p2pow()</h1>
+
+```sh
+    Function [ <internal:mynanoembedded> function php_c_block_to_p2pow ] {
+
+      - Parameters [5] {
+        Parameter #0 [ <required> $block ]
+        Parameter #1 [ <required> $worker_wallet ]
+        Parameter #2 [ <required> $worker_representative ]
+        Parameter #3 [ <required> $worker_fee ]
+        Parameter #4 [ <optional> $worker_fee_type ]
+      }
+    }
+```
 
 ### Description
 
@@ -329,6 +363,18 @@ Throws _MyNanoCEmbeddedException_
 
 <h1>- php_c_brainwallet_generate()</h1>
 
+```sh
+    Function [ <internal:mynanoembedded> function php_c_brainwallet_generate ] {
+
+      - Parameters [4] {
+        Parameter #0 [ <required> $brainwallet ]
+        Parameter #1 [ <required> $salt ]
+        Parameter #2 [ <required> $mode ]
+        Parameter #3 [ <optional> $dictionary_path ]
+      }
+    }
+```
+
 ### Description
 
 Extract a Nano SEED given a phrase or word list and salt
@@ -386,6 +432,17 @@ php -r "echo php_c_brainwallet_generate('The state is that great fiction by whic
 Throws _MyNanoCEmbeddedException_
 
 <h1>- php_c_calculate_work_from_block()</h1>
+
+```sh
+    Function [ <internal:mynanoembedded> function php_c_calculate_work_from_block ] {
+
+      - Parameters [3] {
+        Parameter #0 [ <required> &$block ]
+        Parameter #1 [ <required> $number_of_threads ]
+        Parameter #2 [ <optional> $threshold ]
+      }
+    }
+```
 
 ### Description
 
@@ -524,6 +581,18 @@ Throws _MyNanoCEmbeddedException_
 
 <h1>- php_c_compare()</h1>
 
+```sh
+    Function [ <internal:mynanoembedded> function php_c_compare ] {
+
+      - Parameters [4] {
+        Parameter #0 [ <required> $valueA ]
+        Parameter #1 [ <required> $valueB ]
+        Parameter #2 [ <required> $type ]
+        Parameter #3 [ <required> $compare ]
+      }
+    }
+```
+
 ### Description
 
 Compares two Nano big numbers values
@@ -655,6 +724,16 @@ Throws _MyNanoCEmbeddedException_
 
 <h1>- php_c_from_multiplier()</h1>
 
+```sh
+    Function [ <internal:mynanoembedded> function php_c_from_multiplier ] {
+
+      - Parameters [2] {
+        Parameter #0 [ <required> $multiplier ]
+        Parameter #1 [ <required> $base_difficulty ]
+      }
+    }
+```
+
 ### Description
 
 Takes a multiplier and converts to Nano Proof of Work difficulty
@@ -700,7 +779,22 @@ php -r "echo php_c_from_multiplier(4.891, '8212791982736716625');"
 
 Throws _MyNanoCEmbeddedException_
 
+**See also**
+
+- _php_c_to_multiplier()_
+
 <h1>- php_c_gen_encrypted_stream_to_seed()</h1>
+
+```sh
+    Function [ <internal:mynanoembedded> function php_c_gen_encrypted_stream_to_seed ] {
+
+      - Parameters [3] {
+        Parameter #0 [ <required> $encrypted_stream ]
+        Parameter #1 [ <required> $password ]
+        Parameter #2 [ <required> $dictionary_file ]
+      }
+    }
+```
 
 ### Description
 
@@ -836,6 +930,19 @@ Throws _MyNanoCEmbeddedException_
 
 
 <h1>- php_c_gen_seed_to_encrypted_stream()</h1>
+
+```sh
+    Function [ <internal:mynanoembedded> function php_c_gen_seed_to_encrypted_stream ] {
+
+      - Parameters [5] {
+        Parameter #0 [ <required> $entropy ]
+        Parameter #1 [ <required> $password ]
+        Parameter #2 [ <required> $password_min_len ]
+        Parameter #3 [ <required> $password_max_len ]
+        Parameter #4 [ <optional> $password_type ]
+      }
+    }
+```
 
 ### Description
 
@@ -1012,6 +1119,23 @@ Throws _MyNanoCEmbeddedException_
 - _php_c_gen_encrypted_stream_to_seed()_
 
 <h1>- php_c_generate_block()</h1>
+
+```sh
+    Function [ <internal:mynanoembedded> function php_c_generate_block ] {
+
+      - Parameters [9] {
+        Parameter #0 [ <required> $account ]
+        Parameter #1 [ <required> $previous ]
+        Parameter #2 [ <required> $representative ]
+        Parameter #3 [ <required> $balance ]
+        Parameter #4 [ <required> $balance_type ]
+        Parameter #5 [ <required> $val_send_rec ]
+        Parameter #6 [ <required> $val_send_rec_type ]
+        Parameter #7 [ <required> $link ]
+        Parameter #8 [ <required> $direction ]
+      }
+    }
+```
 
 ### Description
 
@@ -1350,6 +1474,15 @@ Throws _MyNanoCEmbeddedException_
 
 <h1>- php_c_generate_seed()</h1>
 
+```sh
+    Function [ <internal:mynanoembedded> function php_c_generate_seed ] {
+
+      - Parameters [1] {
+        Parameter #0 [ <required> $entropy ]
+      }
+    }
+```
+
 ### Description
 
 Geneartes a random seed using hardware TRNG (if available) or PRNG and genarates a random Nano SEED
@@ -1392,6 +1525,16 @@ php -r "echo php_c_generate_seed(ENTROPY_TYPE_PARANOIC);"
 Throws _MyNanoCEmbeddedException_
 
 <h1>- php_c_generate_token()</h1>
+
+```sh
+    Function [ <internal:mynanoembedded> function php_c_generate_token ] {
+
+      - Parameters [2] {
+        Parameter #0 [ <required> $data ]
+        Parameter #1 [ <required> $password ]
+      }
+    }
+```
 
 ### Description
 
@@ -1452,6 +1595,17 @@ Throws _MyNanoCEmbeddedException_
 _php_c_verify_token()_
 
 <h1>- php_c_get_account_from_block()</h1>
+
+```sh
+    Function [ <internal:mynanoembedded> function php_c_get_account_from_block ] {
+
+      - Parameters [3] {
+        Parameter #0 [ <required> $block ]
+        Parameter #1 [ <optional> $type ]
+        Parameter #2 [ <optional> $prefix ]
+      }
+    }
+```
 
 ### Description
 
@@ -4184,7 +4338,129 @@ Throws _MyNanoCEmbeddedException_
 - _php_c_block_to_p2pow()_
 - _php_c_p2pow_to_json()_
 
-**Documentation on progress ...**
+
+Throws _MyNanoCEmbeddedException_
+
+<h1>- php_c_from_multiplier()</h1>
+
+```sh
+    Function [ <internal:mynanoembedded> function php_c_to_multiplier ] {
+
+      - Parameters [2] {
+        Parameter #0 [ <required> $difficulty ]
+        Parameter #1 [ <required> $base_difficulty ]
+      }
+    }
+```
+
+### Description
+
+Takes a difficulty and converts to Nano Proof of Work multiplier
+
+```php
+php_c_to_multiplier($difficulty, $base_difficulty);
+```
+
+params|type|description
+------|----|-----------
+**_$difficulty_**|string|String value in Hex or Octal or Decimal value
+**_$base_difficulty_**|string|String value in Hex or Octal or Decimal value
+
+#### Return value
+
+Rerurns a Real value of a multiplier difficulty of the Proof of Work
+
+##### Examples
+
+```sh
+php -r "echo php_c_to_multiplier('0xfffffff000000000', DEFAULT_NANO_POW_THRESHOLD);"
+# RETURNS 4
+```
+
+```sh
+php -r "echo php_c_to_multiplier('0xfffffd5adee9340d', '0xfffff10000000000');"
+# RETURNS 5.6710000000011
+```
+
+```sh
+php -r "echo php_c_to_multiplier('0xb0be377ad92a0800', '0612791712736716625');"
+# RETURNS 3.23
+```
+
+```sh
+php -r "echo php_c_to_multiplier('0xe2f648e16fa3c600', '8212791982736716625');"
+# RETURNS 4.891
+```
+
+**On error**
+
+Throws _MyNanoCEmbeddedException_
+
+**See also**
+
+- _php_c_from_multiplier()_
+
+===========================
+<h1>- php_c_verify_token()</h1>
+
+```sh
+    Function [ <internal:mynanoembedded> function php_c_verify_token ] {
+
+      - Parameters [3] {
+        Parameter #0 [ <required> $token ]
+        Parameter #1 [ <required> $data ]
+        Parameter #2 [ <required> $password ]
+      }
+    }
+```
+
+### Description
+
+Checks if a non deterministic hash _token_ is valid given a _data_ and _password_
+
+```php
+php_c_verify_token($token, $data, $password);
+```
+
+params|type|description
+------|----|-----------
+**_$token_**|string|Non deterministic hex string token
+**_$data_**|binary|Raw data or string value
+**_$password_**|string|Password
+
+#### Return value
+
+Rerurns _TRUE_ if token is valid otherwise returns _FALSE_
+
+##### Example 1
+
+```sh
+# Generating a non deterministic HASH with Albert Einstein quote:
+# 'Try not to become a man of success, but rather try to become a man of value (Albert Einstein)' and sign with password 'MyPassword@1234'
+php -r "echo php_c_generate_token('Try not to become a man of success, but rather try to become a man of value (Albert Einstein)', 'MyPassword@1234');"
+
+#RETURNS 19a13667a8172c809831f2e9820a3c9d
+
+# Verify a non deterministic HASH = 19a13667a8172c809831f2e9820a3c9d with Albert Einstein quote:
+# 'Try not to become a man of success, but rather try to become a man of value (Albert Einstein)' and sign with password 'MyPassword@1234'
+
+php -r "echo (php_c_verify_token('19a13667a8172c809831f2e9820a3c9d', 'Try not to become a man of success, but rather try to become a man of value (Albert Einstein)', 'MyPassword@1234'))?'TRUE':'FALSE';";
+```
+
+**Return value**
+
+```sh
+TRUE
+```
+
+**On error**
+
+Throws _MyNanoCEmbeddedException_
+
+**See also**
+
+- _php_c_generate_token()_
+
 
 ## SUMMARY: Constants, Functions and Classes
 
