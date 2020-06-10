@@ -149,3 +149,8 @@ export interface BIG_NUMBER_COMPARE_RESPONSE {
     value_b: string,
     result: string|number
 }
+
+export interface NEXT_PENDING_BLOCK_RESPONSE {
+    block: string,
+    amount_raw: string,
+}

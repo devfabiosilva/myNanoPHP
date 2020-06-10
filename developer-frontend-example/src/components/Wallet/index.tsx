@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { connect } from 'react-redux';
 import QRCode from 'qrcode.react';
 import Dialog from '../Dialog';
@@ -10,7 +10,7 @@ import {
   nano_rpc_account_representative,
   nano_rpc_account_frontier,
   my_nano_php_send_receive_money,
-  //my_nano_php_compare,
+  nano_rpc_get_pending,
 
 } from '../../service';
 
@@ -42,6 +42,7 @@ export function Wallet(props: any) {
   const [ representative, setRepresentative ] = useState("");
   const [ walletReady, setWalletReady ] = useState(false);
   const [ lockInputs, setLockInputs ] = useState(true);
+  const verifyPendingRef = useRef(verifyPending);
 
   useEffect(
 
@@ -102,7 +103,7 @@ export function Wallet(props: any) {
             setLockInputs(false);
         
           if (!props.monitore_pending.pending_function)
-            props.enablePendingMonitor(verifyPending);
+            props.enablePendingMonitor(verifyPendingRef.current);
 
         }
 
@@ -232,6 +233,22 @@ export function Wallet(props: any) {
 
   function verifyPending() {
     console.log("TIC-TAC");
+    let pending_value: any = (props.state as my_wallet).pending;
+
+    if ( (pending_value !== '0.0') ) {
+      props.disablePendingMonitor();
+      nano_rpc_get_pending( (props.state as my_wallet).wallet as string ).then(
+        (pending_res: any) => {
+          console.log(pending_res);
+          //props.enablePendingMonitor(verifyPendingRef.current());
+        },
+        (pending_err: any) => {
+          console.log(pending_err);
+          //props.enablePendingMonitor(verifyPendingRef.current());
+        }
+      )
+
+    }
   }
 
   function beginSendAmount() {

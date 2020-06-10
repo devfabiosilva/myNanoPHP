@@ -8,7 +8,7 @@ const SET_LANGUAGE = 4;
 const OPEN_WALLET_DIALOG = 5;
 const CLOSE_WALLET_DIALOG = 6;
 const DIALOG_STATUS = 7;
-const SET_PENDING_AMOUNT = 8;
+export const SET_PENDING_AMOUNT = 8;
 //const GET_PENDING_AMOUNT = 9;
 const CLEAR_PENDING_AMOUNT = 10;
 
@@ -53,7 +53,7 @@ export function dialogStatus(status: string = "") {
 }
 
 export function setPendingAmount(func: any) {
-    return { type: SET_PENDING_AMOUNT, func }
+    return { type: SET_PENDING_AMOUNT, func };
 }
 
 export function clearPendingAmout() {

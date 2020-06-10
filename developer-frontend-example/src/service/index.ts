@@ -9,7 +9,8 @@ import {
 import {
 
     NANO_PREFIX,
-    UNKNOWN_MY_NANO_PHP_SERVER_ERROR
+    UNKNOWN_MY_NANO_PHP_SERVER_ERROR,
+    changeToNanoPrefix
 
 } from '../utils';
 
@@ -22,7 +23,8 @@ import {
     GENERATED_ENCRYPTED_SEED,
     PUBLIC_KEY_TO_WALLET_RESPONSE,
     my_wallet,
-    BIG_NUMBER_COMPARE_RESPONSE
+    BIG_NUMBER_COMPARE_RESPONSE,
+    NEXT_PENDING_BLOCK_RESPONSE
 
 } from '../utils/wallet_interface';
 
@@ -394,6 +396,55 @@ export async function nano_rpc_account_send_signed_block(block: any) {
 
     await api_rpc.post('/', block).then(
         (d) => data = d.data,
+        (e) => err = e.data
+    );
+    
+    return new Promise((resolve, reject) => (data)?(data.error)?reject({error: data.error}):resolve(data):reject(err));
+
+}
+
+export async function nano_rpc_get_pending(account: string) {
+
+    let data: any = null, err: any;
+    let amount_raw: string, block: string, tmp1: any, tmp2: any;
+    let account_tmp = changeToNanoPrefix ( account );
+
+    await api_rpc.post('/', {
+        action: "accounts_pending",
+        accounts: [ account_tmp ],
+        count: "1",
+        source: "true"
+    }).then(
+        (d: any) => {
+            console.log(d.data);
+            if (d) {
+                if ( (tmp1 = d.data['blocks']) ) {
+
+                    if ( (tmp2 = tmp1[account_tmp]) ) {
+
+                        if ( (block = Object.keys(tmp2)[0]) ) {
+
+                            if ( (amount_raw = tmp2[block].amount) ) {
+                                data = {
+
+                                    block,
+                                    amount_raw,
+
+                                } as NEXT_PENDING_BLOCK_RESPONSE;
+                            } else
+                                err = { error: `Can't find amount in account ${account}` }
+
+                        } else
+                            err = { error: `Can't find block in account ${account}`}
+
+                    } else
+                        err = { error: `Can't find ${account} in block`};
+                    
+                } else
+                    err = {error: "Unknown block in RPC"};
+            } else
+                err = { error: "Empty response" };
+        },
         (e) => err = e.data
     );
     
