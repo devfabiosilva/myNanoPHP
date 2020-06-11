@@ -1,15 +1,29 @@
+body {
+  background-color: #fff;
+}
+div.dark {
+  --background-content: #22434a;
+  --font-color: #fff;
+}
+
+div.light {
+  --background-content: #fff;
+  --font-color: #000;
+}
+
 button {
 
     height: 40px;
     font-size: 12px;
     font-weight: bold;
-    color: rgba(245, 245, 245, 0.5);
-    color: #c6c9cd;
-    background: #17202c;
+    /*color: rgba(245, 245, 245, 0.5); */
+    color: var(--font-color);
+    background-color: var(--background-content);/* #17202c; */
     border: solid 1px #c6c9cd;
     border-radius: 0.4rem;
     cursor: pointer;
-    opacity: 0.9;
+    transition: color 0.3s, background-color 2s ;
+    /*opacity: 0.9;*/
   }
   
   button:hover {

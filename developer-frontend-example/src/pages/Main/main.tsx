@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import OpenEncryptedWalletFile from '../../components/OpenEncryptedFile';
 
@@ -17,7 +17,21 @@ import SelectWallet from '../../components/WalletOptions';
 import GenerateSeed from '../../components/GenerateSeed';
 import { setLanguage } from '../../actions';
 import { getLanguageFromLocalStorage } from '../../utils/language';
+import './style.css';
 
+export function MainContainer( props: any ) {
+    const [ backgroundMode, setBackgroundMode ] = useState("dark");
+    return (
+        <div className={`main-container ${ backgroundMode }`}>
+            <button
+                onClick={ () => {(backgroundMode==="light")?setBackgroundMode("dark"):setBackgroundMode("light")}}
+            >
+                OK
+            </button>
+            { props.children }
+        </div>
+    );
+}
 //sun 2020 05 24 20:30
 export function Main(props: any) {
 
@@ -35,48 +49,66 @@ export function Main(props: any) {
 
             case WALLET_FROM.FROM_SEED:
                 return (
-                    <OpenSeed />
+                    <MainContainer>
+                        <OpenSeed />
+                    </MainContainer>
                 );
 
             case WALLET_FROM.FROM_BIP39:
                 return (
-                    <OpenSeed bip39 />
+                    <MainContainer>
+                        <OpenSeed bip39 />
+                    </MainContainer>
                 );
 
             case WALLET_FROM.FROM_KEY_PAIR:
                 return (
-                    <OpenSeed keyPair />
+                    <MainContainer>
+                        <OpenSeed keyPair />
+                    </MainContainer>
                 );
 
             case WALLET_FROM.FROM_PUBLIC_KEY:
                 return (
-                    <OpenSeed publicKey />
+                    <MainContainer>
+                        <OpenSeed publicKey />
+                    </MainContainer>
                 );
             
             case WALLET_FROM.FROM_ENCRYPTED_FILE:
                 return (
-                    <OpenEncryptedWalletFile />
+                    <MainContainer>
+                        <OpenEncryptedWalletFile />
+                    </MainContainer>
                 );
 
             case WALLET_FROM.FROM_GENERATING_SEED:
                 return (
-                    <GenerateSeed />
+                    <MainContainer>
+                        <GenerateSeed />
+                    </MainContainer>
                 )
 
             case WALLET_FROM.FROM_BRAINWALLET:
                 return (
-                    <Brainwallet />
+                    <MainContainer>
+                        <Brainwallet />
+                    </MainContainer>
                 );
             
             default:
                 return (
-                    <SelectWallet />
+                    <MainContainer>
+                        <SelectWallet />
+                    </MainContainer>
                 );
 
         }
     else
         return (
-            <Wallet />
+            <MainContainer>
+                <Wallet />
+            </MainContainer>
         )
 
 }

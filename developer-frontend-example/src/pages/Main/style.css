@@ -1,0 +1,9 @@
+.main-container {
+
+    width: 500px;
+    height: 600px;
+    background-color: var(--background-content);
+    transition: background-color 0.4s;
+    color: var(--font-color);
+
+}
