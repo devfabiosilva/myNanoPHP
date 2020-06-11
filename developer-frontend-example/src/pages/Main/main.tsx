@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import OpenEncryptedWalletFile from '../../components/OpenEncryptedFile';
 
@@ -15,16 +15,24 @@ import Brainwallet from '../../components/Brainwallet';
 import OpenSeed from '../../components/OpenSeed';
 import SelectWallet from '../../components/WalletOptions';
 import GenerateSeed from '../../components/GenerateSeed';
-import { setLanguage } from '../../actions';
+import { setLanguage, changeBackgroundMode } from '../../actions';
 import { getLanguageFromLocalStorage } from '../../utils/language';
+
+import { 
+    
+    BACKGROUND_LIGHT,
+    BACKGROUND_DARK 
+
+} from '../../utils';
+
 import './style.css';
 
-export function MainContainer( props: any ) {
-    const [ backgroundMode, setBackgroundMode ] = useState("dark");
+export function MainContainer( props: any) {
+
     return (
-        <div className={`main-container ${ backgroundMode }`}>
+        <div className={`main-container ${ props.myParent.backgroundMode }`}>
             <button
-                onClick={ () => {(backgroundMode==="light")?setBackgroundMode("dark"):setBackgroundMode("light")}}
+                onClick={ () => {( props.myParent.backgroundMode === BACKGROUND_LIGHT )?props.myParent.changeBackMode(BACKGROUND_DARK):props.myParent.changeBackMode(BACKGROUND_LIGHT)}}
             >
                 OK
             </button>
@@ -49,56 +57,56 @@ export function Main(props: any) {
 
             case WALLET_FROM.FROM_SEED:
                 return (
-                    <MainContainer>
+                    <MainContainer myParent={ props }>
                         <OpenSeed />
                     </MainContainer>
                 );
 
             case WALLET_FROM.FROM_BIP39:
                 return (
-                    <MainContainer>
+                    <MainContainer myParent={ props }>
                         <OpenSeed bip39 />
                     </MainContainer>
                 );
 
             case WALLET_FROM.FROM_KEY_PAIR:
                 return (
-                    <MainContainer>
+                    <MainContainer myParent={ props }>
                         <OpenSeed keyPair />
                     </MainContainer>
                 );
 
             case WALLET_FROM.FROM_PUBLIC_KEY:
                 return (
-                    <MainContainer>
+                    <MainContainer myParent={ props }>
                         <OpenSeed publicKey />
                     </MainContainer>
                 );
             
             case WALLET_FROM.FROM_ENCRYPTED_FILE:
                 return (
-                    <MainContainer>
+                    <MainContainer myParent={ props }>
                         <OpenEncryptedWalletFile />
                     </MainContainer>
                 );
 
             case WALLET_FROM.FROM_GENERATING_SEED:
                 return (
-                    <MainContainer>
+                    <MainContainer myParent={ props }>
                         <GenerateSeed />
                     </MainContainer>
                 )
 
             case WALLET_FROM.FROM_BRAINWALLET:
                 return (
-                    <MainContainer>
+                    <MainContainer myParent={ props }>
                         <Brainwallet />
                     </MainContainer>
                 );
             
             default:
                 return (
-                    <MainContainer>
+                    <MainContainer myParent={ props }>
                         <SelectWallet />
                     </MainContainer>
                 );
@@ -106,7 +114,7 @@ export function Main(props: any) {
         }
     else
         return (
-            <MainContainer>
+            <MainContainer myParent={ props }>
                 <Wallet />
             </MainContainer>
         )
@@ -114,11 +122,13 @@ export function Main(props: any) {
 }
 
 const mapStateToProps = (state: any, ownProps: any) => ({
-    nano_wallet_state: state.wallet
+    nano_wallet_state: state.wallet,
+    backgroundMode: state.setBackGroundMode
 });
 
 const mapDispatchToProps = (dispatch: any, ownProps: any) => ({
-    modifyLang: (lang: any) => dispatch(setLanguage(lang))
+    modifyLang: (lang: any) => dispatch(setLanguage(lang)),
+    changeBackMode: (mode: string) => dispatch(changeBackgroundMode(mode))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Main);

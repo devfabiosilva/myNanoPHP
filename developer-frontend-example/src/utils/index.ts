@@ -7,6 +7,8 @@ export const UNKNOWN_MY_NANO_PHP_SERVER_ERROR = "Unknown myNanoPHP server error"
 export const SEND_COMMAND = "send";
 export const RECEIVE_COMMAND = "receive";
 export const OPEN_BLOCK_TO_RECEIVE = "open_block";
+export const BACKGROUND_DARK = "dark";
+export const BACKGROUND_LIGHT = "light";
 
 export function changeToNanoPrefix(wallet: string): string {
 

@@ -61,12 +61,12 @@ export function Wallet(props: any) {
   const [ walletReady, setWalletReady ] = useState(false);
   const [ lockInputs, setLockInputs ] = useState(true);
 
-  const [ openPendingBlock, setOpenPendingBlock ] = useState({
+  const [ openPendingBlock, setOpenPendingBlock ] = useState<PENDING_AMOUNT_TO_POCKET>({
 
     amount: "", // in Real value
     block: ""
 
-  } as PENDING_AMOUNT_TO_POCKET);
+  });
 
   const verifyPendingRef = useRef(verifyPending);
 

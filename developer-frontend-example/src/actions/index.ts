@@ -11,6 +11,7 @@ const DIALOG_STATUS = 7;
 const SET_PENDING_AMOUNT = 8;
 //const GET_PENDING_AMOUNT = 9;
 const CLEAR_PENDING_AMOUNT = 10;
+const SET_BACKGROUND_MODE = 11;
 
 export const NANO_WALLET_ACTIONS = {
 
@@ -24,7 +25,8 @@ export const NANO_WALLET_ACTIONS = {
     DIALOG_STATUS,
     SET_PENDING_AMOUNT,
 //    GET_PENDING_AMOUNT
-    CLEAR_PENDING_AMOUNT
+    CLEAR_PENDING_AMOUNT,
+    SET_BACKGROUND_MODE
     
 }
 
@@ -58,4 +60,8 @@ export function setPendingAmount(func: any) {
 
 export function clearPendingAmout() {
     return { type: CLEAR_PENDING_AMOUNT }
+}
+
+export function changeBackgroundMode(mode: string) {
+    return { type: SET_BACKGROUND_MODE, mode }
 }
