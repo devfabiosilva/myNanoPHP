@@ -660,7 +660,7 @@ Throws _MyNanoCEmbeddedException_
 
 <h1>- php_c_convert_balance()</h1>
 
-```php
+```sh
     Function [ <internal:mynanoembedded> function php_c_convert_balance ] {
 
       - Parameters [2] {

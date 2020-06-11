@@ -31,11 +31,32 @@ export function MainContainer( props: any) {
 
     return (
         <div className={`main-container ${ props.myParent.backgroundMode }`}>
-            <button
-                onClick={ () => {( props.myParent.backgroundMode === BACKGROUND_LIGHT )?props.myParent.changeBackMode(BACKGROUND_DARK):props.myParent.changeBackMode(BACKGROUND_LIGHT)}}
-            >
-                OK
-            </button>
+            <div className="bg-mode-toggle">
+                <div className="toggle"
+                    style={
+                            {
+                                transform:( props.myParent.backgroundMode === BACKGROUND_LIGHT )?"none":"translateX(100%)"
+                            }
+                    }
+                ></div>
+                <div className="toggle-name">
+                    <div 
+                        className="light-name" 
+                        onClick={() => props.myParent.changeBackMode(BACKGROUND_LIGHT)}
+                    >
+                        { props.myParent.language.light_toggle_txt }
+
+                    </div>
+                    <div 
+                        className="dark-name" 
+                        onClick={() => props.myParent.changeBackMode(BACKGROUND_DARK)}
+                    >
+                        { props.myParent.language.dark_toggle_txt }
+
+                    </div>
+                </div>
+            </div>
+
             { props.children }
         </div>
     );
@@ -123,7 +144,8 @@ export function Main(props: any) {
 
 const mapStateToProps = (state: any, ownProps: any) => ({
     nano_wallet_state: state.wallet,
-    backgroundMode: state.setBackGroundMode
+    backgroundMode: state.setBackGroundMode,
+    language: state.lang
 });
 
 const mapDispatchToProps = (dispatch: any, ownProps: any) => ({

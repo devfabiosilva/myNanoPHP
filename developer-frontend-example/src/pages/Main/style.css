@@ -1,9 +1,56 @@
 .main-container {
 
+    position: absolute;
     width: 500px;
     height: 600px;
     background-color: var(--background-content);
     transition: background-color 0.4s;
     color: var(--font-color);
 
+}
+
+.bg-mode-toggle,
+.toggle {
+    border-radius: 100px;
+    height: 40px;
+}
+
+
+.bg-mode-toggle {
+    position: relative;
+    width: 160px;
+    background-color: blue;
+
+}
+
+.toggle{
+
+    position: absolute;
+    width: 50%;
+    background-color: crimson;
+    transition: transform .3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+}
+
+.toggle-name {
+
+    position: absolute;
+    font-size: 90%;
+    font-weight: bolder;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: space-between;
+
+}
+
+.light-name,
+.dark-name {
+    cursor: pointer;
+    margin: auto;
+    width: 35%;
+    height: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }

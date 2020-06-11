@@ -74,7 +74,9 @@ export const LANG_PT_BR = {
     msg_missing_file_password: "É necessário a senha para abrir o arquivo %d",
     msg_amount_is_empty: "Valor para enviar está vazio",
     msg_destination_wallet_empty: "Carteira de destino está vazia",
-    send_enc_file_passwd_placeholder: "Digite sua senha para desencriptar semente e enviar quantia"
+    send_enc_file_passwd_placeholder: "Digite sua senha para desencriptar semente e enviar quantia",
+    dark_toggle_txt: "Escuro",
+    light_toggle_txt: "Claro"
 
 }
 
@@ -150,7 +152,9 @@ export const LANG_EN_US = {
     msg_missing_file_password: "Password required to open file %d",
     msg_amount_is_empty: "Amount is empty",
     msg_destination_wallet_empty: "Destination wallet is empty",
-    send_enc_file_passwd_placeholder: "Type your password to decrypt file"
+    send_enc_file_passwd_placeholder: "Type your password to decrypt file",
+    dark_toggle_txt: "Dark",
+    light_toggle_txt: "Light"
 
 }
 
