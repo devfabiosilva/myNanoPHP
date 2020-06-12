@@ -18,7 +18,6 @@ import {
 } from '../../utils/wallet_interface';
 
 import { setPublicKey } from '../../actions';
-import LanguageTool from '../LanguageTool';
 
 export function Brainwallet(props: any) {
 
@@ -91,7 +90,6 @@ export function Brainwallet(props: any) {
 
     return (
         <div className="brainwallet-container">
-            <LanguageTool />
             <div className="word-phrases-container">
                 <div className="word-phrases-title">
                     { props.language.brainwallet }

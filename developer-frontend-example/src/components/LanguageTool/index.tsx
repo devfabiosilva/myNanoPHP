@@ -10,8 +10,8 @@ import {
 
 import { setLanguage } from '../../actions';
 import { connect } from 'react-redux';
-import brazilFlag from '../../assets/brzl@32.png';
-import usaFlag from '../../assets/usa@30.png';
+import brazilFlag from '../../assets/brzl@25.png';
+import usaFlag from '../../assets/usa@25.png';
 import './style.css';
 
 export function LanguageTool(props: any) {
@@ -36,7 +36,7 @@ export function LanguageTool(props: any) {
                             }
                         }
                     >
-                        <img src={usaFlag} alt="english language" />
+                        <img className="language-icon" src={usaFlag} alt="english language" />
                         English
                     </div>
                     <div className="lang-pt-br-name"
@@ -46,7 +46,7 @@ export function LanguageTool(props: any) {
                             }
                         }
                     >
-                        <img src={brazilFlag} alt="portuguese language"/>
+                        <img className="language-icon" src={brazilFlag} alt="portuguese language"/>
                         Português
                     </div>
                 </div>

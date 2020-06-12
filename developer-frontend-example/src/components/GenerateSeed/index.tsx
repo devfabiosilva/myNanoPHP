@@ -27,8 +27,6 @@ import {
 
 } from '../../actions';
 
-import LanguageTool from '../LanguageTool';
-
 export function GenerateSeed(props: any) {
 
     const [ myconsole, setMyConsole ] = useState("");
@@ -109,7 +107,6 @@ export function GenerateSeed(props: any) {
 
     return (
         <div>
-            <LanguageTool />
             <div className="gen-seed-options-title">
                 { props.language.gen_select_new_seed_title }
             </div>

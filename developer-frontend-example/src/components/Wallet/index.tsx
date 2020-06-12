@@ -50,8 +50,6 @@ import {
 
 } from '../../utils/wallet_interface';
 
-import LanguageTool from '../LanguageTool';
-
 export function Wallet(props: any) {
 
   const [ balance, setBalance] = useState("");
@@ -341,7 +339,6 @@ export function Wallet(props: any) {
   return (
     <div className="wallet-container">
       <Dialog />
-      <LanguageTool />
       <div className="wallet-number-container">
         <div className="wallet-number-title">{ props.language.wallet_number }:</div>
         <div className="wallet-number">

@@ -26,7 +26,6 @@ import {
 
 } from '../../service';
 
-import LanguageTool from '../LanguageTool';
 import './style.css';
 
 export function OpenEncryptedWalletFile(props: any) {
@@ -102,7 +101,6 @@ export function OpenEncryptedWalletFile(props: any) {
 
   return (
     <div>
-      <LanguageTool />
       <input 
 
         type="file" 

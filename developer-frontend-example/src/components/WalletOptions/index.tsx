@@ -9,7 +9,6 @@ import {
 } from '../../utils/wallet_interface';
 
 import { setPublicKey } from '../../actions';
-import LanguageTool from '../LanguageTool';
 
 export function SelectWallet(props: any) {
 
@@ -27,7 +26,6 @@ export function SelectWallet(props: any) {
 
     return (
         <div className="option-container">
-            <LanguageTool />
             <select
                 className="options"
                 id="options-id"

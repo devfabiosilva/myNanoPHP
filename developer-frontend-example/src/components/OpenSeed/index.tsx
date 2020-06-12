@@ -24,8 +24,6 @@ import {
 
 } from '../../utils/wallet_interface';
 
-import LanguageTool from '../LanguageTool';
-
 export function OpenSeed(props: any) {
 
     function openNanoSeed() {
@@ -147,7 +145,6 @@ export function OpenSeed(props: any) {
 
     return (
         <div>
-            <LanguageTool />
             <div>
                 {
 

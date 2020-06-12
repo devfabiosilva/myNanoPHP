@@ -25,46 +25,23 @@ import {
 
 import { getLanguageFromLocalStorage } from '../../utils/language';
 
-import { 
-    
-    BACKGROUND_LIGHT,
-    BACKGROUND_DARK 
-
-} from '../../utils';
-
+import LanguageTool from '../../components/LanguageTool';
 import './style.css';
+import DarkModeTool from '../../components/DarkModeTool';
 
 export function MainContainer( props: any) {
 
     return (
         <div className="body-container">
             <div className="main-container">
-                <div className="bg-mode-toggle">
-                    <div className="toggle"
-                        style={
-                                {
-                                    transform:( props.myParent.backgroundMode === BACKGROUND_LIGHT )?"none":"translateX(100%)"
-                                }
-                        }
-                    ></div>
-                    <div className="toggle-name">
-                        <div 
-                            className="light-name" 
-                            onClick={() => props.myParent.changeBackMode(BACKGROUND_LIGHT)}
-                        >
-                            { props.myParent.language.light_toggle_txt }
 
-                        </div>
-                        <div 
-                            className="dark-name" 
-                            onClick={() => props.myParent.changeBackMode(BACKGROUND_DARK)}
-                        >
-                            { props.myParent.language.dark_toggle_txt }
-
-                        </div>
-                    </div>
+                <div className="main-header">
+                    <DarkModeTool />
+                    <LanguageTool />
                 </div>
-                { props.children }
+                <div className="main-content">
+                    { props.children }
+                </div>
             </div>
         </div>
     );

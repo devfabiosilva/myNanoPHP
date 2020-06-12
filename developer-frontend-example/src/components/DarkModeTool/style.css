@@ -1,18 +1,21 @@
+.bg-mode-toggle,
+.toggle {
 
-.bg-mode-lang-toggle,
-.lang-toggle {
     border-radius: 100px;
     height: 40px;
+
 }
 
 
-.bg-mode-lang-toggle {
+.bg-mode-toggle {
+
     position: relative;
-    width: 280px;
+    width: 200px;
     background-color: var(--toggle-content);
+
 }
 
-.lang-toggle {
+.toggle{
 
     position: absolute;
     width: 50%;
@@ -21,7 +24,7 @@
 
 }
 
-.lang-toggle-name {
+.toggle-name {
 
     position: absolute;
     font-size: 90%;
@@ -33,8 +36,9 @@
 
 }
 
-.lang-pt-br-name,
-.lang-en-us-name {
+.light-name,
+.dark-name {
+
     color: var(--color);
     cursor: pointer;
     margin: auto;
@@ -43,8 +47,13 @@
     display: flex;
     align-items: center;
     justify-content: center;
+
 }
 
-.language-icon {
+.dark-name-icon-container,
+.light-name-icon-container {
+
+    display: flex;
     margin-right: 5px;
+
 }
