@@ -15,7 +15,14 @@ import Brainwallet from '../../components/Brainwallet';
 import OpenSeed from '../../components/OpenSeed';
 import SelectWallet from '../../components/WalletOptions';
 import GenerateSeed from '../../components/GenerateSeed';
-import { setLanguage, changeBackgroundMode } from '../../actions';
+
+import { 
+    
+    setLanguage, 
+    changeBackgroundMode
+
+} from '../../actions';
+
 import { getLanguageFromLocalStorage } from '../../utils/language';
 
 import { 
@@ -30,34 +37,36 @@ import './style.css';
 export function MainContainer( props: any) {
 
     return (
-        <div className={`main-container ${ props.myParent.backgroundMode }`}>
-            <div className="bg-mode-toggle">
-                <div className="toggle"
-                    style={
-                            {
-                                transform:( props.myParent.backgroundMode === BACKGROUND_LIGHT )?"none":"translateX(100%)"
-                            }
-                    }
-                ></div>
-                <div className="toggle-name">
-                    <div 
-                        className="light-name" 
-                        onClick={() => props.myParent.changeBackMode(BACKGROUND_LIGHT)}
-                    >
-                        { props.myParent.language.light_toggle_txt }
+        <div className="body-container">
+            <div className={`main-container ${ props.myParent.backgroundMode }`}>
+                <div className="bg-mode-toggle">
+                    <div className="toggle"
+                        style={
+                                {
+                                    transform:( props.myParent.backgroundMode === BACKGROUND_LIGHT )?"none":"translateX(100%)"
+                                }
+                        }
+                    ></div>
+                    <div className="toggle-name">
+                        <div 
+                            className="light-name" 
+                            onClick={() => props.myParent.changeBackMode(BACKGROUND_LIGHT)}
+                        >
+                            { props.myParent.language.light_toggle_txt }
 
-                    </div>
-                    <div 
-                        className="dark-name" 
-                        onClick={() => props.myParent.changeBackMode(BACKGROUND_DARK)}
-                    >
-                        { props.myParent.language.dark_toggle_txt }
+                        </div>
+                        <div 
+                            className="dark-name" 
+                            onClick={() => props.myParent.changeBackMode(BACKGROUND_DARK)}
+                        >
+                            { props.myParent.language.dark_toggle_txt }
 
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            { props.children }
+                { props.children }
+            </div>
         </div>
     );
 }
