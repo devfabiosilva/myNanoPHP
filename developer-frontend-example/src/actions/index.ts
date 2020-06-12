@@ -63,5 +63,7 @@ export function clearPendingAmout() {
 }
 
 export function changeBackgroundMode(mode: string) {
+    let body_background: any = document.getElementsByTagName('body');
+    body_background[0].className=mode;
     return { type: SET_BACKGROUND_MODE, mode }
 }

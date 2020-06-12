@@ -38,7 +38,7 @@ export function MainContainer( props: any) {
 
     return (
         <div className="body-container">
-            <div className={`main-container ${ props.myParent.backgroundMode }`}>
+            <div className="main-container">
                 <div className="bg-mode-toggle">
                     <div className="toggle"
                         style={
@@ -64,7 +64,6 @@ export function MainContainer( props: any) {
                         </div>
                     </div>
                 </div>
-
                 { props.children }
             </div>
         </div>
