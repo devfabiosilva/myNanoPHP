@@ -1,0 +1,11 @@
+.band-logos {
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 435px;
+    height: 82px;
+    background-color: #f5f6f8;
+    border-radius: 100px;
+
+}

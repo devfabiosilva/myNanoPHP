@@ -26,8 +26,9 @@ import {
 import { getLanguageFromLocalStorage } from '../../utils/language';
 
 import LanguageTool from '../../components/LanguageTool';
-import './style.css';
 import DarkModeTool from '../../components/DarkModeTool';
+import { Brand } from '../../components/Brand';
+import './style.css';
 
 export function MainContainer( props: any) {
 
@@ -36,6 +37,7 @@ export function MainContainer( props: any) {
             <div className="main-container">
 
                 <div className="main-header">
+                    <Brand />
                     <DarkModeTool />
                     <LanguageTool />
                 </div>
