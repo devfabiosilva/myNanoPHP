@@ -9,8 +9,6 @@ import {
 
 } from '../../actions';
 
-import './style.css';
-
 import { 
 
     WALLET_FROM, 
@@ -37,6 +35,8 @@ import {
     RECEIVE_COMMAND
 
 } from '../../utils';
+
+import './style.css';
 
 function Dialog(props: any) {
 

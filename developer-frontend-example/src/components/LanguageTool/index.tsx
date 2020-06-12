@@ -1,32 +1,56 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import { 
-
-    getLanguageFromLocalStorage, 
+ 
     PORTUGUESE_LANGUAGE, 
-    ENGLISH_LANGUAGE
+    ENGLISH_LANGUAGE,
+    getLanguageFromLocalStorage
 
 } from '../../utils/language';
 
 import { setLanguage } from '../../actions';
 import { connect } from 'react-redux';
+import brazilFlag from '../../assets/brzl@32.png';
+import usaFlag from '../../assets/usa@30.png';
+import './style.css';
 
 export function LanguageTool(props: any) {
+    const [ languageName, setLanguageName ] = useState(getLanguageFromLocalStorage());
 
     return (
-        <div>
-            <button
-                onClick={() => {
-
-                        (getLanguageFromLocalStorage() === PORTUGUESE_LANGUAGE)?
-                            props.modifyLang(ENGLISH_LANGUAGE):
-                            props.modifyLang(PORTUGUESE_LANGUAGE);
-
+        <div className="lang-tool-container">
+            <div className="bg-mode-lang-toggle">
+                <div className="lang-toggle"
+                    style={
+                        {
+                            transform: ( languageName === PORTUGUESE_LANGUAGE )?"translateX(100%)":"none"
+                        }
                     }
-                }
-            >
-                Language/Idioma
-            </button>
+                >
+                </div>
+                <div className="lang-toggle-name">
+                    <div className="lang-en-us-name"
+                        onClick={ () => {
+                                props.modifyLang(ENGLISH_LANGUAGE);
+                                setLanguageName(ENGLISH_LANGUAGE);
+                            }
+                        }
+                    >
+                        <img src={usaFlag} alt="english language" />
+                        English
+                    </div>
+                    <div className="lang-pt-br-name"
+                        onClick={ () => {
+                                props.modifyLang(PORTUGUESE_LANGUAGE) 
+                                setLanguageName(PORTUGUESE_LANGUAGE);
+                            }
+                        }
+                    >
+                        <img src={brazilFlag} alt="portuguese language"/>
+                        Português
+                    </div>
+                </div>
+            </div>
         </div>
     );
 }
