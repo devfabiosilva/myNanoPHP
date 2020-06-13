@@ -4460,7 +4460,7 @@ Throws _MyNanoCEmbeddedException_
 
 Throws _MyNanoCEmbeddedException_
 
-<h1>- php_c_from_multiplier()</h1>
+<h1>- php_c_to_multiplier()</h1>
 
 ```sh
     Function [ <internal:mynanoembedded> function php_c_to_multiplier ] {

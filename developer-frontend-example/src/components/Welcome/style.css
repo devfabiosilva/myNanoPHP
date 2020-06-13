@@ -1,0 +1,39 @@
+.typewriter {
+
+    font-family: 'Courier New', Courier;
+    display: inline-block;
+
+}
+
+.typewriter-text {
+
+    display: inline-block;
+  	overflow: hidden;
+  	letter-spacing: 2px;
+    animation: typing 5s steps(50, end), blink .5s step-end infinite;
+    white-space: nowrap;
+    font-size: 22px;
+    font-weight: 600;
+    border-right: 4px solid var(--primary);
+
+}
+
+@keyframes typing {
+
+    from {
+        width: 0%;
+    }
+    to {
+        width: 100%;
+    }
+
+}
+
+@keyframes blink {
+    from, to { 
+        border-color: transparent;
+    }
+    50% { 
+        border-color: var(--primary); 
+    }
+}

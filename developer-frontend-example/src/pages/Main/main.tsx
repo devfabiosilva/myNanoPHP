@@ -29,6 +29,7 @@ import LanguageTool from '../../components/LanguageTool';
 import DarkModeTool from '../../components/DarkModeTool';
 import { Brand } from '../../components/Brand';
 import './style.css';
+import Welcome from '../../components/Welcome';
 
 export function MainContainer( props: any) {
 
@@ -115,6 +116,7 @@ export function Main(props: any) {
             default:
                 return (
                     <MainContainer myParent={ props }>
+                        <Welcome />
                         <SelectWallet />
                     </MainContainer>
                 );
