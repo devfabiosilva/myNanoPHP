@@ -19,3 +19,8 @@ export function changeToNanoPrefix(wallet: string): string {
 
 }
 
+export function getKey() {
+
+    return Math.random().toString(36).substring(2);
+
+}

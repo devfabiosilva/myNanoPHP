@@ -30,6 +30,7 @@ import DarkModeTool from '../../components/DarkModeTool';
 import { Brand } from '../../components/Brand';
 import './style.css';
 import Welcome from '../../components/Welcome';
+import Notify from '../../components/Notification';
 
 export function MainContainer( props: any) {
 
@@ -117,6 +118,7 @@ export function Main(props: any) {
                 return (
                     <MainContainer myParent={ props }>
                         <Welcome />
+                        <Notify />
                         <SelectWallet />
                     </MainContainer>
                 );

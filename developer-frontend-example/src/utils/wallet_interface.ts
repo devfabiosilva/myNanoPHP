@@ -160,3 +160,11 @@ export interface PENDING_AMOUNT_TO_POCKET {
     amount: string,
     block: string
 }
+
+export interface NOTIFY_MESSAGE {
+    key?: string,
+    notify_type?: number,
+    msg?: string,
+    timeout?: number,
+    life?: string
+}

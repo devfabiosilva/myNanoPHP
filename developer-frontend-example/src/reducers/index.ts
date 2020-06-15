@@ -17,6 +17,7 @@ import {
 
 import { monitore_pending_amount } from './monitore_pending_amount';
 import { setBackGroundMode } from './backgroundmode';
+import { notifyEvt } from './notifyevents';
 
 const nano_wallet_rootReducer = combineReducers(
 
@@ -26,7 +27,8 @@ const nano_wallet_rootReducer = combineReducers(
         openTransactionDialog,
         transactionDialogStatus,
         monitore_pending_amount,
-        setBackGroundMode
+        setBackGroundMode,
+        notifyEvt
     }
 
 );

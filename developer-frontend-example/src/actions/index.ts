@@ -1,4 +1,4 @@
-import { my_wallet } from '../utils/wallet_interface';
+import { my_wallet, NOTIFY_MESSAGE } from '../utils/wallet_interface';
 
 const ACTION_NONE = 0;
 const EXTRACT_PUBLIC_KEY = 1;
@@ -11,6 +11,8 @@ const DIALOG_STATUS = 7;
 const SET_PENDING_AMOUNT = 8;
 const CLEAR_PENDING_AMOUNT = 10;
 const SET_BACKGROUND_MODE = 11;
+const GET_NOTIFY_MESSAGE = 12;
+const SET_NOTIFY_MESSAGE = 13;
 
 export const NANO_WALLET_ACTIONS = {
 
@@ -25,6 +27,8 @@ export const NANO_WALLET_ACTIONS = {
     SET_PENDING_AMOUNT,
     CLEAR_PENDING_AMOUNT,
     SET_BACKGROUND_MODE,
+    GET_NOTIFY_MESSAGE,
+    SET_NOTIFY_MESSAGE
     
 }
 
@@ -37,19 +41,19 @@ export function setMyWallet(wallet_param: my_wallet) {
 }
 
 export function setLanguage(language: string) {
-    return { type: SET_LANGUAGE, language }
+    return { type: SET_LANGUAGE, language };
 }
 
 export function openWalletDialog() {
-    return { type: OPEN_WALLET_DIALOG }
+    return { type: OPEN_WALLET_DIALOG };
 }
 
 export function closeWalletDialog() {
-    return { type: CLOSE_WALLET_DIALOG }
+    return { type: CLOSE_WALLET_DIALOG };
 }
 
 export function dialogStatus(status: string = "") {
-    return { type: DIALOG_STATUS, status }
+    return { type: DIALOG_STATUS, status };
 }
 
 export function setPendingAmount(func: any) {
@@ -57,11 +61,19 @@ export function setPendingAmount(func: any) {
 }
 
 export function clearPendingAmout() {
-    return { type: CLEAR_PENDING_AMOUNT }
+    return { type: CLEAR_PENDING_AMOUNT };
 }
 
 export function changeBackgroundMode(mode: string) {
     let body_background: any = document.getElementsByTagName('body');
     body_background[0].className=mode;
-    return { type: SET_BACKGROUND_MODE, mode }
+    return { type: SET_BACKGROUND_MODE, mode };
+}
+
+export function getNotifyMessage() {
+    return { type: GET_NOTIFY_MESSAGE };
+}
+
+export function setNotifyMessage(msg: NOTIFY_MESSAGE) {
+    return { type: SET_NOTIFY_MESSAGE, msg};
 }
