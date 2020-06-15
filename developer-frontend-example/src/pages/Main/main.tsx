@@ -118,8 +118,8 @@ export function Main(props: any) {
                 return (
                     <MainContainer myParent={ props }>
                         <Welcome />
-                        <Notify />
                         <SelectWallet />
+                        <Notify />
                     </MainContainer>
                 );
 

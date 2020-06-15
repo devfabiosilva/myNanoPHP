@@ -17,32 +17,47 @@ import { X } from 'react-feather';
 import { 
 
     setLanguage, 
-    setNotifyMessage 
+    setNotifyMessage, 
+    removeNotifyMessage
 
 } from '../../actions';
 
 import { NOTIFY_MESSAGE } from '../../utils/wallet_interface';
 
+
 export function Notify(props: any) {
 
-    //const config = { duration: 6000, tension: 125, friction: 20, precision: 0.1 };
-    const transition = useTransition(props.notifications, item => item.key, {
-        from: { opacity: 0, height: 0, life: '100%' } as any, 
-        enter: { opacity: 1, life: '0%', height: 200 } as any,
-        leave: { opacity: 0, height: 0 } as any,
-        onRest: (item: any) => {console.log(item)},
-        config: { duration: 6000 } as any
-
+    const config = { tension: 125, friction: 20, precision: 0.1 };
+    const transition = useTransition(props.notifications, item => (item)?item.key:null, {
+        from: { opacity: 0, life: '100%', height: 0, } as any, 
+        enter: ((item: any) => async (next: (param: any) => any) => {
+            if (item)
+                await next({ opacity: 1, height: 70 });
+        }
+        ) as any,
+        leave: ((item: any) => async (next: (param: any) => any) => {
+                if (item) {
+                    await next( { life: '0%' } );
+                    await next( { opacity: 0 } );
+                    await next( { height: 0 });
+                }
+            }
+        ) as any,
+        onRest: (item: any) => props.removeNotification(item.key),
+        config: ((item: any, state: any) => { 
+            
+           return (state === 'leave')?[{ duration: 3000 }, config, config]: config;
+        }) as any
     });
 
     return (
         <div>
             <Container>
-                { transition.map(({ key, item, props }) => (
-                        <Message key={item.key}>
+                { transition.map(({ key, item, props, props: {...style} }) => (
+                        <Message key={(item)?item.key:null} style={style as any}>
                             <Content>
                                 <Life style={{ right: (props as any).life}} />
-                                    { item.msg }
+                                    { (item)?item.msg:"" }
                                 <Button>
                                     <X size={18} />
                                 </Button>
@@ -61,7 +76,8 @@ const mapStateToProps = (state: any, ownProps: any) => ({
 
 const mapDispatchToProps = (dispatch: any, ownProps: any) => ({
     modifyLang: (lang: any) => dispatch(setLanguage(lang)),
-    newNotification: (msg: NOTIFY_MESSAGE) => dispatch(setNotifyMessage(msg))
+    newNotification: (msg: NOTIFY_MESSAGE) => dispatch(setNotifyMessage(msg)),
+    removeNotification: (key: number) => dispatch(removeNotifyMessage(key))
 });
   
 export default connect(mapStateToProps, mapDispatchToProps)(Notify);

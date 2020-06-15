@@ -10,6 +10,7 @@ import {
     SEED_AND_BIP39,
     WALLET_FROM,
     OPEN_ENCRYPTED_SEED_RESPONSE,
+    NOTIFY_MESSAGE,
 
 } from '../../utils/wallet_interface';
 
@@ -23,9 +24,11 @@ import {
 import { 
 
     setPublicKey, 
-    setMyWallet 
+    setMyWallet, 
+    setNotifyMessage
 
 } from '../../actions';
+import Notify from '../Notification';
 
 export function GenerateSeed(props: any) {
 
@@ -66,6 +69,9 @@ export function GenerateSeed(props: any) {
 
         if (!password_value) {
 
+            props.newNotification({
+                msg: props.language.empty_password
+            });
             setMyConsole(props.language.empty_password);
             return;
 
@@ -149,6 +155,7 @@ export function GenerateSeed(props: any) {
                     { props.language.save_to_enc_btn }
                 </button>
             </div>
+            <Notify />
         </div>
     );
 }
@@ -156,12 +163,13 @@ export function GenerateSeed(props: any) {
 const mapStateToProps = (state: any, ownProps: any) => ({
 
     nano_wallet: state.wallet,
-    language: state.lang
+    language: state.lang,
 
 });
   
 const mapDispatchToProps = (dispatch: any, ownProps: any) => ({
-    wallet_public_key: (public_key: my_wallet) => dispatch(setPublicKey(public_key))
+    wallet_public_key: (public_key: my_wallet) => dispatch(setPublicKey(public_key)),
+    newNotification: (msg: NOTIFY_MESSAGE) => dispatch(setNotifyMessage(msg)),
 });
   
 export default connect(mapStateToProps, mapDispatchToProps)(GenerateSeed);

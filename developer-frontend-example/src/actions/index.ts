@@ -13,6 +13,7 @@ const CLEAR_PENDING_AMOUNT = 10;
 const SET_BACKGROUND_MODE = 11;
 const GET_NOTIFY_MESSAGE = 12;
 const SET_NOTIFY_MESSAGE = 13;
+const REMOVE_NOTIFY_MESSAGE = 14;
 
 export const NANO_WALLET_ACTIONS = {
 
@@ -28,7 +29,8 @@ export const NANO_WALLET_ACTIONS = {
     CLEAR_PENDING_AMOUNT,
     SET_BACKGROUND_MODE,
     GET_NOTIFY_MESSAGE,
-    SET_NOTIFY_MESSAGE
+    SET_NOTIFY_MESSAGE,
+    REMOVE_NOTIFY_MESSAGE
     
 }
 
@@ -76,4 +78,8 @@ export function getNotifyMessage() {
 
 export function setNotifyMessage(msg: NOTIFY_MESSAGE) {
     return { type: SET_NOTIFY_MESSAGE, msg};
+}
+
+export function removeNotifyMessage(key: number) {
+    return { type: REMOVE_NOTIFY_MESSAGE, key };
 }
