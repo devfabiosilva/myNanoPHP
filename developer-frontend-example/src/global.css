@@ -27,6 +27,11 @@ body.dark {
   --primary: #a6df38;
   --toggle-content: #0d2830;
   --button-content: #0d2830;
+  --notification-background: #445159;
+  --notification-button: rgba(255, 255, 255, 0.5);
+  --notification-button-hover: rgba(255, 255, 255, 0.6);
+  --notification-background-alert: #c5c52cc4;
+  --notification-background-error:  #db4343c4;
 }
 
 body.light {
@@ -37,6 +42,11 @@ body.light {
   --primary: #90d50b;
   --toggle-content: #e5e8e5;
   --button-content: #e5e8e5;
+  --notification-background: #c7c7c7;
+  --notification-button: rgba(77, 75, 75, 0.5);
+  --notification-button-hover: rgba(75, 75, 75, 0.6);
+  --notification-background-alert: #e9e993;
+  --notification-background-error:  #f88080;
 }
 
 button {

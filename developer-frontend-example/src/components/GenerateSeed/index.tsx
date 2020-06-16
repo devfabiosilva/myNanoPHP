@@ -28,7 +28,6 @@ import {
     setNotifyMessage
 
 } from '../../actions';
-import Notify from '../Notification';
 
 export function GenerateSeed(props: any) {
 
@@ -71,7 +70,8 @@ export function GenerateSeed(props: any) {
 
             props.newNotification({
                 msg: props.language.empty_password
-            });
+            } as NOTIFY_MESSAGE);
+
             setMyConsole(props.language.empty_password);
             return;
 
@@ -155,7 +155,6 @@ export function GenerateSeed(props: any) {
                     { props.language.save_to_enc_btn }
                 </button>
             </div>
-            <Notify />
         </div>
     );
 }

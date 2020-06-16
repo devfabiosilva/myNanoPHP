@@ -10,6 +10,14 @@ export const OPEN_BLOCK_TO_RECEIVE = "open_block";
 export const BACKGROUND_DARK = "dark";
 export const BACKGROUND_LIGHT = "light";
 
+export const NOTIFY_TYPE = {
+
+    NOTIFY_TYPE_INFO: 0,
+    NOTIFY_TYPE_ALERT: 1,
+    NOTIFY_TYPE_ERROR: 2
+    
+}
+
 export function changeToNanoPrefix(wallet: string): string {
 
     if ( wallet.indexOf(XRB_PREFIX) > -1 )

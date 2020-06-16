@@ -5,8 +5,10 @@
 */
 import styled from 'styled-components';
 import { animated } from 'react-spring';
+import { NOTIFY_TYPE } from '../../utils';
 
 export const Container = styled<any>('div')`
+  background-color: transparent;
   position: fixed;
   z-index: 5;
   width: 0 auto;
@@ -20,11 +22,11 @@ export const Container = styled<any>('div')`
   pointer-events: none;
   align-items: ${props => (props.position === 'center' ? 'center' : `flex-${props.position || 'end'}`)};
 `;
-
+//  display: ${props => (props.key)?"block":"none"};
 export const Message = styled(animated.div)`
   position: relative;
   overflow: hidden;
-  width: 40ch;
+  width: 60ch;
   @media (max-width: 680px) {
     width: 100%;
   }
@@ -32,7 +34,9 @@ export const Message = styled(animated.div)`
 
 export const Content = styled<any>('div')`
   color: white;
-  background: #445159;
+  /*background: #445159; */
+  background-color: ${props => (props.notf === NOTIFY_TYPE.NOTIFY_TYPE_ALERT)?"var(--notification-background-alert)":(props.notf === NOTIFY_TYPE.NOTIFY_TYPE_ERROR)?"var(--notification-background-error)":"var(--notification-background)"};
+  color: var(--color);
   opacity: 0.9;
   padding: 12px 22px;
   font-size: 1em;
@@ -40,36 +44,9 @@ export const Content = styled<any>('div')`
   grid-template-columns: ${props => (props.canClose === false ? '1fr' : '1fr auto')};
   grid-gap: 10px;
   overflow: hidden;
-  height: auto;
+  height: 160px;
   border-radius: 3px;
   margin-top: ${props => (props.top ? '0' : '10px')};
   margin-bottom: ${props => (props.top ? '10px' : '0')};
 `;
 
-export const Button = styled('button')`
-  cursor: pointer;
-  pointer-events: all;
-  outline: 0;
-  border: none;
-  background: transparent;
-  display: flex;
-  align-self: flex-end;
-  overflow: hidden;
-  margin: 0;
-  padding: 0;
-  padding-bottom: 14px;
-  color: rgba(255, 255, 255, 0.5);
-  :hover {
-    color: rgba(255, 255, 255, 0.6);
-  }
-`;
-
-export const Life = styled<any>(animated.div)`
-  position: absolute;
-  bottom: ${props => (props.top ? '10px' : '0')};
-  left: 0px;
-  width: auto;
-  /*background-image: linear-gradient(130deg, #00b4e6, #00f0e0);*/
-  background-image: linear-gradient(130deg, var(--color), var(--primary));
-  height: 5px;
-`;

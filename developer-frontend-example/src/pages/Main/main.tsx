@@ -45,6 +45,7 @@ export function MainContainer( props: any) {
                 </div>
                 <div className="main-content">
                     { props.children }
+                    <Notify />
                 </div>
             </div>
         </div>
