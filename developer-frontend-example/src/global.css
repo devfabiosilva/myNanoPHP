@@ -21,15 +21,13 @@ body {
 
 body.dark {
   --background: #1e3c44;
-  --background-content: #22434a;
+  --background-content:#244c54; /* #22434a; */
   --color: #e9f6fb;
-  --background-hovered: #294b52;
+  --background-hovered: #3a6f7f;/* #294b52;*/
   --primary: #a6df38;
-  --toggle-content: #0d2830;
+  --toggle-content: #244c54;/* #0d2830;*/
   --button-content: #0d2830;
   --notification-background: #445159;
-  /*--notification-button: rgba(255, 255, 255, 0.5);
-  --notification-button-hover: rgba(255, 255, 255, 0.6);*/
   --notification-background-alert: #c5c52cc4;
   --notification-background-error:  #db4343;
 }
@@ -43,8 +41,6 @@ body.light {
   --toggle-content: #e5e8e5;
   --button-content: #e5e8e5;
   --notification-background: #c7c7c7;
-  /*--notification-button: rgba(77, 75, 75, 0.5);
-  --notification-button-hover: rgba(75, 75, 75, 0.6);*/
   --notification-background-alert: #e9e993;
   --notification-background-error:  #f88080;
 }
@@ -60,7 +56,6 @@ button {
     border-radius: 0.4rem;
     cursor: pointer;
     transition: color 0.3s, background-color 0.3s ;
-    /*opacity: 0.9;*/
   }
   
   button:hover {

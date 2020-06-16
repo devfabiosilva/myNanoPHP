@@ -37,11 +37,10 @@ export function MainContainer( props: any) {
     return (
         <div className="body-container">
             <div className="main-container">
-
                 <div className="main-header">
                     <Brand />
-                    <DarkModeTool />
                     <LanguageTool />
+                    <DarkModeTool />
                 </div>
                 <div className="main-content">
                     { props.children }

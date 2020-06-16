@@ -11,7 +11,7 @@
 
 .main-container {
 
-    width: 971px;
+    width: 1000px;/*971px;*/
     height: 600px;
     background-color: var(--background);
     transition: background-color 0.4s initial;
@@ -25,4 +25,12 @@
     justify-content: space-between;
     align-items: center;
     
+}
+
+.main-content {
+    background-color: var(--background-content);
+    margin: 20px;
+    width: 970px;
+    height: 500px;
+    border-radius: 20px;
 }

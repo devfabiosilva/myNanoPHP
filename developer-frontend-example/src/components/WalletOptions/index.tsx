@@ -16,7 +16,8 @@ import {
     FaLock, 
     FaBrain,
     FaPlus,
-    FaWallet
+    FaWallet,
+    FaAddressCard
 
 } from 'react-icons/fa'
 
@@ -25,10 +26,7 @@ import './style.css';
 
 export function SelectWallet(props: any) {
 
-    function setOptions() {
-
-        let option: any = document.getElementById('options-id');
-        let origin: number = option.value;
+    function setOptions(origin: string) {
 
         props.wallet_public_key({
             public_key: "",
@@ -39,46 +37,115 @@ export function SelectWallet(props: any) {
 
     return (
         <div className="option-container">
-            <select
-                className="options"
-                id="options-id"
-            >
-                <option defaultValue = { WALLET_FROM.FROM_SEED } value={ WALLET_FROM.FROM_SEED }>
-                    { props.language.open_with_seed }
-                </option>
-                <option value = { WALLET_FROM.FROM_BIP39 }>
-                    { props.language.open_with_bip39 }
-                </option>
-                <option value = { WALLET_FROM.FROM_ENCRYPTED_FILE }>
-                    { props.language.open_with_encrypted_file }
-                </option>
-                <option value = { WALLET_FROM.FROM_BRAINWALLET }>
-                    { props.language.open_with_brainwallet }
-                </option>
-                <option value = { WALLET_FROM.FROM_GENERATING_SEED }>
-                    { props.language.open_gen_new_seed }
-                </option>
-                <option value = { WALLET_FROM.FROM_KEY_PAIR }>
-                    { props.language.open_keypair }
-                </option>
-                <option value = { WALLET_FROM.FROM_PUBLIC_KEY }>
-                    { props.language.open_from_public_key }
-                </option>
-            </select>
-            <button 
-                className="open-selected-btn"
-                onClick={ setOptions }
-            >
-                { props.language.open_selected }
-            </button>
             <div className="wallet-panel">
-                <div><p><FaSeedling size={32} /></p><p>{ props.language.open_with_seed }</p></div>
-                <div><p><FaBook size={32} /></p><p>{ props.language.open_with_bip39 }</p></div>
-                <div><p><FaLock size={32} /></p><p>{ props.language.open_with_encrypted_file }</p></div>
-                <div><p><FaBrain size={32} /></p><p>{ props.language.open_with_brainwallet }</p></div>
-                <div><p><FaPlus size={32} /></p><p>{ props.language.open_gen_new_seed }</p></div>
-                <div><p><FaKey size={32} /></p><p>{ props.language.open_keypair }</p></div>
-                <div><p><FaWallet size={32} /></p><p>{ props.language.open_from_public_key }</p></div>
+                <div className="option-container-row">
+                    <div
+
+                        onClick={() => setOptions(WALLET_FROM.FROM_SEED)}
+                        className="option-container-tag"
+
+                    >
+                        <p className="option-container-icon">
+                            <FaSeedling size={32} />
+                        </p>
+                        <p className="option-container-text">
+                            { props.language.open_with_seed }
+                        </p>
+                    </div>
+                    <div 
+                        
+                        onClick={() => setOptions(WALLET_FROM.FROM_BIP39)}
+                        className="option-container-tag"
+
+                    >
+                        <p className="option-container-icon">
+                            <FaBook size={32} />
+                        </p>
+                        <p className="option-container-text">
+                            { props.language.open_with_bip39 }
+                        </p>
+                    </div>
+                    <div 
+
+                        onClick={() => setOptions(WALLET_FROM.FROM_ENCRYPTED_FILE)}
+                        className="option-container-tag"
+
+                    >
+                        <p className="option-container-icon">
+                            <FaLock size={32} />
+                        </p>
+                        <p className="option-container-text">
+                            { props.language.open_with_encrypted_file }
+                        </p>
+                    </div>
+                    <div
+                        
+                        onClick={() => setOptions(WALLET_FROM.FROM_BRAINWALLET)}
+                        className="option-container-tag"
+
+                    >
+                        <p className="option-container-icon">
+                            <FaBrain size={32} />
+                        </p>
+                        <p className="option-container-text">
+                            { props.language.open_with_brainwallet }
+                        </p>
+                    </div>
+                    </div>
+                <div className="option-container-row">
+                    <div
+                     
+                        onClick={() => setOptions(WALLET_FROM.FROM_GENERATING_SEED)}
+                        className="option-container-tag"
+                    
+                    >
+                        <p className="option-container-icon">
+                            <FaPlus size={32} />
+                        </p>
+                        <p className="option-container-text">
+                            { props.language.open_gen_new_seed }
+                        </p>
+                    </div>
+                    <div
+                        
+                        onClick={() => setOptions(WALLET_FROM.FROM_KEY_PAIR)}
+                        className="option-container-tag"
+                    
+                    >
+                        <p className="option-container-icon">
+                            <FaKey size={32} />
+                        </p>
+                        <p className="option-container-text">
+                            { props.language.open_keypair }
+                        </p>
+                    </div>
+                    <div
+                        
+                        onClick={() => setOptions(WALLET_FROM.FROM_PUBLIC_KEY)}
+                        className="option-container-tag"
+                        
+                    >
+                        <p className="option-container-icon">
+                            <FaWallet size={32} />
+                        </p>
+                        <p className="option-container-text">
+                            { props.language.open_from_public_key }
+                        </p>
+                    </div>
+                    <div 
+                        
+                        onClick={() => alert("Testing about in development ...")}
+                        className="option-container-tag"
+                    
+                    >
+                        <p className="option-container-icon">
+                            <FaAddressCard size={32} />
+                        </p>
+                        <p className="option-container-text">
+                            { props.language.about_author }
+                        </p>
+                    </div>
+                </div>
             </div>
         </div>
     );
