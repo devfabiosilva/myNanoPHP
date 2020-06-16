@@ -77,7 +77,8 @@ export const LANG_PT_BR = {
     send_enc_file_passwd_placeholder: "Digite sua senha para desencriptar semente e enviar quantia",
     dark_toggle_txt: "Escuro",
     light_toggle_txt: "Claro",
-    welcome_msg: "Bem vindo ao myNanoPHP. Uma pequena biblioteca em C que integra Nano ao PHP"
+    welcome_msg: "Bem vindo ao myNanoPHP. Uma pequena biblioteca em C que integra Nano ao PHP",
+    opening_wallet_from_seed: "Abrindo a carteira NANO da semente"
 
 }
 
@@ -156,7 +157,8 @@ export const LANG_EN_US = {
     send_enc_file_passwd_placeholder: "Type your password to decrypt file",
     dark_toggle_txt: "Dark",
     light_toggle_txt: "Light",
-    welcome_msg: "Welcome to myNanoPHP. A small C library that integrates Nano to PHP"
+    welcome_msg: "Welcome to myNanoPHP. A small C library that integrates Nano to PHP",
+    opening_wallet_from_seed: "Opening NANO wallet from SEED"
 
 }
 

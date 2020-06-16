@@ -11,7 +11,7 @@ import {
 
 import { 
 
-    setPublicKey
+    setPublicKey, setNotifyMessage
 
 } from '../../actions';
 
@@ -20,9 +20,11 @@ import {
     my_wallet,
     NANO_KEY_PAIR,
     WALLET_FROM,
-    PUBLIC_KEY_TO_WALLET_RESPONSE
+    PUBLIC_KEY_TO_WALLET_RESPONSE,
+    NOTIFY_MESSAGE
 
 } from '../../utils/wallet_interface';
+import { NOTIFY_TYPE } from '../../utils';
 
 export function OpenSeed(props: any) {
 
@@ -33,7 +35,11 @@ export function OpenSeed(props: any) {
 
         if ((seed_value = seed.value.trim()) === "") {
 
-            alert(props.language.msg_empty_seed);
+            //alert(props.language.msg_empty_seed);
+            props.newNotification({
+                notify_type: NOTIFY_TYPE.NOTIFY_TYPE_ALERT,
+                msg: props.language.msg_empty_seed
+            } as NOTIFY_MESSAGE);
 
             return;
 
@@ -56,7 +62,12 @@ export function OpenSeed(props: any) {
 
                 },
                 (error) => {
-                    console.log(error);
+                    if (error.error) {
+                        props.newNotification({
+                            notify_type: NOTIFY_TYPE.NOTIFY_TYPE_ERROR,
+                            msg: `${error.error} ${error.reason}`
+                        } as NOTIFY_MESSAGE);
+                    }
                 }
             );
         else if (props.keyPair) {
@@ -134,10 +145,18 @@ export function OpenSeed(props: any) {
                         }
 
                     );
-
+                    props.newNotification({
+                        msg: props.language.opening_wallet_from_seed
+                    } as NOTIFY_MESSAGE);
                 },
                 (error_seed2keypair) => {
-                    console.log(error_seed2keypair);
+                    //console.log(error_seed2keypair);
+                    if (error_seed2keypair.error) {
+                        props.newNotification({
+                            notify_type: NOTIFY_TYPE.NOTIFY_TYPE_ERROR,
+                            msg: `${error_seed2keypair.error} ${error_seed2keypair.reason}`
+                        } as NOTIFY_MESSAGE);
+                    }
                 }
             );
 
@@ -194,7 +213,8 @@ const mapStateToProps = (state: any, ownProps: any) => ({
 });
 
 const mapDispatchToProps = (dispatch: any, ownProps: any) => ({
-    wallet_public_key: (public_key: my_wallet) => dispatch(setPublicKey(public_key))
+    wallet_public_key: (public_key: my_wallet) => dispatch(setPublicKey(public_key)),
+    newNotification: (msg: NOTIFY_MESSAGE) => dispatch(setNotifyMessage(msg))
 });
   
 export default connect(mapStateToProps, mapDispatchToProps)(OpenSeed);

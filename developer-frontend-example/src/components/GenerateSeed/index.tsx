@@ -168,7 +168,7 @@ const mapStateToProps = (state: any, ownProps: any) => ({
   
 const mapDispatchToProps = (dispatch: any, ownProps: any) => ({
     wallet_public_key: (public_key: my_wallet) => dispatch(setPublicKey(public_key)),
-    newNotification: (msg: NOTIFY_MESSAGE) => dispatch(setNotifyMessage(msg)),
+    newNotification: (msg: NOTIFY_MESSAGE) => dispatch(setNotifyMessage(msg))
 });
   
 export default connect(mapStateToProps, mapDispatchToProps)(GenerateSeed);

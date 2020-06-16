@@ -37,7 +37,7 @@ export const Content = styled<any>('div')`
   /*background: #445159; */
   background-color: ${props => (props.notf === NOTIFY_TYPE.NOTIFY_TYPE_ALERT)?"var(--notification-background-alert)":(props.notf === NOTIFY_TYPE.NOTIFY_TYPE_ERROR)?"var(--notification-background-error)":"var(--notification-background)"};
   color: var(--color);
-  opacity: 0.9;
+  opacity: 0.95;
   padding: 12px 22px;
   font-size: 1em;
   display: grid;

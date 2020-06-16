@@ -5,7 +5,8 @@ import {
 
     closeWalletDialog,
     setMyWallet,
-    dialogStatus
+    dialogStatus,
+    setNotifyMessage
 
 } from '../../actions';
 
@@ -13,7 +14,8 @@ import {
 
     WALLET_FROM, 
     my_wallet, 
-    MY_NANO_PHP_SEED2KEYPAIR 
+    MY_NANO_PHP_SEED2KEYPAIR, 
+    NOTIFY_MESSAGE
 
 } from '../../utils/wallet_interface';
 
@@ -32,7 +34,8 @@ import {
     UNKNOWN_MY_NANO_PHP_SERVER_ERROR, 
     SEND_COMMAND,
     OPEN_BLOCK_TO_RECEIVE,
-    RECEIVE_COMMAND
+    RECEIVE_COMMAND,
+    NOTIFY_TYPE
 
 } from '../../utils';
 
@@ -85,7 +88,13 @@ function Dialog(props: any) {
 
             if (password === "") {
 
-                alert( props.language.dialog_password_empty );
+                //alert( props.language.dialog_password_empty );
+                props.newNotification(
+                    {
+                        notify_type: NOTIFY_TYPE.NOTIFY_TYPE_ERROR,
+                        msg: props.language.dialog_password_empty
+                    } as NOTIFY_MESSAGE
+                )
                 return;
 
             }
@@ -401,7 +410,8 @@ const mapDispatchToProps = (dispatch: any, ownProps: any) => ({
 
     closeMyDialog: () => dispatch(closeWalletDialog()),
     setMyWallet: (param: my_wallet) => dispatch(setMyWallet(param)),
-    dialogStatus: (param: string) => dispatch(dialogStatus(param))
+    dialogStatus: (param: string) => dispatch(dialogStatus(param)),
+    newNotification: (msg: NOTIFY_MESSAGE) => dispatch(setNotifyMessage(msg))
 
 });
   

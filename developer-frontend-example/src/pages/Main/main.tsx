@@ -19,7 +19,7 @@ import GenerateSeed from '../../components/GenerateSeed';
 import { 
     
     setLanguage, 
-    changeBackgroundMode
+    changeBackgroundMode,
 
 } from '../../actions';
 
@@ -130,8 +130,7 @@ export function Main(props: any) {
             <MainContainer myParent={ props }>
                 <Wallet />
             </MainContainer>
-        )
-
+        );
 }
 
 const mapStateToProps = (state: any, ownProps: any) => ({
@@ -142,7 +141,7 @@ const mapStateToProps = (state: any, ownProps: any) => ({
 
 const mapDispatchToProps = (dispatch: any, ownProps: any) => ({
     modifyLang: (lang: any) => dispatch(setLanguage(lang)),
-    changeBackMode: (mode: string) => dispatch(changeBackgroundMode(mode))
+    changeBackMode: (mode: string) => dispatch(changeBackgroundMode(mode)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Main);

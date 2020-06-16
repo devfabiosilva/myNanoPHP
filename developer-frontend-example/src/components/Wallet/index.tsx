@@ -29,6 +29,7 @@ import {
   SEND_COMMAND,
   RECEIVE_COMMAND,
   OPEN_BLOCK_TO_RECEIVE,
+  NOTIFY_TYPE,
 
 } from '../../utils';
 
@@ -39,14 +40,16 @@ import {
   dialogStatus, 
   clearPendingAmout,
   setPendingAmount,
-  closeWalletDialog
+  closeWalletDialog,
+  setNotifyMessage
 
 } from '../../actions';
 
 import { 
 
   my_wallet, 
-  PENDING_AMOUNT_TO_POCKET 
+  PENDING_AMOUNT_TO_POCKET, 
+  NOTIFY_MESSAGE
 
 } from '../../utils/wallet_interface';
 
@@ -85,7 +88,11 @@ export function Wallet(props: any) {
 
           if (( amount_to_send_receive = obj_amount_to_send_receive.value.trim() ) === "") {
 
-            alert( props.language.msg_amount_is_empty );
+            //alert( props.language.msg_amount_is_empty );
+            props.newNotification({
+              notify_type: NOTIFY_TYPE.NOTIFY_TYPE_ERROR,
+              msg: props.language.msg_amount_is_empty
+            } as NOTIFY_MESSAGE);
             props.dialogStatus();
             return;
 
@@ -429,6 +436,7 @@ const mapDispatchToProps = (dispatch: any, ownProps: any) => ({
   dialogStatus: (param: string) => dispatch(dialogStatus(param)),
   enablePendingMonitor: (monitorCallback: any) => dispatch(setPendingAmount(monitorCallback)),
   disablePendingMonitor: () => dispatch(clearPendingAmout()),
+  newNotification: (msg: NOTIFY_MESSAGE) => dispatch(setNotifyMessage(msg))
 
 });
 

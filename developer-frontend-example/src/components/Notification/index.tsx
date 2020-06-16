@@ -44,7 +44,7 @@ export function Notify(props: any) {
             
         },
         config: ((item: any, state: any) => { 
-            return (state === 'leave')?[{ duration: 2500 }, config]: config;
+            return (state === 'leave')?[{ duration: 10000 }, config]: config;
         }) as any
     });
 
