@@ -8,7 +8,20 @@ import {
 
 } from '../../utils/wallet_interface';
 
+import { 
+
+    FaKey, 
+    FaSeedling, 
+    FaBook, 
+    FaLock, 
+    FaBrain,
+    FaPlus,
+    FaWallet
+
+} from 'react-icons/fa'
+
 import { setPublicKey } from '../../actions';
+import './style.css';
 
 export function SelectWallet(props: any) {
 
@@ -58,6 +71,15 @@ export function SelectWallet(props: any) {
             >
                 { props.language.open_selected }
             </button>
+            <div className="wallet-panel">
+                <div><p><FaSeedling size={32} /></p><p>{ props.language.open_with_seed }</p></div>
+                <div><p><FaBook size={32} /></p><p>{ props.language.open_with_bip39 }</p></div>
+                <div><p><FaLock size={32} /></p><p>{ props.language.open_with_encrypted_file }</p></div>
+                <div><p><FaBrain size={32} /></p><p>{ props.language.open_with_brainwallet }</p></div>
+                <div><p><FaPlus size={32} /></p><p>{ props.language.open_gen_new_seed }</p></div>
+                <div><p><FaKey size={32} /></p><p>{ props.language.open_keypair }</p></div>
+                <div><p><FaWallet size={32} /></p><p>{ props.language.open_from_public_key }</p></div>
+            </div>
         </div>
     );
 }
