@@ -24,6 +24,12 @@ In Development ...
 
 ## Hello World Demo API
 
+There is a POC (Proof of Concept) implementing myNanoPHP Library in ReactJS for developers to test and start using this library reading [README_API template tutorial](README_API.md)
+
+<p align="center">
+  <img src="/docs/images/poc001.png">
+</p>
+
 ## FUNCTIONS
 
 <h1>- php_c_add_sub_balance()</h1>
