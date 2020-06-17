@@ -1,0 +1,59 @@
+.wallet-container {
+
+    padding: 20px;
+
+}
+
+.wallet-address-container,
+.wallet-number-container,
+.wallet-public-key-container,
+.representative-wallet-container,
+.balance-container,
+.pending-account-container {
+
+    display: flex;
+    align-items: center;
+    padding-bottom: 15px;
+
+}
+
+.wallet-number,
+.wallet-number-title,
+.wallet-address-title,
+.wallet-address,
+.wallet-public-key-title,
+.wallet-public-key,
+.prepresentative-title,
+.representative-wallet,
+.balance-title,
+.balance,
+.pending-account-title,
+.pending-account {
+
+    font-size: 16px;
+
+}
+
+.wallet-address-title,
+.wallet-number-title,
+.wallet-public-key-title,
+.prepresentative-title,
+.balance-title,
+.pending-account-title {
+
+    margin-right: 10px;
+    font-weight: 600;
+
+}
+
+.wallet-number,
+.wallet-address,
+.wallet-public-key,
+.representative-wallet,
+.balance,
+.pending-account {
+
+    font-style: italic;
+    font-weight: 400;
+
+}

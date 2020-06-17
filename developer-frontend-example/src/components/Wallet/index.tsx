@@ -53,6 +53,8 @@ import {
 
 } from '../../utils/wallet_interface';
 
+import './style.css';
+
 export function Wallet(props: any) {
 
   const [ balance, setBalance] = useState("");
@@ -352,25 +354,37 @@ export function Wallet(props: any) {
           { props.state.wallet_number }
         </div>
       </div>
-      <div className="wallet">
-        { props.language.wallet }: { props.state.wallet }
+      <div className="wallet-address-container">
+        <div className="wallet-address-title">{ props.language.wallet }:</div>
+        <div className="wallet-address">{ props.state.wallet }</div>
       </div>
-      <div className="wallet-public-key">
-        { props.language.pk } { props.state.public_key }
+      <div className="wallet-public-key-container">
+        <div className="wallet-public-key-title">{ props.language.pk }</div>
+        <div className="wallet-public-key">{ props.state.public_key }</div>
       </div>
       <div className="representative-wallet-container">
-        <div className="prepresentative-label">
+        <div className="prepresentative-title">
           { props.language.representative_title }:
         </div>
         <div className="representative-wallet" >
           { representative }
         </div>
       </div>
-      <div className="balance">
-        { props.language.balance }: { (balance)?balance:props.language.loading_balance }
+      <div className="balance-container">
+        <div className="balance-title">
+          { props.language.balance }:
+        </div> 
+        <div className="balance">
+          { (balance)?balance:props.language.loading_balance }
+        </div>
       </div>
-      <div className="pending-account">
-        { props.language.pending_account }: { (pendingAccount)?pendingAccount:props.language.loading_pending }
+      <div className="pending-account-container">
+        <div className="pending-account-title">
+          { props.language.pending_account }:
+        </div>
+        <div className="pending-account">
+          { (pendingAccount)?pendingAccount:props.language.loading_pending }
+        </div>
       </div>
       <div className="destination-wallet-container">
         <label>{ props.language.destination_wallet_label }: </label>
