@@ -387,31 +387,67 @@ export function Wallet(props: any) {
         </div>
       </div>
       <div className="destination-wallet-container">
-        <label>{ props.language.destination_wallet_label }: </label>
-        <input 
+        <div className="destination-wallet-title">
+          { props.language.destination_wallet_label }:
+        </div>
+        <div className="destination-wallet">
+          <input 
 
-          type = "text" 
-          id = "destination-wallet-id"
-          className = "destination-wallet" 
+            type = "text" 
+            id = "destination-wallet-id"
+            className = "destination-wallet-input"
+            placeholder = { props.language.placeholder_dest_wallet }
 
-        />
+          />
+        </div>
       </div>
-      <div className="value-to-send">
-        <label>{ props.language.amount }: </label>
-        <input 
+      <div className="value-to-send-container">
+        <div className="value-to-send-tite">
+          { props.language.amount }:
+        </div>
+        <div className="value-to-send">
+          <input 
 
-          type = "text"
-          id = "value-to-send-id"
-          className = "value-to-send" 
+            type = "text"
+            id = "value-to-send-id"
+            className = "value-to-send-input" 
+            placeholder= { props.language.placeholder_amount_to_send }
 
-        />
+          />
+        </div>
       </div>
       <div className="fee-container">
-        <label>{ props.language.label_allow_p2pow_dpow_label }</label>
-        <input type="checkbox" checked={ fee } onChange={() => setFee(!fee)} />
-        <div className="fee-label-value-container" style={{display:(fee)?"inline-block":"none"}}>
-          <label>{ props.language.label_fee }</label>
-          <input type="text" defaultValue={ MAX_FEE } />
+        <div className="fee-title">
+          { props.language.label_allow_p2pow_dpow_label }
+        </div>
+        <div className="sub-fee-container">
+          <div className="fee-checkbox-container">
+            <input 
+
+              type="checkbox" 
+              checked={ fee } 
+              onChange={() => setFee(!fee)}
+
+            />
+          </div>
+          <div 
+
+            className="fee-label-value-container" 
+            style={{display:(fee)?"inline-block":"none"}}
+
+          >
+            <label className="fee-label-title">
+                { props.language.label_fee }
+            </label>
+            <input 
+
+              className="fee-input" 
+              type="text" 
+              defaultValue={ MAX_FEE } 
+              placeholder={ props.language.placeholder_type_your_fee }
+
+            />
+          </div>
         </div>
       </div>
       <div className="button-container"

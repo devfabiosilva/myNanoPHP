@@ -79,7 +79,10 @@ export const LANG_PT_BR = {
     light_toggle_txt: "Claro",
     welcome_msg: "myNanoPHP. Uma pequena biblioteca em C que integra Nano ao PHP",
     opening_wallet_from_seed: "Abrindo a carteira NANO da semente",
-    about_author: "Sobre o autor"
+    about_author: "Sobre o autor",
+    placeholder_dest_wallet: "Digite a carteira de destino aqui",
+    placeholder_amount_to_send: "Digite a quantia para enviar",
+    placeholder_type_your_fee: "Digite sua taxa"
 
 }
 
@@ -160,7 +163,10 @@ export const LANG_EN_US = {
     light_toggle_txt: "Light",
     welcome_msg: "myNanoPHP. A small C library that integrates Nano to PHP",
     opening_wallet_from_seed: "Opening NANO wallet from SEED",
-    about_author: "About the author"
+    about_author: "About the author",
+    placeholder_dest_wallet: "Type destination wallet here",
+    placeholder_amount_to_send: "Type amount to send",
+    placeholder_type_your_fee: "Type your fee"
 
 }
 

@@ -9,11 +9,14 @@
 .wallet-public-key-container,
 .representative-wallet-container,
 .balance-container,
-.pending-account-container {
+.pending-account-container,
+.destination-wallet-container,
+.value-to-send-container,
+.fee-container {
 
     display: flex;
     align-items: center;
-    padding-bottom: 15px;
+    padding-bottom: 8px;
 
 }
 
@@ -28,7 +31,15 @@
 .balance-title,
 .balance,
 .pending-account-title,
-.pending-account {
+.pending-account,
+.destination-wallet-title,
+.destination-wallet,
+.value-to-send-tite,
+.value-to-send,
+.fee-title,
+.sub-fee-container,
+.fee-label-title
+{
 
     font-size: 16px;
 
@@ -39,7 +50,12 @@
 .wallet-public-key-title,
 .prepresentative-title,
 .balance-title,
-.pending-account-title {
+.pending-account-title,
+.destination-wallet-title,
+.value-to-send-tite,
+.fee-title,
+.fee-label-title,
+.fee-checkbox-container {
 
     margin-right: 10px;
     font-weight: 600;
@@ -51,9 +67,19 @@
 .wallet-public-key,
 .representative-wallet,
 .balance,
-.pending-account {
+.pending-account,
+.value-to-send,
+.sub-fee-container,
+.fee-input {
 
     font-style: italic;
     font-weight: 400;
+
+}
+
+.sub-fee-container {
+
+    display: flex;
+    align-items: center;
 
 }
