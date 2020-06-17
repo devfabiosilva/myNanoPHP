@@ -1,4 +1,9 @@
-import { my_wallet, NOTIFY_MESSAGE } from '../utils/wallet_interface';
+import { 
+    
+    my_wallet, 
+    NOTIFY_MESSAGE 
+
+} from '../utils/wallet_interface';
 
 const ACTION_NONE = 0;
 const EXTRACT_PUBLIC_KEY = 1;

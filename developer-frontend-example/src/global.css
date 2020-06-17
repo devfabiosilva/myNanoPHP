@@ -33,16 +33,16 @@ body.dark {
 }
 
 body.light {
-  --background: #edeeef;
-  --background-content: #fff;
+  --background: #b5b6b7;/* #edeeef; */
+  --background-content: #f5f6f8; /* #fff; */
   --color: #696969;
-  --background-hovered: #f5f6f8;
+  --background-hovered: #a3d839de;/*#f5f6f8;*/
   --primary: #90d50b;
-  --toggle-content: #e5e8e5;
+  --toggle-content: #c7c7c7;/*#e5e8e5;*/
   --button-content: #e5e8e5;
-  --notification-background: #c7c7c7;
-  --notification-background-alert: #e9e993;
-  --notification-background-error:  #f88080;
+  --notification-background: #527ffc;
+  --notification-background-alert: #e6d649f3;
+  --notification-background-error:  #ff8383;
 }
 
 button {

@@ -6,7 +6,9 @@ import {
 
     Container,
     Message,
-    Content
+    Content,
+    NotificationIconContainer,
+    NotificationTextContainer
 
 } from './styled';
 
@@ -19,7 +21,21 @@ import {
 } from '../../actions';
 
 import { NOTIFY_MESSAGE } from '../../utils/wallet_interface';
-import { getKey } from '../../utils';
+
+import { 
+
+    getKey, 
+    NOTIFY_TYPE 
+
+} from '../../utils';
+
+import { 
+    
+    FiAlertTriangle, 
+    FiInfo, 
+    FiXCircle 
+
+} from 'react-icons/fi';
 
 export function Notify(props: any) {
 
@@ -48,6 +64,74 @@ export function Notify(props: any) {
         }) as any
     });
 
+    function NotificationType(props: any) {
+
+        if (props.myProps) {
+
+            if (props.myProps.notify_type) {
+
+                switch (props.myProps.notify_type) {
+
+                    case NOTIFY_TYPE.NOTIFY_TYPE_ALERT:
+                        return (
+                            <>
+                                <NotificationIconContainer key={getKey()}>
+                                    <FiAlertTriangle key={getKey()} size={36} />
+                                </NotificationIconContainer>
+                                <NotificationTextContainer key={getKey()}>
+                                    { (props.myProps.msg)?props.myProps.msg:"" }
+                                </NotificationTextContainer>
+                            </>
+                        );
+
+                    case NOTIFY_TYPE.NOTIFY_TYPE_ERROR:
+                        return (
+                            <>
+                                <NotificationIconContainer key={getKey()}>
+                                    <FiXCircle key={getKey()} size={36} />
+                                </NotificationIconContainer>
+                                <NotificationTextContainer key={getKey()}>
+                                    { (props.myProps.msg)?props.myProps.msg:"" }
+                                </NotificationTextContainer>
+                            </>
+                        );
+
+                }
+
+            }
+
+            return (
+                <>
+                    <NotificationIconContainer key={getKey()}>
+                        <FiInfo key={getKey()} size={36} />
+                    </NotificationIconContainer>
+                    <NotificationTextContainer key={getKey()}>
+                        { (props.myProps.msg)?props.myProps.msg:"" }
+                    </NotificationTextContainer>
+                </>
+            );
+
+        }
+
+        return null;
+
+    }
+    
+
+   return (
+        <Container>
+            { transition.map(({ key, item, props: { ...style}, }) => (
+                    <Message key={(item)?item.key:"key"} style={style as any}>
+                        <Content key={getKey()} notf={(item)?(item.notify_type)?item.notify_type:null:null} >
+                            <NotificationType myProps={item} />
+                        </Content>
+                    </Message>
+                ))
+            }
+        </Container>
+    );
+
+/*
     return (
         <Container>
             { transition.map(({ key, item, props: { ...style}, }) => (
@@ -60,6 +144,7 @@ export function Notify(props: any) {
             }
         </Container>
     );
+*/
 }
 
 const mapStateToProps = (state: any, ownProps: any) => ({

@@ -22,7 +22,7 @@ export const Container = styled<any>('div')`
   pointer-events: none;
   align-items: ${props => (props.position === 'center' ? 'center' : `flex-${props.position || 'end'}`)};
 `;
-//  display: ${props => (props.key)?"block":"none"};
+
 export const Message = styled(animated.div)`
   position: relative;
   overflow: hidden;
@@ -40,7 +40,9 @@ export const Content = styled<any>('div')`
   opacity: 0.95;
   padding: 12px 22px;
   font-size: 1em;
-  display: grid;
+  display: flex;
+  align-itens: center;
+  justify-content: center;
   grid-template-columns: ${props => (props.canClose === false ? '1fr' : '1fr auto')};
   grid-gap: 10px;
   overflow: hidden;
@@ -50,3 +52,16 @@ export const Content = styled<any>('div')`
   margin-bottom: ${props => (props.top ? '10px' : '0')};
 `;
 
+export const NotificationIconContainer = styled<any>('div')`
+  display: flex;
+  justify-content: center;
+  margin-right: 5px;
+  align-items: center;
+  height: 50%;
+  width: 10%;
+`;
+
+export const NotificationTextContainer = styled<any>('div')`
+  height: 100%;
+  width: 90%;
+`;

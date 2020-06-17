@@ -4004,7 +4004,14 @@ PHP_FUNCTION(php_c_is_valid_nano_seed_encrypted)
    RETURN_FALSE;
 
 }
+/*
+PHP_FUNCTION(php_c_change_representative)
+{
 
+To be implemented in future
+
+}
+*/
 zend_module_entry mynanoembedded_module_entry = {
 #if ZEND_MODULE_API_NO >= 20010901
    STANDARD_MODULE_HEADER,
