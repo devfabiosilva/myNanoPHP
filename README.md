@@ -30,6 +30,10 @@ There is a POC (Proof of Concept) implementing myNanoPHP Library in ReactJS for 
   <img src="/docs/images/poc001.png">
 </p>
 
+<p align="center">
+  <img src="/docs/images/poc002.png">
+</p>
+
 ## FUNCTIONS
 
 <h1>- php_c_add_sub_balance()</h1>
