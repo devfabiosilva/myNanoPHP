@@ -9,6 +9,11 @@ export const RECEIVE_COMMAND = "receive";
 export const OPEN_BLOCK_TO_RECEIVE = "open_block";
 export const BACKGROUND_DARK = "dark";
 export const BACKGROUND_LIGHT = "light";
+export const QR_CODE_BG_DARK = "#244c54";
+export const QR_CODE_FG_DARK = "#e9f6fb";
+export const QR_CODE_BG_LIGHT = "#f5f6f8";
+export const QR_CODE_FG_LIGHT = "#696969";
+
 
 export const NOTIFY_TYPE = {
 

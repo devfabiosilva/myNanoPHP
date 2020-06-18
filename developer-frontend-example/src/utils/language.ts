@@ -82,7 +82,14 @@ export const LANG_PT_BR = {
     about_author: "Sobre o autor",
     placeholder_dest_wallet: "Digite a carteira de destino aqui",
     placeholder_amount_to_send: "Digite a quantia para enviar",
-    placeholder_type_your_fee: "Digite sua taxa"
+    placeholder_type_your_fee: "Digite sua taxa",
+    btn_send_title: "Clica aqui para enviar",
+    light_mode_title: "Modo claro",
+    dark_mode_title: "Mode escuro",
+    success_open_wallet: "Carteira %d. Saldo: %e. Valor pendente %f",
+    notification_light_mode_changed: "Mudou para o modo claro",
+    notification_dark_mode_changed: "Mudou para o modo escuro",
+    notification_language_changed: "Changed to English language"
 
 }
 
@@ -166,7 +173,14 @@ export const LANG_EN_US = {
     about_author: "About the author",
     placeholder_dest_wallet: "Type destination wallet here",
     placeholder_amount_to_send: "Type amount to send",
-    placeholder_type_your_fee: "Type your fee"
+    placeholder_type_your_fee: "Type your fee",
+    btn_send_title: "Click here to send",
+    light_mode_title: "Light mode",
+    dark_mode_title: "Dark mode",
+    success_open_wallet: "Wallet %d. Balance: %e. Pending %f",
+    notification_light_mode_changed: "Changed to light mode",
+    notification_dark_mode_changed: "Changed to dark mode",
+    notification_language_changed: "Mudou para o português do Brasil"
 
 }
 

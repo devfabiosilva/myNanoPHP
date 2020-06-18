@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { changeBackgroundMode } from '../../actions';
+import { changeBackgroundMode, setNotifyMessage } from '../../actions';
 import './style.css';
 
 import { 
@@ -16,6 +16,7 @@ import {
     FaMoon
 
 } from 'react-icons/fa';
+import { NOTIFY_MESSAGE } from '../../utils/wallet_interface';
 
 export function DarkModeTool(props: any) {
 
@@ -31,14 +32,32 @@ export function DarkModeTool(props: any) {
             <div className="toggle-name">
                 <div 
                     className="light-name" 
-                    onClick={() => props.changeBackMode(BACKGROUND_LIGHT)}
+                    onClick={() => {
+                        
+                            props.changeBackMode(BACKGROUND_LIGHT);
+                            props.newNotification({
+                                msg: props.language.notification_light_mode_changed
+                            } as NOTIFY_MESSAGE)
+
+                        }
+                    }
+                    title={ props.language.light_mode_title }
                 >
                     <div className="light-name-icon-container"><FaSun /></div><div>{ props.language.light_toggle_txt }</div>
 
                 </div>
                 <div 
                     className="dark-name" 
-                    onClick={() => props.changeBackMode(BACKGROUND_DARK)}
+                    onClick={() => {
+
+                            props.changeBackMode(BACKGROUND_DARK);
+                            props.newNotification({
+                                msg: props.language.notification_dark_mode_changed
+                            } as NOTIFY_MESSAGE);
+
+                        }
+                    }
+                    title={ props.language.dark_mode_title }
                 >
                     <div className="dark-name-icon-container"><FaMoon /></div><div>{ props.language.dark_toggle_txt }</div>
 
@@ -50,12 +69,17 @@ export function DarkModeTool(props: any) {
 }
 
 const mapStateToProps = (state: any, ownProps: any) => ({
+
     backgroundMode: state.setBackGroundMode,
     language: state.lang
+
 });
 
 const mapDispatchToProps = (dispatch: any, ownProps: any) => ({
-    changeBackMode: (mode: string) => dispatch(changeBackgroundMode(mode))
+
+    changeBackMode: (mode: string) => dispatch(changeBackgroundMode(mode)),
+    newNotification: (msg: NOTIFY_MESSAGE) => dispatch(setNotifyMessage(msg))
+
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(DarkModeTool);

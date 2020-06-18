@@ -21,7 +21,13 @@ import {
 
 } from 'react-icons/fa'
 
-import { setPublicKey } from '../../actions';
+import { 
+    
+    setPublicKey, 
+    showAbout 
+
+} from '../../actions';
+
 import './style.css';
 
 export function SelectWallet(props: any) {
@@ -134,7 +140,7 @@ export function SelectWallet(props: any) {
                     </div>
                     <div 
                         
-                        onClick={() => alert("Testing about in development ...")}
+                        onClick={() => props.showAbout()}
                         className="option-container-tag"
                     
                     >
@@ -159,7 +165,10 @@ const mapStateToProps = (state: any, ownProps: any) => ({
 });
 
 const mapDispatchToProps = (dispatch: any, ownProps: any) => ({
+
     wallet_public_key: (public_key: my_wallet) => dispatch(setPublicKey(public_key)),
+    showAbout: () => dispatch(showAbout(true))
+    
 });
   
 export default connect(mapStateToProps, mapDispatchToProps)(SelectWallet);

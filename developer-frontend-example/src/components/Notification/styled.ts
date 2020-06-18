@@ -26,7 +26,7 @@ export const Container = styled<any>('div')`
 export const Message = styled(animated.div)`
   position: relative;
   overflow: hidden;
-  width: 60ch;
+  width: 75ch;
   @media (max-width: 680px) {
     width: 100%;
   }

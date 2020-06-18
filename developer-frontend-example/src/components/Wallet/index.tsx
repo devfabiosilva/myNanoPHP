@@ -30,6 +30,11 @@ import {
   RECEIVE_COMMAND,
   OPEN_BLOCK_TO_RECEIVE,
   NOTIFY_TYPE,
+  BACKGROUND_DARK,
+  QR_CODE_BG_LIGHT,
+  QR_CODE_BG_DARK,
+  QR_CODE_FG_DARK,
+  QR_CODE_FG_LIGHT,
 
 } from '../../utils';
 
@@ -53,6 +58,7 @@ import {
 
 } from '../../utils/wallet_interface';
 
+import { FiSend } from 'react-icons/fi';
 import './style.css';
 
 export function Wallet(props: any) {
@@ -81,6 +87,7 @@ export function Wallet(props: any) {
       let obj_amount_to_send_receive: any;
       let dest_wallet: string; // destination wallet or link
       let amount_to_send_receive: string;
+      let tmp: string;
 
       if ( (props.dialog_status === SEND_COMMAND) || (props.dialog_status === RECEIVE_COMMAND) ) {
 
@@ -172,6 +179,13 @@ export function Wallet(props: any) {
                         });
                         setBalance(props.state.balance);
                         setPendingAccount(props.state.pending);
+                        tmp = props.language.success_open_wallet.replace(/%d/, props.state.wallet).replace(/%e/, props.state.balance);
+
+                        props.newNotification(
+                          {
+                            msg: tmp.replace(/%f/, props.state.pending),
+                          } as NOTIFY_MESSAGE
+                        )
                       },
                       (error: any) => console.log(error)
                     );
@@ -450,18 +464,33 @@ export function Wallet(props: any) {
           </div>
         </div>
       </div>
-      <div className="button-container"
-        style={{display:(lockInputs)?"none":"inline-block"}}
+      <div 
+        className="button-container"
+        style={
+          {
+            display:(lockInputs)?"none":"inline-block"
+          }
+        }
       >
         <button 
+
           className="send-button"
           onClick={ () => beginSendAmount() }
+          title={ props.language.btn_send_title }
+
         >
-          { props.language.send }
+          { props.language.send } <FiSend size={16} style={{paddingLeft: "4px"}} />
         </button>
       </div>
       <div className="qr-code-container">
-        <QRCode value={ props.state.wallet }/>
+        <QRCode 
+
+          value={ props.state.wallet }
+          renderAs="svg"
+          bgColor={ (props.backgroundMode === BACKGROUND_DARK)?QR_CODE_BG_DARK:QR_CODE_BG_LIGHT }
+          fgColor={ (props.backgroundMode === BACKGROUND_DARK)?QR_CODE_FG_DARK:QR_CODE_FG_LIGHT }
+
+        />
       </div>
     </div>
   );
@@ -474,7 +503,8 @@ const mapStateToProps = (state: any, ownProps: any) => ({
   language: state.lang,
   dialog_status: state.transactionDialogStatus,
   monitore_pending: state.monitore_pending_amount,
-  dialog_is_open: state.openTransactionDialog
+  dialog_is_open: state.openTransactionDialog,
+  backgroundMode: state.setBackGroundMode
 
 });
 

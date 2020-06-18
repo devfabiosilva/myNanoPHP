@@ -18,17 +18,21 @@ import {
 import { monitore_pending_amount } from './monitore_pending_amount';
 import { setBackGroundMode } from './backgroundmode';
 import { notifyEvt } from './notifyevents';
+import { showAboutMode } from './about';
 
 const nano_wallet_rootReducer = combineReducers(
 
     { 
+
         wallet,
         lang,
         openTransactionDialog,
         transactionDialogStatus,
         monitore_pending_amount,
         setBackGroundMode,
-        notifyEvt
+        notifyEvt,
+        showAboutMode
+        
     }
 
 );

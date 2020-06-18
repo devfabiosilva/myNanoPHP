@@ -31,6 +31,7 @@ import { Brand } from '../../components/Brand';
 import './style.css';
 import Welcome from '../../components/Welcome';
 import Notify from '../../components/Notification';
+import About from '../../components/About';
 
 export function MainContainer( props: any) {
 
@@ -61,6 +62,15 @@ export function Main(props: any) {
             props
         ]
     );
+
+    if (props.about)
+        return (
+
+            <MainContainer myParent={ props }>
+                <About />
+            </MainContainer>
+
+        );
 
     if ((props.nano_wallet_state as NANO_KEY_PAIR).public_key === "")
         switch ((props.nano_wallet_state as my_wallet).origin) {
@@ -133,14 +143,19 @@ export function Main(props: any) {
 }
 
 const mapStateToProps = (state: any, ownProps: any) => ({
+
     nano_wallet_state: state.wallet,
     backgroundMode: state.setBackGroundMode,
-    language: state.lang
+    language: state.lang,
+    about: state.showAboutMode
+
 });
 
 const mapDispatchToProps = (dispatch: any, ownProps: any) => ({
+
     modifyLang: (lang: any) => dispatch(setLanguage(lang)),
-    changeBackMode: (mode: string) => dispatch(changeBackgroundMode(mode)),
+    changeBackMode: (mode: string) => dispatch(changeBackgroundMode(mode))
+
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Main);
