@@ -6,15 +6,14 @@ import {
 
 } from '../utils/wallet_interface';
 
-export function wallet(
-    state: my_wallet = {
+const INITIAL_WALLET: my_wallet = {
 
-        origin: WALLET_FROM.SELECT_OPTION,
-        public_key: ""
+    origin: WALLET_FROM.SELECT_OPTION,
+    public_key: ""
 
-    }, 
-    action: any
-) {
+}
+
+export function wallet( state: my_wallet = INITIAL_WALLET,  action: any) {
 
     switch (action.type) {
 
@@ -25,7 +24,10 @@ export function wallet(
             return Object.assign(state, { wallet: action.address });
         
         case NANO_WALLET_ACTIONS.SET_MY_WALLET_PARAM:
-            return Object.assign(state, action.wallet_param)
+            return Object.assign(state, action.wallet_param);
+
+        case NANO_WALLET_ACTIONS.RESET_WALLET:
+            return INITIAL_WALLET;
 
         default:
             return state;

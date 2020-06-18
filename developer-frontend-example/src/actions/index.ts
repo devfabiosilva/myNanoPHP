@@ -20,6 +20,7 @@ const GET_NOTIFY_MESSAGE = 12;
 const SET_NOTIFY_MESSAGE = 13;
 const REMOVE_NOTIFY_MESSAGE = 14;
 const SHOW_ABOUT = 15;
+const RESET_WALLET = 16;
 
 export const NANO_WALLET_ACTIONS = {
 
@@ -37,7 +38,8 @@ export const NANO_WALLET_ACTIONS = {
     GET_NOTIFY_MESSAGE,
     SET_NOTIFY_MESSAGE,
     REMOVE_NOTIFY_MESSAGE,
-    SHOW_ABOUT
+    SHOW_ABOUT,
+    RESET_WALLET
     
 }
 
@@ -93,4 +95,8 @@ export function removeNotifyMessage(key: number) {
 
 export function showAbout(show: boolean) {
     return { type: SHOW_ABOUT, show };
+}
+
+export function resetWallet() {
+    return { type: RESET_WALLET };
 }

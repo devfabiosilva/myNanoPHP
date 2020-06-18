@@ -59,7 +59,7 @@ export const LANG_PT_BR = {
     type_your_public_key_here: "Digite sua chave pública aqui",
     open_public_key: "Abrir carteira com a chave pública",
     label_allow_p2pow_dpow_label: "Permitir taxa da Prova de Trabalho (P2PoW or DPoW)",
-    label_fee: "Taxa",
+    label_fee: "Taxa máxima",
     representative_title: "Representativo",
     amount: "Valor",
     destination_wallet_label: "Carteira de destino",
@@ -89,7 +89,8 @@ export const LANG_PT_BR = {
     success_open_wallet: "Carteira %d. Saldo: %e. Valor pendente %f",
     notification_light_mode_changed: "Mudou para o modo claro",
     notification_dark_mode_changed: "Mudou para o modo escuro",
-    notification_language_changed: "Changed to English language"
+    notification_language_changed: "Changed to English language",
+    go_back: "Voltar"
 
 }
 
@@ -150,7 +151,7 @@ export const LANG_EN_US = {
     type_your_public_key_here: "Type your public key here",
     open_public_key: "Open wallet with public key",
     label_allow_p2pow_dpow_label: "Allow Proof of Work fee (P2PoW or DPoW)",
-    label_fee: "Fee",
+    label_fee: "Maximum fee",
     representative_title: "Representative",
     amount: "Amount",
     destination_wallet_label: "Destination wallet",
@@ -180,7 +181,8 @@ export const LANG_EN_US = {
     success_open_wallet: "Wallet %d. Balance: %e. Pending %f",
     notification_light_mode_changed: "Changed to light mode",
     notification_dark_mode_changed: "Changed to dark mode",
-    notification_language_changed: "Mudou para o português do Brasil"
+    notification_language_changed: "Mudou para o português do Brasil",
+    go_back: "Back"
 
 }
 

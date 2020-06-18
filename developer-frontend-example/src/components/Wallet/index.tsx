@@ -46,7 +46,8 @@ import {
   clearPendingAmout,
   setPendingAmount,
   closeWalletDialog,
-  setNotifyMessage
+  setNotifyMessage,
+  resetWallet
 
 } from '../../actions';
 
@@ -58,14 +59,14 @@ import {
 
 } from '../../utils/wallet_interface';
 
-import { FiSend } from 'react-icons/fi';
+import { FiSend, FiSkipBack } from 'react-icons/fi';
 import './style.css';
 
 export function Wallet(props: any) {
 
   const [ balance, setBalance] = useState("");
   const [ pendingAccount, setPendingAccount ] = useState("");
-  const [ fee, setFee ] = useState(true);
+  const [ fee, setFee ] = useState(false);
   const [ representative, setRepresentative ] = useState("");
   const [ walletReady, setWalletReady ] = useState(false);
   const [ lockInputs, setLockInputs ] = useState(true);
@@ -438,8 +439,9 @@ export function Wallet(props: any) {
           <div className="fee-checkbox-container">
             <input 
 
+              className="fee-checkbox"
               type="checkbox" 
-              checked={ fee } 
+              checked={ fee }
               onChange={() => setFee(!fee)}
 
             />
@@ -482,6 +484,24 @@ export function Wallet(props: any) {
           { props.language.send } <FiSend size={16} style={{paddingLeft: "4px"}} />
         </button>
       </div>
+      <div 
+        className="button-back-container"
+        style={
+          {
+            display:(lockInputs)?"none":"inline-block"
+          }
+        }
+      >
+        <button 
+
+          className="back-button"
+          onClick={ () => props.goBack() }
+          title={ props.language.go_back }
+
+        >
+          <FiSkipBack size={20} style={{paddingRight: "4px"}} /> { props.language.go_back }
+        </button>
+      </div>
       <div className="qr-code-container">
         <QRCode 
 
@@ -516,7 +536,8 @@ const mapDispatchToProps = (dispatch: any, ownProps: any) => ({
   dialogStatus: (param: string) => dispatch(dialogStatus(param)),
   enablePendingMonitor: (monitorCallback: any) => dispatch(setPendingAmount(monitorCallback)),
   disablePendingMonitor: () => dispatch(clearPendingAmout()),
-  newNotification: (msg: NOTIFY_MESSAGE) => dispatch(setNotifyMessage(msg))
+  newNotification: (msg: NOTIFY_MESSAGE) => dispatch(setNotifyMessage(msg)),
+  goBack: () => dispatch(resetWallet())
 
 });
 

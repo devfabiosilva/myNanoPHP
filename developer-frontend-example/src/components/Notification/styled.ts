@@ -27,6 +27,7 @@ export const Message = styled(animated.div)`
   position: relative;
   overflow: hidden;
   width: 75ch;
+  border-radius: 8px;
   @media (max-width: 680px) {
     width: 100%;
   }
@@ -47,7 +48,7 @@ export const Content = styled<any>('div')`
   grid-gap: 10px;
   overflow: hidden;
   height: 160px;
-  border-radius: 3px;
+  border-radius: 8px;
   margin-top: ${props => (props.top ? '0' : '10px')};
   margin-bottom: ${props => (props.top ? '10px' : '0')};
 `;
