@@ -92,16 +92,13 @@
     cursor: pointer;
     height: 16px;
     width: 16px;
-    /*background-color: var(--background-color);*/
-    background-color: lawngreen;
-    color: lightcoral;
 
 }
-
+/*
 .fee-checkbox:hover ~ {
-    background-color: red;/*var(--background-hovered);*/
+    background-color: red;
 }
-
+*/
 .qr-code-container {
 
     position: absolute;
@@ -154,7 +151,7 @@
     width: 250px;
     
 }
-
+/*
 .destination-wallet-input,
 .value-to-send-input,
 .fee-input {
@@ -168,3 +165,4 @@
     color: var(--color);
 
 }
+*/

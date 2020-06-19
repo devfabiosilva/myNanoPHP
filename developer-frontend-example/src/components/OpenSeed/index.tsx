@@ -11,7 +11,7 @@ import {
 
 import { 
 
-    setPublicKey, setNotifyMessage
+    setPublicKey, setNotifyMessage, resetWallet
 
 } from '../../actions';
 
@@ -24,7 +24,10 @@ import {
     NOTIFY_MESSAGE
 
 } from '../../utils/wallet_interface';
+
 import { NOTIFY_TYPE } from '../../utils';
+import { FiSkipBack } from 'react-icons/fi';
+import './style.css';
 
 export function OpenSeed(props: any) {
 
@@ -100,6 +103,7 @@ export function OpenSeed(props: any) {
                     console.log(public_key_to_wallet_error);
                 }
             );
+
         } else if (props.publicKey) {
 
             if (seed_value.length!==64) {
@@ -163,44 +167,74 @@ export function OpenSeed(props: any) {
     }
 
     return (
-        <div>
-            <div>
-                {
+        <div className="open-seed-container">
+            <div className="open-seed-content-box">
+                <div className="open-seed-title">
 
-                    (props.bip39)?props.language.your_bip39:
-                    (props.keyPair)?props.language.your_keypair:
-                    (props.publicKey)?props.language.your_public_key:
-                    props.language.your_seed
+                    {
 
-                }
+                        (props.bip39)?props.language.your_bip39:
+                        (props.keyPair)?props.language.your_keypair:
+                        (props.publicKey)?props.language.your_public_key:
+                        props.language.your_seed
+
+                    }
+
+                </div>
+                <input
+
+                    className = "seed-input"
+                    id = "seed-input-id"
+                    type="text"
+                    title= {
+
+                        (props.bip39)?props.language.type_your_bip39_here:
+                        (props.keyPair)?props.language.type_your_keypair_here:
+                        (props.publicKey)?props.language.type_your_public_key_here:
+                        props.language.type_your_seed_here
+
+                    }
+                    placeholder = {
+
+                        (props.bip39)?props.language.type_your_bip39_here:
+                        (props.keyPair)?props.language.type_your_keypair_here:
+                        (props.publicKey)?props.language.type_your_public_key_here:
+                        props.language.type_your_seed_here
+
+                    }
+
+                />
+                <button
+
+                    className="open-seed-btn"
+                    onClick={ openNanoSeed }
+                    title= {
+
+                        (props.bip39)?props.language.open_nano_bip39:
+                        (props.keyPair)?props.language.open_keypair:
+                        (props.publicKey)?props.language.open_public_key:
+                        props.language.open_nano_seed
+
+                    }
+
+                >
+                    {
+                        (props.bip39)?props.language.open_nano_bip39:
+                        (props.keyPair)?props.language.open_keypair:
+                        (props.publicKey)?props.language.open_public_key:
+                        props.language.open_nano_seed
+                    }
+                </button>
+                <button
+
+                    className="go-back-open-seed-btn"
+                    onClick={ () => props.goBack() }
+                    title={ props.language.go_back }
+
+                >
+                    <FiSkipBack size={20} style={{paddingRight: "4px"}} /> { props.language.go_back }
+                </button>
             </div>
-            <input
-
-                className = "seed-input"
-                id = "seed-input-id"
-                placeholder = {
-
-                    (props.bip39)?props.language.type_your_bip39_here:
-                    (props.keyPair)?props.language.type_your_keypair_here:
-                    (props.publicKey)?props.language.type_your_public_key_here:
-                    props.language.type_your_seed_here
-
-                }
-
-            />
-            <button
-
-                className="open-seed-btn"
-                onClick={ openNanoSeed }
-
-            >
-                {
-                    (props.bip39)?props.language.open_nano_bip39:
-                    (props.keyPair)?props.language.open_keypair:
-                    (props.publicKey)?props.language.open_public_key:
-                    props.language.open_nano_seed
-                }
-            </button>
         </div>
     );
 }
@@ -213,8 +247,11 @@ const mapStateToProps = (state: any, ownProps: any) => ({
 });
 
 const mapDispatchToProps = (dispatch: any, ownProps: any) => ({
+
     wallet_public_key: (public_key: my_wallet) => dispatch(setPublicKey(public_key)),
-    newNotification: (msg: NOTIFY_MESSAGE) => dispatch(setNotifyMessage(msg))
+    newNotification: (msg: NOTIFY_MESSAGE) => dispatch(setNotifyMessage(msg)),
+    goBack: () => dispatch(resetWallet())
+
 });
   
 export default connect(mapStateToProps, mapDispatchToProps)(OpenSeed);

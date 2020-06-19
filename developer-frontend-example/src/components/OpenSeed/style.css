@@ -1,0 +1,42 @@
+.open-seed-container {
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+
+}
+
+.open-seed-title {
+
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 36px;
+    font-weight: 700;
+
+}
+
+.seed-input {
+
+    width: 90%;
+    margin-left: 5%;
+    margin-right: 5%;
+    margin-top: 0;
+    margin-bottom: 120px;
+    text-align: center;
+
+}
+
+.go-back-open-seed-btn,
+.open-seed-btn {
+
+    width: 900px;
+
+}
+
+.go-back-open-seed-btn {
+
+    margin: 10px 0 0 0;
+
+}
