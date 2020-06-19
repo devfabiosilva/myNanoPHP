@@ -13,7 +13,7 @@ export const QR_CODE_BG_DARK = "#244c54";
 export const QR_CODE_FG_DARK = "#e9f6fb";
 export const QR_CODE_BG_LIGHT = "#f5f6f8";
 export const QR_CODE_FG_LIGHT = "#696969";
-
+export const DEFAULT_NOTIFY_TIMEOUT = 5000; // in milliseconds
 
 export const NOTIFY_TYPE = {
 

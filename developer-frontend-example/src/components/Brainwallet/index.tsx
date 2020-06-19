@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { 
 
@@ -13,15 +13,24 @@ import {
     MY_NANO_PHP_ERROR, 
     NANO_KEY_PAIR, 
     my_wallet, 
-    WALLET_FROM
+    WALLET_FROM,
+    NOTIFY_MESSAGE
 
 } from '../../utils/wallet_interface';
 
-import { setPublicKey } from '../../actions';
+import { 
+    
+    setPublicKey, 
+    resetWallet, 
+    setNotifyMessage
+
+} from '../../actions';
+
+import './style.css';
+import { FiSkipBack } from 'react-icons/fi';
+import { NOTIFY_TYPE } from '../../utils';
 
 export function Brainwallet(props: any) {
-
-    const [ warningMsg, setWarningMsg ] = useState("");
 
     function openBrainWallet() {
 
@@ -32,31 +41,39 @@ export function Brainwallet(props: any) {
 
         if ((braiwallet_value = brainwallet.value.trim()) === "") {
 
-            setWarningMsg( props.language.msg_brainwallet_empty );
+            props.setNotifyMessage({
+
+                notify_type: NOTIFY_TYPE.NOTIFY_TYPE_ERROR,
+                msg: props.language.msg_brainwallet_empty,
+                timeout: 1000
+
+            } as NOTIFY_MESSAGE);
             return;
 
         }
 
         if ((salt_value = salt.value.trim()) === "") {
 
-            setWarningMsg( props.language.msg_salt_empty );
+            props.setNotifyMessage({
+
+                notify_type: NOTIFY_TYPE.NOTIFY_TYPE_ERROR,
+                msg: props.language.msg_salt_empty
+
+            } as NOTIFY_MESSAGE);
             return;
 
         }
 
-        if (warningMsg!=="")
-            setWarningMsg("");
-
         my_nano_php_open_brainwallet(braiwallet_value, salt_value).then(
             (result) => {
 
-                setWarningMsg(
+                props.setNotifyMessage({
 
-                    `${(result as BRAINWALLET_RESPONSE).extracted.warning_msg}
-                    ${(result as BRAINWALLET_RESPONSE).warning}`
+                    msg: `${(result as BRAINWALLET_RESPONSE).extracted.warning_msg} ${(result as BRAINWALLET_RESPONSE).warning}`,
+                    timeout: 15000
 
-                );
-    
+                } as NOTIFY_MESSAGE);
+
                 my_nano_php_seed2keypair(0, (result as BRAINWALLET_RESPONSE).extracted.result.seed).then(
                     (seed2keypair: any) => {
                         console.log((seed2keypair.key_pair as NANO_KEY_PAIR));
@@ -79,9 +96,13 @@ export function Brainwallet(props: any) {
             },
             (error) => {
 
-                setWarningMsg(
-                    (error as MY_NANO_PHP_ERROR).reason
-                );
+                props.setNotifyMessage({
+
+                    notify_type: NOTIFY_TYPE.NOTIFY_TYPE_ERROR,
+                    msg: (error as MY_NANO_PHP_ERROR).reason,
+                    timeout: 10000
+
+                } as NOTIFY_MESSAGE);
 
             }
         )
@@ -90,36 +111,59 @@ export function Brainwallet(props: any) {
 
     return (
         <div className="brainwallet-container">
-            <div className="word-phrases-container">
-                <div className="word-phrases-title">
-                    { props.language.brainwallet }
+            <div className="brainwallet-box">
+                <div className="word-phrases-container">
+                    <div className="word-phrases-title">
+                        { props.language.brainwallet }
+                    </div>
+                    <input
+
+                        type="text"
+                        className="word-phrases"
+                        id="word-phrases-id"
+                        title={ props.language.placehold_type_brainwallet }
+                        placeholder={ props.language.placehold_type_brainwallet }
+                        style={
+                            {
+                                height: "80px"
+                            }
+                        }
+
+                    />
                 </div>
-                <input
-                    type="text"
-                    className="word-phrases"
-                    id="word-phrases-id"
-                />
-            </div>
-            <div className="salt-container">
-                <div className="salt-title">
-                    { props.language.salt }
+                <div className="salt-container">
+                    <div className="salt-title">
+                        { props.language.salt }
+                    </div>
+                    <input
+
+                        type="text"
+                        className="salt"
+                        id="salt-id"
+                        title={ props.language.placehold_type_salt }
+                        placeholder={ props.language.placehold_type_salt }
+                        
+                    />
                 </div>
-                <input
-                    type="text"
-                    className="salt"
-                    id="salt-id"
-                />
-            </div>
-            <button 
-                className="open-brainwallet-btn"
-                onClick={ openBrainWallet }
-            >
-                { props.language.open_brainwallet }
-            </button>
-            <div
-                className="warning-msg-container"
-            >
-                { warningMsg }
+                <button 
+
+                    className="open-brainwallet-btn"
+                    onClick={ openBrainWallet }
+                    title={ props.language.open_brainwallet }
+
+                >
+                    { props.language.open_brainwallet }
+                </button>
+                <button
+
+                    className="go-back-open-brainwallet-btn"
+                    onClick={ () => props.goBack() }
+                    title={ props.language.go_back }
+
+                >
+                    <FiSkipBack size={20} style={{paddingRight: "4px"}} /> { props.language.go_back }
+                </button>
+
             </div>
         </div>
     )
@@ -127,12 +171,18 @@ export function Brainwallet(props: any) {
 }
 
 const mapStateToProps = (state: any, ownProps: any) => ({
+
     nano_wallet: state.wallet,
     language: state.lang
+
 });
   
 const mapDispatchToProps = (dispatch: any, ownProps: any) => ({
+
     wallet_public_key: (public_key: my_wallet) => dispatch(setPublicKey(public_key)),
+    setNotifyMessage: (msg: NOTIFY_MESSAGE) => dispatch(setNotifyMessage(msg)),
+    goBack: () => dispatch(resetWallet())
+
 });
   
 export default connect(mapStateToProps, mapDispatchToProps)(Brainwallet);

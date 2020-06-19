@@ -90,7 +90,9 @@ export const LANG_PT_BR = {
     notification_light_mode_changed: "Mudou para o modo claro",
     notification_dark_mode_changed: "Mudou para o modo escuro",
     notification_language_changed: "Changed to English language",
-    go_back: "Voltar"
+    go_back: "Voltar",
+    placehold_type_brainwallet: "Digite sua Brainwallet aqui",
+    placehold_type_salt: "Digite seu Salt aqui"
 
 }
 
@@ -182,7 +184,9 @@ export const LANG_EN_US = {
     notification_light_mode_changed: "Changed to light mode",
     notification_dark_mode_changed: "Changed to dark mode",
     notification_language_changed: "Mudou para o português do Brasil",
-    go_back: "Back"
+    go_back: "Back",
+    placehold_type_brainwallet: "Type your Brainwallet here",
+    placehold_type_salt: "Type your Salt here"
 
 }
 

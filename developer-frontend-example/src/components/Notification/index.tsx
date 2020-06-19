@@ -25,7 +25,8 @@ import { NOTIFY_MESSAGE } from '../../utils/wallet_interface';
 import { 
 
     getKey, 
-    NOTIFY_TYPE 
+    NOTIFY_TYPE, 
+    DEFAULT_NOTIFY_TIMEOUT
 
 } from '../../utils';
 
@@ -60,7 +61,7 @@ export function Notify(props: any) {
             
         },
         config: ((item: any, state: any) => { 
-            return (state === 'leave')?[{ duration: 5000 }, config]: config;
+            return (state === 'leave')?[{ duration:(item)?(item.timeout)?item.timeout:DEFAULT_NOTIFY_TIMEOUT:DEFAULT_NOTIFY_TIMEOUT }, config]: config;
         }) as any
     });
 
@@ -131,20 +132,6 @@ export function Notify(props: any) {
         </Container>
     );
 
-/*
-    return (
-        <Container>
-            { transition.map(({ key, item, props: { ...style}, }) => (
-                    <Message key={(item)?item.key:"key"} style={style as any}>
-                        <Content key={getKey()} notf={(item)?(item.notify_type)?item.notify_type:null:null} >
-                            { (item)?item.msg:"" }
-                        </Content>
-                    </Message>
-                ))
-            }
-        </Container>
-    );
-*/
 }
 
 const mapStateToProps = (state: any, ownProps: any) => ({

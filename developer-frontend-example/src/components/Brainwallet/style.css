@@ -1,0 +1,55 @@
+.brainwallet-container {
+
+    display: flex;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+
+}
+
+.salt-title,
+.word-phrases-title {
+
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 36px;
+    font-weight: 700;
+
+}
+
+.salt,
+.word-phrases {
+
+    width: 90%;
+    margin-left: 5%;
+    margin-right: 5%;
+    margin-top: 0;
+    text-align: center;
+
+}
+
+.word-phrases {
+
+    margin-bottom: 30px;
+
+}
+
+.salt {
+
+    margin-bottom: 60px;
+
+}
+
+.go-back-open-brainwallet-btn,
+.open-brainwallet-btn {
+
+    width: 900px;
+
+}
+
+.go-back-open-brainwallet-btn {
+
+    margin: 15px 0 0 0;
+
+}

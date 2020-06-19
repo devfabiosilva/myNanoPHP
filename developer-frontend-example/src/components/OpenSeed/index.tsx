@@ -11,7 +11,9 @@ import {
 
 import { 
 
-    setPublicKey, setNotifyMessage, resetWallet
+    setPublicKey,
+    setNotifyMessage,
+    resetWallet
 
 } from '../../actions';
 
@@ -154,7 +156,6 @@ export function OpenSeed(props: any) {
                     } as NOTIFY_MESSAGE);
                 },
                 (error_seed2keypair) => {
-                    //console.log(error_seed2keypair);
                     if (error_seed2keypair.error) {
                         props.newNotification({
                             notify_type: NOTIFY_TYPE.NOTIFY_TYPE_ERROR,
