@@ -3,12 +3,10 @@ import { connect } from 'react-redux';
 
 import { 
 
-    my_wallet,
     ENTROPY_TYPE,
     GENERATED_ENCRYPTED_SEED,
     MY_NANO_PHP_ERROR,
     SEED_AND_BIP39,
-    WALLET_FROM,
     OPEN_ENCRYPTED_SEED_RESPONSE,
     NOTIFY_MESSAGE,
 
@@ -23,8 +21,6 @@ import {
 
 import { 
 
-    setPublicKey, 
-    setMyWallet, 
     setNotifyMessage,
     resetWallet
 
@@ -32,6 +28,7 @@ import {
 
 import { FiSkipBack } from 'react-icons/fi';
 import './style.css';
+import { NOTIFY_TYPE } from '../../utils';
 
 export function GenerateSeed(props: any) {
 
@@ -43,13 +40,6 @@ export function GenerateSeed(props: any) {
         () => {
 
             if (seedAndBip39.seed) {
-                props.wallet_public_key(
-                    {
-                        origin: WALLET_FROM.FROM_GENERATING_SEED,
-                        public_key: "",
-                        encrypted_block: encryptedBlock
-                    }
-                );
 
                 setMyConsole(
                     props.language.msg_done_seed_and_bip39.replace(/%d/, seedAndBip39.seed).replace(/%e/, seedAndBip39.bip39)
@@ -69,11 +59,14 @@ export function GenerateSeed(props: any) {
         let options: any;
         let password: any = document.getElementById('gen-seed-password-id');
         let password_value: string = password.value.trim();
+        let notification_tmp: string;
 
         if (!password_value) {
 
             props.newNotification({
-                msg: props.language.empty_password
+                notify_type: NOTIFY_TYPE.NOTIFY_TYPE_ALERT,
+                msg: props.language.empty_password,
+                timeout: 600
             } as NOTIFY_MESSAGE);
 
             setMyConsole(props.language.empty_password);
@@ -82,18 +75,36 @@ export function GenerateSeed(props: any) {
         }
 
         options = document.getElementById('gen-seed-options-id');
-        setMyConsole(props.language.msg_gen_random_seed.replace(/%d/, options.value));
+        notification_tmp = props.language.msg_gen_random_seed.replace(/%d/, options.value);
+        setMyConsole(notification_tmp);
+        props.newNotification({
+            msg: notification_tmp,
+            timeout: 8000
+        } as NOTIFY_MESSAGE)
         my_nano_php_generate_encrypted_seed(options.value, password_value).then(
             (res: any) => {
 
                 setEncryptedBlock((res as GENERATED_ENCRYPTED_SEED).encrypted_seed);
-                setMyConsole(`${props.language.msg_seed_success} ${props.language.msg_opening_enc_block}`);
+                //setMyConsole(`${props.language.msg_seed_success} ${props.language.msg_opening_enc_block}`);
+                props.newNotification({
+                    msg: `${props.language.msg_seed_success} ${props.language.msg_opening_enc_block}`,
+                    timeout: 6000
+                } as NOTIFY_MESSAGE);
 
                 my_nano_php_open_encrypted_seed((res as GENERATED_ENCRYPTED_SEED).encrypted_seed, password_value).then(
                     (result: any) => {
 
                         setSeedAndBip39((result as OPEN_ENCRYPTED_SEED_RESPONSE).result);
-                        setMyWallet(props.language.msg_done);
+                        //setMyWallet(props.language.msg_done);
+                        props.newNotification({
+                            notify_type: NOTIFY_TYPE.NOTIFY_TYPE_ALERT,
+                            msg: props.language.keep_safe_msg,
+                            timeout: 25000
+                        } as NOTIFY_MESSAGE);
+                        props.newNotification({
+                            msg: props.language.msg_done,
+                            timeout:3000
+                        } as NOTIFY_MESSAGE);
 
                     },
                     (error: any) => {
@@ -121,25 +132,34 @@ export function GenerateSeed(props: any) {
                 <div className="gen-seed-options-title">
                     { props.language.gen_select_new_seed_title }
                 </div>
-                <input
+                <div className="gen-seed-password-box">
+                    <div className="gen-seed-password-title" style={{marginRight: "4px"}}>
+                        { props.language.password_txt }
+                    </div>
+                    <input
 
-                    id="gen-seed-password-id"
-                    className="gen-seed-password"
-                    type="password"
-                    placeholder={ props.language.passwd_create_file }
-                    
-                />
+                        id="gen-seed-password-id"
+                        className="gen-seed-password"
+                        type="password"
+                        placeholder={ props.language.passwd_create_file }
+                        
+                    />
+                </div>
                 <div className="gen-seed-option-content">
+                    <div className="gen-seed-selection-title" style={{marginRight: "4px"}}>
+                        { props.language.entropy_type_title }
+                    </div>
                     <select
 
                         className="gen-seed-options"
                         id="gen-seed-options-id"
+                        defaultValue={ ENTROPY_TYPE.EXCELENT }
 
                     >
-                        <option defaultValue = { ENTROPY_TYPE.PARANOIC } value={ ENTROPY_TYPE.PARANOIC }>
+                        <option value={ ENTROPY_TYPE.PARANOIC }>
                             { props.language.gen_opt_paranoic }
                         </option>
-                        <option value = { ENTROPY_TYPE.EXCELENT}>
+                        <option value = { ENTROPY_TYPE.EXCELENT} >
                             { props.language.gen_opt_excelent }
                         </option>
                         <option value = { ENTROPY_TYPE.GOOD }>
@@ -153,6 +173,11 @@ export function GenerateSeed(props: any) {
                         </option>
                     </select>
                 </div>
+                <div className="seed-and-bip39-container-box">
+                    <div className="seed-and-bip39-container-txt">
+                        { (myconsole)?myconsole:"Console" }
+                    </div>
+                </div>
                 <button
                     className = "generate-seed-btn"
                     onClick = { genSeed }
@@ -160,9 +185,6 @@ export function GenerateSeed(props: any) {
                     { props.language.gen_btn }
                 </button>
                 <div className="seed-and-bip39-container">
-                    <div className="seed-and-bip39-container-txt">
-                        { myconsole }
-                    </div>
                     <button className="save-to-encrypted-file-btn">
                         { props.language.save_to_enc_btn }
                     </button>
@@ -190,7 +212,6 @@ const mapStateToProps = (state: any, ownProps: any) => ({
   
 const mapDispatchToProps = (dispatch: any, ownProps: any) => ({
 
-    wallet_public_key: (public_key: my_wallet) => dispatch(setPublicKey(public_key)),
     newNotification: (msg: NOTIFY_MESSAGE) => dispatch(setNotifyMessage(msg)),
     goBack: () => dispatch(resetWallet())
 

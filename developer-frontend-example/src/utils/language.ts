@@ -92,7 +92,10 @@ export const LANG_PT_BR = {
     notification_language_changed: "Changed to English language",
     go_back: "Voltar",
     placehold_type_brainwallet: "Digite sua Brainwallet aqui",
-    placehold_type_salt: "Digite seu Salt aqui"
+    placehold_type_salt: "Digite seu Salt aqui",
+    password_txt: "Senha:",
+    entropy_type_title: "Tipo de entropia:",
+    keep_safe_msg: "Mantenha sempre suas SEED's, Bip39, Brainwallet e chaves privadas em locais seguros. Criptografe seus arquivos com senha forte e NUNCA divulgue-as pra NINGUÉM"
 
 }
 
@@ -186,7 +189,10 @@ export const LANG_EN_US = {
     notification_language_changed: "Mudou para o português do Brasil",
     go_back: "Back",
     placehold_type_brainwallet: "Type your Brainwallet here",
-    placehold_type_salt: "Type your Salt here"
+    placehold_type_salt: "Type your Salt here",
+    password_txt: "Password:",
+    entropy_type_title: "Entropy type:",
+    keep_safe_msg: "Keep your SEED's, Bip39, Brainwallet and Private Keys in safe place. Encrypt all of them with a strong password and NEVER tell them to ANYBODY"
 
 }
 

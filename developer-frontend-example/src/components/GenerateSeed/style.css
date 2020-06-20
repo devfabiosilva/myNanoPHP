@@ -5,13 +5,6 @@
     height: 100%;
     align-items: center;
     justify-content: center;
-    background-color: darkred;
-
-}
-
-.create-seed-and-bip39-box {
-
-    background-color: darkseagreen;
 
 }
 
@@ -34,15 +27,71 @@
 
 }
 
-.gen-seed-password,
-.gen-seed-options {
+.gen-seed-password {
 
     width: 620px;
+
+}
+
+.gen-seed-options {
+
+    width: 40%;
 
 }
 
 .gen-seed-password {
 
     text-align: center;
+
+}
+
+.gen-seed-option-content {
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin: 20px 0 0 0
+
+}
+
+.gen-seed-password-box {
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+}
+
+.seed-and-bip39-container-txt {
+
+    width: 720px;
+    height: 128px;
+    margin: 35px 0 20px 0;
+    padding: 8px 12px;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background-color: var(--background-content);
+    color: var(--color);
+
+
+}
+
+.gen-seed-password-title,
+.gen-seed-selection-title,
+.seed-and-bip39-container-txt {
+
+    font-style: italic;
+    font-size: 16px;
+
+}
+
+.seed-and-bip39-container-box {
+
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
 
 }
