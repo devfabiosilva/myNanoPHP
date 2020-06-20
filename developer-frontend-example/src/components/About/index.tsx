@@ -8,7 +8,7 @@ export function About(props: any) {
         <div className="about-container">
             To be implemented ...
             <button onClick={ props.goBack }>
-                <FiSkipBack size={16} /> Go back
+                <FiSkipBack size={16} style={{marginRight: "4px"}} /> { props.language.go_back }
             </button>
         </div>
     );

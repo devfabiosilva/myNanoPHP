@@ -25,9 +25,13 @@ import {
 
     setPublicKey, 
     setMyWallet, 
-    setNotifyMessage
+    setNotifyMessage,
+    resetWallet
 
 } from '../../actions';
+
+import { FiSkipBack } from 'react-icons/fi';
+import './style.css';
 
 export function GenerateSeed(props: any) {
 
@@ -112,47 +116,65 @@ export function GenerateSeed(props: any) {
     }
 
     return (
-        <div>
-            <div className="gen-seed-options-title">
-                { props.language.gen_select_new_seed_title }
-            </div>
-            <input
-                id="gen-seed-password-id"
-                type="password"
-                placeholder={ props.language.passwd_create_file }
-            />
-            <select
-                className="gen-seed-options"
-                id="gen-seed-options-id"
-            >
-                <option defaultValue = { ENTROPY_TYPE.PARANOIC } value={ ENTROPY_TYPE.PARANOIC }>
-                    { props.language.gen_opt_paranoic }
-                </option>
-                <option value = { ENTROPY_TYPE.EXCELENT}>
-                    { props.language.gen_opt_excelent }
-                </option>
-                <option value = { ENTROPY_TYPE.GOOD }>
-                    { props.language.gen_opt_good }
-                </option>
-                <option value = { ENTROPY_TYPE.NOT_ENOUGH }>
-                    { props.language.gen_opt_not_enough}
-                </option>
-                <option value = { ENTROPY_TYPE.NOT_RECOMMENDED }>
-                    { props.language.gen_opt_not_recommended }
-                </option>
-            </select>
-            <button
-                className = "generate-seed-btn"
-                onClick = { genSeed }
-            >
-                { props.language.gen_btn }
-            </button>
-            <div className="seed-and-bip39-container">
-                <div className="seed-and-bip39-container-txt">
-                    { myconsole }
+        <div className="create-seed-and-bip39-container">
+            <div className="create-seed-and-bip39-box">
+                <div className="gen-seed-options-title">
+                    { props.language.gen_select_new_seed_title }
                 </div>
-                <button className="save-to-encrypted-file-btn">
-                    { props.language.save_to_enc_btn }
+                <input
+
+                    id="gen-seed-password-id"
+                    className="gen-seed-password"
+                    type="password"
+                    placeholder={ props.language.passwd_create_file }
+                    
+                />
+                <div className="gen-seed-option-content">
+                    <select
+
+                        className="gen-seed-options"
+                        id="gen-seed-options-id"
+
+                    >
+                        <option defaultValue = { ENTROPY_TYPE.PARANOIC } value={ ENTROPY_TYPE.PARANOIC }>
+                            { props.language.gen_opt_paranoic }
+                        </option>
+                        <option value = { ENTROPY_TYPE.EXCELENT}>
+                            { props.language.gen_opt_excelent }
+                        </option>
+                        <option value = { ENTROPY_TYPE.GOOD }>
+                            { props.language.gen_opt_good }
+                        </option>
+                        <option value = { ENTROPY_TYPE.NOT_ENOUGH }>
+                            { props.language.gen_opt_not_enough}
+                        </option>
+                        <option value = { ENTROPY_TYPE.NOT_RECOMMENDED }>
+                            { props.language.gen_opt_not_recommended }
+                        </option>
+                    </select>
+                </div>
+                <button
+                    className = "generate-seed-btn"
+                    onClick = { genSeed }
+                >
+                    { props.language.gen_btn }
+                </button>
+                <div className="seed-and-bip39-container">
+                    <div className="seed-and-bip39-container-txt">
+                        { myconsole }
+                    </div>
+                    <button className="save-to-encrypted-file-btn">
+                        { props.language.save_to_enc_btn }
+                    </button>
+                </div>
+                <button
+
+                    className="go-back-gen-seed-btn"
+                    onClick={ () => props.goBack() }
+                    title={ props.language.go_back }
+
+                >
+                    <FiSkipBack size={20} style={{paddingRight: "4px"}} /> { props.language.go_back }
                 </button>
             </div>
         </div>
@@ -167,8 +189,11 @@ const mapStateToProps = (state: any, ownProps: any) => ({
 });
   
 const mapDispatchToProps = (dispatch: any, ownProps: any) => ({
+
     wallet_public_key: (public_key: my_wallet) => dispatch(setPublicKey(public_key)),
-    newNotification: (msg: NOTIFY_MESSAGE) => dispatch(setNotifyMessage(msg))
+    newNotification: (msg: NOTIFY_MESSAGE) => dispatch(setNotifyMessage(msg)),
+    goBack: () => dispatch(resetWallet())
+
 });
   
 export default connect(mapStateToProps, mapDispatchToProps)(GenerateSeed);

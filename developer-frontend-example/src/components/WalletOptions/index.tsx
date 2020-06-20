@@ -49,6 +49,7 @@ export function SelectWallet(props: any) {
 
                         onClick={() => setOptions(WALLET_FROM.FROM_SEED)}
                         className="option-container-tag"
+                        title={ props.language.open_with_seed }
 
                     >
                         <p className="option-container-icon">
@@ -62,6 +63,7 @@ export function SelectWallet(props: any) {
                         
                         onClick={() => setOptions(WALLET_FROM.FROM_BIP39)}
                         className="option-container-tag"
+                        title={ props.language.open_with_bip39 }
 
                     >
                         <p className="option-container-icon">
@@ -75,6 +77,7 @@ export function SelectWallet(props: any) {
 
                         onClick={() => setOptions(WALLET_FROM.FROM_ENCRYPTED_FILE)}
                         className="option-container-tag"
+                        title={ props.language.open_with_encrypted_file }
 
                     >
                         <p className="option-container-icon">
@@ -88,6 +91,7 @@ export function SelectWallet(props: any) {
                         
                         onClick={() => setOptions(WALLET_FROM.FROM_BRAINWALLET)}
                         className="option-container-tag"
+                        title={ props.language.open_with_brainwallet }
 
                     >
                         <p className="option-container-icon">
@@ -103,6 +107,7 @@ export function SelectWallet(props: any) {
                      
                         onClick={() => setOptions(WALLET_FROM.FROM_GENERATING_SEED)}
                         className="option-container-tag"
+                        title={ props.language.open_gen_new_seed }
                     
                     >
                         <p className="option-container-icon">
@@ -116,6 +121,7 @@ export function SelectWallet(props: any) {
                         
                         onClick={() => setOptions(WALLET_FROM.FROM_KEY_PAIR)}
                         className="option-container-tag"
+                        title={ props.language.open_keypair  }
                     
                     >
                         <p className="option-container-icon">
@@ -129,6 +135,7 @@ export function SelectWallet(props: any) {
                         
                         onClick={() => setOptions(WALLET_FROM.FROM_PUBLIC_KEY)}
                         className="option-container-tag"
+                        title={ props.language.open_from_public_key }
                         
                     >
                         <p className="option-container-icon">
@@ -142,6 +149,7 @@ export function SelectWallet(props: any) {
                         
                         onClick={() => props.showAbout()}
                         className="option-container-tag"
+                        title={ props.language.about_author }
                     
                     >
                         <p className="option-container-icon">
