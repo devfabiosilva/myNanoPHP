@@ -27,8 +27,8 @@ import {
 } from '../../actions';
 
 import { FiSkipBack } from 'react-icons/fi';
-import './style.css';
 import { NOTIFY_TYPE } from '../../utils';
+import './style.css';
 
 export function GenerateSeed(props: any) {
 
@@ -44,7 +44,7 @@ export function GenerateSeed(props: any) {
                 setMyConsole(
                     props.language.msg_done_seed_and_bip39.replace(/%d/, seedAndBip39.seed).replace(/%e/, seedAndBip39.bip39)
                 );
-                setSeedAndBip39({}); //Forget Seed and Bip39 Immediatelly
+                setSeedAndBip39({}); //Forget Seed and Bip39 Immediatelly. These sensible data are stored now in encryptedBlock state encrypted with password
             }
         },
         [
@@ -53,6 +53,47 @@ export function GenerateSeed(props: any) {
             props
         ]
     );
+
+    function saveToFile() {
+
+        let binary_blob: any;
+        let a: any;
+        let pseudo_url: any;
+
+        if (encryptedBlock === "") {
+
+            setMyConsole(props.language.encrypted_block_not_found_msg);
+            props.newNotification({
+
+                notify_type: NOTIFY_TYPE.NOTIFY_TYPE_ALERT,
+                msg: props.language.encrypted_block_not_found_msg,
+                timeout: 7000
+
+            } as NOTIFY_MESSAGE);
+
+            return;
+
+        }
+
+        binary_blob = new Blob(
+
+            [Buffer.from(encryptedBlock, 'hex')],
+            { type: 'application/octet-stream' }
+        
+        );
+
+        a = document.createElement('a');
+        a.style = 'display: none';
+        document.body.appendChild(a);
+        pseudo_url=window.URL.createObjectURL(binary_blob);
+
+        a.href = pseudo_url;
+        a.download = "myEncryptedNanoSeed.nse";
+        a.click();
+        window.URL.revokeObjectURL(pseudo_url);
+        document.body.removeChild(a);
+
+    }
 
     function genSeed() {
 
@@ -64,9 +105,11 @@ export function GenerateSeed(props: any) {
         if (!password_value) {
 
             props.newNotification({
+
                 notify_type: NOTIFY_TYPE.NOTIFY_TYPE_ALERT,
                 msg: props.language.empty_password,
                 timeout: 600
+
             } as NOTIFY_MESSAGE);
 
             setMyConsole(props.language.empty_password);
@@ -78,32 +121,38 @@ export function GenerateSeed(props: any) {
         notification_tmp = props.language.msg_gen_random_seed.replace(/%d/, options.value);
         setMyConsole(notification_tmp);
         props.newNotification({
+
             msg: notification_tmp,
             timeout: 8000
-        } as NOTIFY_MESSAGE)
+
+        } as NOTIFY_MESSAGE);
         my_nano_php_generate_encrypted_seed(options.value, password_value).then(
             (res: any) => {
 
                 setEncryptedBlock((res as GENERATED_ENCRYPTED_SEED).encrypted_seed);
-                //setMyConsole(`${props.language.msg_seed_success} ${props.language.msg_opening_enc_block}`);
                 props.newNotification({
+
                     msg: `${props.language.msg_seed_success} ${props.language.msg_opening_enc_block}`,
                     timeout: 6000
+
                 } as NOTIFY_MESSAGE);
 
                 my_nano_php_open_encrypted_seed((res as GENERATED_ENCRYPTED_SEED).encrypted_seed, password_value).then(
                     (result: any) => {
 
                         setSeedAndBip39((result as OPEN_ENCRYPTED_SEED_RESPONSE).result);
-                        //setMyWallet(props.language.msg_done);
                         props.newNotification({
+
                             notify_type: NOTIFY_TYPE.NOTIFY_TYPE_ALERT,
                             msg: props.language.keep_safe_msg,
-                            timeout: 25000
+                            timeout: 20000
+
                         } as NOTIFY_MESSAGE);
                         props.newNotification({
+
                             msg: props.language.msg_done,
                             timeout:3000
+
                         } as NOTIFY_MESSAGE);
 
                     },
@@ -118,9 +167,35 @@ export function GenerateSeed(props: any) {
 
             },
             (err) => {
-                ((err as MY_NANO_PHP_ERROR).error)?
-                    setMyConsole(`Error: ${(err as MY_NANO_PHP_ERROR).error.toString()} reason: ${(err as MY_NANO_PHP_ERROR).reason}`):
+
+                if ((err as MY_NANO_PHP_ERROR).error) {
+
+                    notification_tmp = `Error: ${(err as MY_NANO_PHP_ERROR).error} reason: ${(err as MY_NANO_PHP_ERROR).reason}`;
+
+                    if (err.info)
+                        notification_tmp=`${notification_tmp} Server info: ${err.info}`;
+
+                    setMyConsole(notification_tmp);
+                    props.newNotification({
+
+                        notify_type: NOTIFY_TYPE.NOTIFY_TYPE_ERROR,
+                        msg: notification_tmp,
+                        timeout: 15000
+
+                    } as NOTIFY_MESSAGE);
+
+                } else {
+
                     setMyConsole(props.language.msg_unknown_server_error);
+                    props.newNotification({
+
+                        notify_type: NOTIFY_TYPE.NOTIFY_TYPE_ERROR,
+                        msg: props.language.msg_unknown_server_error,
+                        timeout: 6000
+
+                    } as NOTIFY_MESSAGE);
+
+                }
             }
         );
 
@@ -179,13 +254,20 @@ export function GenerateSeed(props: any) {
                     </div>
                 </div>
                 <button
+
                     className = "generate-seed-btn"
                     onClick = { genSeed }
+
                 >
                     { props.language.gen_btn }
                 </button>
                 <div className="seed-and-bip39-container">
-                    <button className="save-to-encrypted-file-btn">
+                    <button 
+
+                        className="save-to-encrypted-file-btn"
+                        onClick={() => saveToFile()}
+
+                    >
                         { props.language.save_to_enc_btn }
                     </button>
                 </div>

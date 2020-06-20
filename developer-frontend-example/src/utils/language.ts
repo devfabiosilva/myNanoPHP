@@ -95,7 +95,8 @@ export const LANG_PT_BR = {
     placehold_type_salt: "Digite seu Salt aqui",
     password_txt: "Senha:",
     entropy_type_title: "Tipo de entropia:",
-    keep_safe_msg: "Mantenha sempre suas SEED's, Bip39, Brainwallet e chaves privadas em locais seguros. Criptografe seus arquivos com senha forte e NUNCA divulgue-as pra NINGUÉM"
+    keep_safe_msg: "Mantenha sempre suas SEED's, Bip39, Brainwallet e chaves privadas em locais seguros. Criptografe seus arquivos com senha forte e NUNCA divulgue-as pra NINGUÉM",
+    encrypted_block_not_found_msg: "Bloco criptografado NÃO encontrado. Por favor crie uma Semente NANO primeiro"
 
 }
 
@@ -192,7 +193,8 @@ export const LANG_EN_US = {
     placehold_type_salt: "Type your Salt here",
     password_txt: "Password:",
     entropy_type_title: "Entropy type:",
-    keep_safe_msg: "Keep your SEED's, Bip39, Brainwallet and Private Keys in safe place. Encrypt all of them with a strong password and NEVER tell them to ANYBODY"
+    keep_safe_msg: "Keep your SEED's, Bip39, Brainwallet and Private Keys in safe place. Encrypt all of them with a strong password and NEVER tell them to ANYBODY",
+    encrypted_block_not_found_msg: "Encrypted block NOT found. Please create a NANO Seed first"
 
 }
 
