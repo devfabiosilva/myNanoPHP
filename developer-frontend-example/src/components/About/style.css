@@ -1,0 +1,112 @@
+.about-container {
+
+    height: 100%;
+    width: 100%;
+    background-color: firebrick;
+
+}
+
+.about-title {
+
+    width: 100%;
+    text-align: center;
+    font-size: 34px;
+    font-weight: 700;
+    background-color: forestgreen;
+
+}
+
+.about-content {
+
+    width: 100%;
+    height: 80%;
+    font-size: 18px;
+    background-color: goldenrod;
+
+}
+
+.about-button-content {
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    background-color: fuchsia;
+
+}
+
+.about-button-go-back {
+
+    width: 400px;
+
+}
+
+.about-text-content {
+
+    display: flex;
+    background-color: mediumvioletred;
+
+}
+
+.about-author-content {
+
+    background-color: midnightblue;
+
+}
+
+.about-author-title {
+    background-color: olive;
+}
+
+.about-author-content {
+    display: flex;
+}
+
+.about-email-content {
+    display: flex;
+    background-color: peru;
+}
+
+.about-email-title {
+    background-color: rosybrown;
+}
+
+.about-email-msg {
+    background-color: seagreen;
+}
+
+.about-github-content {
+    display: flex;
+    background-color: skyblue;
+}
+
+.about-github-title {
+    background-color: thistle;
+}
+
+.about-github-msg {
+    background-color: blue;
+}
+
+.about-donation-content {
+    display: flex;
+    background-color: chocolate;
+}
+
+.about-donation-title {
+    background-color: crimson;
+}
+
+.about-donation-msg {
+    background-color: darkblue;
+}
+
+.about-bitcoin-content {
+    display: flex;
+    background-color: darkolivegreen;
+}
+
+.about-nano-content {
+    display: flex;
+    background-color: deeppink;
+}

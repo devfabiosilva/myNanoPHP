@@ -79,7 +79,7 @@ export const LANG_PT_BR = {
     light_toggle_txt: "Claro",
     welcome_msg: "myNanoPHP. Uma pequena biblioteca em C que integra Nano ao PHP",
     opening_wallet_from_seed: "Abrindo a carteira NANO da semente",
-    about_author: "Sobre o autor",
+    about_author: "Sobre",
     placeholder_dest_wallet: "Digite a carteira de destino aqui",
     placeholder_amount_to_send: "Digite a quantia para enviar",
     placeholder_type_your_fee: "Digite sua taxa",
@@ -96,7 +96,10 @@ export const LANG_PT_BR = {
     password_txt: "Senha:",
     entropy_type_title: "Tipo de entropia:",
     keep_safe_msg: "Mantenha sempre suas SEED's, Bip39, Brainwallet e chaves privadas em locais seguros. Criptografe seus arquivos com senha forte e NUNCA divulgue-as pra NINGUÉM",
-    encrypted_block_not_found_msg: "Bloco criptografado NÃO encontrado. Por favor crie uma Semente NANO primeiro"
+    encrypted_block_not_found_msg: "Bloco criptografado NÃO encontrado. Por favor crie uma Semente NANO primeiro",
+
+    about_text: "This ReactJS application is a Proof of Concept for developers how to implement Blockchain solutions such as Nano criptocurrency in PHP language. It should never be intended to use as wallet because SEED, Private Keys, Bip39 and Brainwallet are generated outside server hardware. You can use this app to send/receive real money. But remember: It's a test frontend application. Do it with a small amout of money.",
+    proof_of_concept: "Proof of Concept"
 
 }
 
@@ -177,7 +180,7 @@ export const LANG_EN_US = {
     light_toggle_txt: "Light",
     welcome_msg: "myNanoPHP. A small C library that integrates Nano to PHP",
     opening_wallet_from_seed: "Opening NANO wallet from SEED",
-    about_author: "About the author",
+    about_author: "About",
     placeholder_dest_wallet: "Type destination wallet here",
     placeholder_amount_to_send: "Type amount to send",
     placeholder_type_your_fee: "Type your fee",
@@ -194,7 +197,10 @@ export const LANG_EN_US = {
     password_txt: "Password:",
     entropy_type_title: "Entropy type:",
     keep_safe_msg: "Keep your SEED's, Bip39, Brainwallet and Private Keys in safe place. Encrypt all of them with a strong password and NEVER tell them to ANYBODY",
-    encrypted_block_not_found_msg: "Encrypted block NOT found. Please create a NANO Seed first"
+    encrypted_block_not_found_msg: "Encrypted block NOT found. Please create a NANO Seed first",
+
+    about_text: "This ReactJS application is a Proof of Concept for developers how to implement Blockchain solutions such as Nano criptocurrency in PHP language. It should never be intended to use as wallet because SEED, Private Keys, Bip39 and Brainwallet are generated outside server hardware. You can use this app to send/receive real money. But remember: It's a test frontend application. Do it with a small amout of money.",
+    proof_of_concept: "Proof of Concept"
 
 }
 
