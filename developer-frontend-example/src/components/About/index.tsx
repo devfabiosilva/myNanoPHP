@@ -21,7 +21,7 @@ export function About(props: any) {
                 </div>
                 <div className="about-author-content">
                     <div className="about-author-title">
-                        Auto
+                        { props.language.author_title }
                     </div>
                     <div className="about-author-msg">
                         Fábio Pereira da Silva
@@ -45,7 +45,7 @@ export function About(props: any) {
                 </div>
                 <div className="about-donation-content">
                     <div className="about-donation-title">
-                        Donation
+                        { props.language.donation }
                     </div>
                     <div className="about-donation-msg">
                         <div className="about-bitcoin-content">
@@ -53,7 +53,7 @@ export function About(props: any) {
                                 Bitcoin
                             </div>
                             <div className="about-bitcoin-address">
-                                Bitcoin address
+                                1JDckpLRJGhp46LTcjY1vsW19wurZ3L1d5
                             </div>
                         </div>
                         <div className="about-nano-content">
@@ -61,7 +61,7 @@ export function About(props: any) {
                                 Nano
                             </div>
                             <div className="about-nano-address">
-                                Nano address
+                                nano_1cb5fs7xmixqzpitfn9ouy4j1g3hjmdfudc1igt5xhwwps7qdku5htqxmznb
                             </div>
                         </div>
                         <div className="about-litecoin-content">
@@ -69,7 +69,7 @@ export function About(props: any) {
                                 Litecoin
                             </div>
                             <div className="about-litecoin-address">
-                                Litecoin address
+                                LRjEiKadFzPCoGorWvSVUnWPsFyPZGt97f
                             </div>
                         </div>
                         <div className="about-dogecoin-content">
@@ -77,7 +77,7 @@ export function About(props: any) {
                                 Dogecoin
                             </div>
                             <div className="about-dogecoin-address">
-                                Dogecoin address
+                                DRrWWMdwY6AN8rdz7zH2cp3qaK8vSgDTau
                             </div>
                         </div>
                     </div>

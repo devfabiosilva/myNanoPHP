@@ -28,7 +28,8 @@ export function DarkModeTool(props: any) {
                             transform:( props.backgroundMode === BACKGROUND_LIGHT )?"none":"translateX(100%)"
                         }
                 }
-            ></div>
+            >
+            </div>
             <div className="toggle-name">
                 <div 
                     className="light-name" 

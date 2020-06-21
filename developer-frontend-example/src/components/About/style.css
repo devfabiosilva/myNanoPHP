@@ -2,7 +2,6 @@
 
     height: 100%;
     width: 100%;
-    background-color: firebrick;
 
 }
 
@@ -12,16 +11,52 @@
     text-align: center;
     font-size: 34px;
     font-weight: 700;
-    background-color: forestgreen;
+    padding: 6px;
 
 }
 
 .about-content {
 
     width: 100%;
-    height: 80%;
+    height: 75%;
     font-size: 18px;
-    background-color: goldenrod;
+
+}
+
+.about-author-title,
+.about-text-content-title,
+.about-email-title,
+.about-github-title,
+.about-donation-title {
+
+    padding: 4px;
+    width: 100px;
+    text-align: center;
+    font-weight: 700;;
+
+}
+
+
+.about-text-content-msg,
+.about-author-msg,
+.about-email-msg,
+.about-github-msg,
+.about-donation-msg {
+
+    margin: 4px auto;
+    width: 800px;
+    padding: 4px 8px;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background-color: var(--background-content);
+    color: var(--color);
+
+}
+
+.about-text-content-msg {
+
+    height: 125px;
 
 }
 
@@ -31,7 +66,6 @@
     justify-content: center;
     align-items: center;
     width: 100%;
-    background-color: fuchsia;
 
 }
 
@@ -41,72 +75,40 @@
 
 }
 
-.about-text-content {
+.about-text-content,
+.about-author-content,
+.about-email-content,
+.about-github-content,
+.about-donation-content,
+.about-bitcoin-content,
+.about-nano-content,
+.about-litecoin-content,
+.about-dogecoin-content
+ {
 
     display: flex;
-    background-color: mediumvioletred;
 
 }
 
-.about-author-content {
+.about-bitcoin-title,
+.about-nano-title,
+.about-litecoin-title,
+.about-dogecoin-title {
 
-    background-color: midnightblue;
+    padding: 0 4px 4px 0;
+    width: 80px;
+    font-weight: 700;
 
 }
 
-.about-author-title {
-    background-color: olive;
-}
+.about-bitcoin-address,
+.about-nano-address,
+.about-litecoin-address,
+.about-dogecoin-address {
 
-.about-author-content {
-    display: flex;
-}
+    padding: 0 4px 4px 0;
+    width: 80%;
+    margin: 0 auto;
+    font-style: italic;
 
-.about-email-content {
-    display: flex;
-    background-color: peru;
-}
-
-.about-email-title {
-    background-color: rosybrown;
-}
-
-.about-email-msg {
-    background-color: seagreen;
-}
-
-.about-github-content {
-    display: flex;
-    background-color: skyblue;
-}
-
-.about-github-title {
-    background-color: thistle;
-}
-
-.about-github-msg {
-    background-color: blue;
-}
-
-.about-donation-content {
-    display: flex;
-    background-color: chocolate;
-}
-
-.about-donation-title {
-    background-color: crimson;
-}
-
-.about-donation-msg {
-    background-color: darkblue;
-}
-
-.about-bitcoin-content {
-    display: flex;
-    background-color: darkolivegreen;
-}
-
-.about-nano-content {
-    display: flex;
-    background-color: deeppink;
 }

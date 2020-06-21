@@ -1,5 +1,6 @@
 .band-logos {
 
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -7,5 +8,43 @@
     height: 82px;
     background-color: #f5f6f8;
     border-radius: 100px;
+
+}
+
+.nano-link,
+.p2pow-link,
+.php-link,
+.iot-link {
+
+    position: absolute;
+    top: 0;
+    width: 75px;
+    height: 100%;
+    cursor: pointer;
+    opacity: 0.5;
+
+}
+
+.nano-link {
+
+    left: 30px;
+
+}
+
+.p2pow-link {
+
+    left: 112px;
+
+}
+
+.php-link {
+
+    left: 212px;
+
+}
+
+.iot-link {
+
+    left: 312px;
 
 }
