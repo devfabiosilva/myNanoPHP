@@ -1,6 +1,13 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { changeBackgroundMode, setNotifyMessage } from '../../actions';
+
+import { 
+
+    changeBackgroundMode, 
+    setNotifyMessage 
+
+} from '../../actions';
+
 import './style.css';
 
 import { 

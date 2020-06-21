@@ -4,7 +4,9 @@ import { connect } from 'react-redux';
 
 import { 
 
-  setPublicKey
+  setPublicKey,
+  resetWallet,
+  setNotifyMessage
 
 } from '../../actions';
 
@@ -14,7 +16,8 @@ import {
   PUBLIC_KEY2ADDRESS, 
   my_wallet,
   WALLET_FROM,
-  MY_NANO_PHP_SEED2KEYPAIR
+  MY_NANO_PHP_SEED2KEYPAIR,
+  NOTIFY_MESSAGE
 
 } from '../../utils/wallet_interface';
 
@@ -26,6 +29,8 @@ import {
 
 } from '../../service';
 
+import { FiSkipBack } from 'react-icons/fi';
+import { NOTIFY_TYPE } from '../../utils';
 import './style.css';
 
 export function OpenEncryptedWalletFile(props: any) {
@@ -74,7 +79,17 @@ export function OpenEncryptedWalletFile(props: any) {
               }
             );
           },
-          (e) => console.log(e)
+          (e) => {
+            
+            props.newNotification({
+
+              notify_type: NOTIFY_TYPE.NOTIFY_TYPE_ERROR,
+              msg: `${e.error} ${e.reason}`
+
+            } as NOTIFY_MESSAGE);
+            fileUploader.value = '';
+
+          }
         );
       } else {
 
@@ -121,17 +136,31 @@ export function OpenEncryptedWalletFile(props: any) {
       >
         { props.language.open_enc_file }
       </button>
+      <button
+
+        onClick={ () => props.goBack()}
+        title={ props.language.go_back }
+
+      >
+        <FiSkipBack size={20} style={{paddingRight: "4px"}} />{ props.language.go_back}
+      </button>
     </div>
   );
 }
 
 const mapStateToProps = (state: any, ownProps: any) => ({
+
   nano_wallet: state.wallet,
   language: state.lang
+
 });
 
 const mapDispatchToProps = (dispatch: any, ownProps: any) => ({
-  wallet_public_key: (public_key: my_wallet) => dispatch(setPublicKey(public_key))
+
+  wallet_public_key: (public_key: my_wallet) => dispatch(setPublicKey(public_key)),
+  goBack: () => dispatch(resetWallet()),
+  newNotification: (msg: NOTIFY_MESSAGE) => dispatch(setNotifyMessage(msg))
+
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(OpenEncryptedWalletFile);

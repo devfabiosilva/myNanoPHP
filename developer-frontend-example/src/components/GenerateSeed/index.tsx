@@ -27,7 +27,13 @@ import {
 } from '../../actions';
 
 import { FiSkipBack } from 'react-icons/fi';
-import { NOTIFY_TYPE } from '../../utils';
+
+import { 
+    
+    NOTIFY_TYPE, 
+    saveToBinaryEncryptedStream 
+
+} from '../../utils';
 import './style.css';
 
 export function GenerateSeed(props: any) {
@@ -56,10 +62,6 @@ export function GenerateSeed(props: any) {
 
     function saveToFile() {
 
-        let binary_blob: any;
-        let a: any;
-        let pseudo_url: any;
-
         if (encryptedBlock === "") {
 
             setMyConsole(props.language.encrypted_block_not_found_msg);
@@ -75,23 +77,7 @@ export function GenerateSeed(props: any) {
 
         }
 
-        binary_blob = new Blob(
-
-            [Buffer.from(encryptedBlock, 'hex')],
-            { type: 'application/octet-stream' }
-        
-        );
-
-        a = document.createElement('a');
-        a.style = 'display: none';
-        document.body.appendChild(a);
-        pseudo_url=window.URL.createObjectURL(binary_blob);
-
-        a.href = pseudo_url;
-        a.download = "myEncryptedNanoSeed.nse";
-        a.click();
-        window.URL.revokeObjectURL(pseudo_url);
-        document.body.removeChild(a);
+        saveToBinaryEncryptedStream(encryptedBlock);
 
     }
 

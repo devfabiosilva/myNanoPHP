@@ -1,0 +1,24 @@
+.token-containter {
+ 
+    display: none;
+    justify-content: center;
+    align-items: center;
+    justify-items: center;
+    position: fixed; 
+    z-index: 3;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.4);
+
+}
+
+.token-window {
+
+    border-radius: 4px;
+    background-color: #f0f0f5;
+    width: 711px;
+    height: 440px;
+
+}

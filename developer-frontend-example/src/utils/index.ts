@@ -37,3 +37,29 @@ export function getKey() {
     return Math.random().toString(36).substring(2);
 
 }
+
+export function saveToBinaryEncryptedStream(encrypted_stream: string) {
+
+    let binary_blob: any;
+    let a: any;
+    let pseudo_url: any;
+
+    binary_blob = new Blob(
+
+        [Buffer.from(encrypted_stream, 'hex')],
+        { type: 'application/octet-stream' }
+    
+    );
+
+    a = document.createElement('a');
+    a.style = 'display: none';
+    document.body.appendChild(a);
+    pseudo_url=window.URL.createObjectURL(binary_blob);
+
+    a.href = pseudo_url;
+    a.download = "myEncryptedNanoSeed.nse";
+    a.click();
+    window.URL.revokeObjectURL(pseudo_url);
+    document.body.removeChild(a);
+
+}

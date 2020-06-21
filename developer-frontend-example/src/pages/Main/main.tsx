@@ -32,6 +32,7 @@ import './style.css';
 import Welcome from '../../components/Welcome';
 import Notify from '../../components/Notification';
 import About from '../../components/About';
+import TokenMsg from '../../components/TokenMsg';
 
 export function MainContainer( props: any) {
 
@@ -47,6 +48,7 @@ export function MainContainer( props: any) {
                     { props.children }
                 </div>
             </div>
+            <TokenMsg />
             <Notify />
         </div>
     );
