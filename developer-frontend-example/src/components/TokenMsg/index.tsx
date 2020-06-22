@@ -26,6 +26,7 @@ const mapStateToProps = (state: any, ownProps: any) => ({
 
 const mapDispatchToProps = (dispatch: any, ownProps: any) => ({
 
+
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(TokenMsg);

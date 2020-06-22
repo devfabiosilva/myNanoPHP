@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import { connect } from 'react-redux';
 
@@ -35,6 +35,9 @@ import './style.css';
 
 export function OpenEncryptedWalletFile(props: any) {
 
+  const [ passwordReady, setPasswordReady ] = useState(false);
+
+/*
   function loadFile() {
 
     let password:any = document.getElementById('file-password');
@@ -113,37 +116,80 @@ export function OpenEncryptedWalletFile(props: any) {
       myfile.click();
 
   }
+*/
+  function loadFile() {
+
+    let fileUploader:any = document.getElementById('file-uploader-id');
+    let password: any = document.getElementById('file-password');
+
+    if (fileUploader.files[0]) {
+
+      password.value = "";
+      setPasswordReady(true);
+
+    }
+
+  }
+
+  function openFile() {
+
+    let myfile: any = document.getElementById('file-uploader-id');
+
+    if (myfile)
+      myfile.click();
+
+  }
+
+  function clearAndGoBack() {
+
+    let fileUploader:any = document.getElementById('file-uploader-id');
+    let password: any = document.getElementById('file-password');
+
+    fileUploader.value = '';
+    password.value = '';
+    props.goBack();
+
+  }
 
   return (
-    <div>
-      <input 
+    <div className="open-encrypted-file-container">
+      <div className="open-encrypted-file-content">
+        <input 
 
-        type="file" 
-        id="file-uploader-id"
-        className="file-uploader"
-        onChange={ () => loadFile()}
+          type="file" 
+          id="file-uploader-id"
+          className="file-uploader"
+          onChange={ () => loadFile()}
 
-      />
-      <input 
+        />
+        <input 
 
-        type="password" 
-        id="file-password"
-        placeholder={ props.language.type_your_password }
+          type="password"
+          id="file-password"
+          className="password-input"
+          style={{
+            display: (passwordReady)?"inline":"none"
+          }}
+          placeholder={ props.language.type_your_password }
 
-      />
-      <button
-        onClick={ () => openFile()}
-      >
-        { props.language.open_enc_file }
-      </button>
-      <button
+        />
+        <button
+          onClick={ () => openFile()}
+          style={{
+            display: (passwordReady)?"none":"inline"
+          }}
+        >
+          { props.language.open_enc_file }
+        </button>
+        <button
 
-        onClick={ () => props.goBack()}
-        title={ props.language.go_back }
+          onClick={ () => clearAndGoBack()}
+          title={ props.language.go_back }
 
-      >
-        <FiSkipBack size={20} style={{paddingRight: "4px"}} />{ props.language.go_back}
-      </button>
+        >
+          <FiSkipBack size={20} style={{paddingRight: "4px"}} />{ props.language.go_back}
+        </button>
+      </div>
     </div>
   );
 }

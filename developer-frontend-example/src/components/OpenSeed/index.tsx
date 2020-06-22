@@ -40,7 +40,6 @@ export function OpenSeed(props: any) {
 
         if ((seed_value = seed.value.trim()) === "") {
 
-            //alert(props.language.msg_empty_seed);
             props.newNotification({
                 notify_type: NOTIFY_TYPE.NOTIFY_TYPE_ALERT,
                 msg: props.language.msg_empty_seed
