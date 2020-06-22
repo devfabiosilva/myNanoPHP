@@ -14,6 +14,7 @@ export const QR_CODE_FG_DARK = "#e9f6fb";
 export const QR_CODE_BG_LIGHT = "#f5f6f8";
 export const QR_CODE_FG_LIGHT = "#696969";
 export const DEFAULT_NOTIFY_TIMEOUT = 5000; // in milliseconds
+export const MY_NANO_PHP_DARK_MODE = "myNanoPHPDarkMode";
 
 export const NOTIFY_TYPE = {
 
@@ -61,5 +62,28 @@ export function saveToBinaryEncryptedStream(encrypted_stream: string) {
     a.click();
     window.URL.revokeObjectURL(pseudo_url);
     document.body.removeChild(a);
+
+}
+
+export function getBackgroundFromLocalStorage() {
+
+    let darkMode: any = localStorage.getItem(MY_NANO_PHP_DARK_MODE);
+
+    if ( ( darkMode === null ) || ( darkMode === undefined ) ) {
+
+        localStorage.setItem(MY_NANO_PHP_DARK_MODE, BACKGROUND_DARK);
+        darkMode = localStorage.getItem(MY_NANO_PHP_DARK_MODE) as string;
+
+    }
+
+    return darkMode;
+
+}
+
+export function setBackgroundToLocalStorage(mode: string) {
+
+    localStorage.setItem(MY_NANO_PHP_DARK_MODE, mode);
+
+    return localStorage.getItem(MY_NANO_PHP_DARK_MODE);
 
 }

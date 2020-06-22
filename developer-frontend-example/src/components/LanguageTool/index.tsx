@@ -75,8 +75,10 @@ const mapStateToProps = (state: any, ownProps: any) => ({
 });
 
 const mapDispatchToProps = (dispatch: any, ownProps: any) => ({
+
     modifyLang: (lang: any) => dispatch(setLanguage(lang)),
     newNotification: (msg: NOTIFY_MESSAGE) => dispatch(setNotifyMessage(msg))
+    
 });
   
 export default connect(mapStateToProps, mapDispatchToProps)(LanguageTool);

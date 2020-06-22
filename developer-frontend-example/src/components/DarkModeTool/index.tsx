@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 
 import { 
@@ -13,7 +13,9 @@ import './style.css';
 import { 
     
     BACKGROUND_LIGHT, 
-    BACKGROUND_DARK 
+    BACKGROUND_DARK, 
+    setBackgroundToLocalStorage,
+    getBackgroundFromLocalStorage
 
 } from '../../utils';
 
@@ -26,6 +28,17 @@ import {
 import { NOTIFY_MESSAGE } from '../../utils/wallet_interface';
 
 export function DarkModeTool(props: any) {
+
+    useEffect(
+
+        () => {
+            
+            props.changeBackMode(getBackgroundFromLocalStorage());
+
+        },
+        [ props ]
+
+    )
 
     return (
         <div className="bg-mode-toggle">
@@ -43,6 +56,7 @@ export function DarkModeTool(props: any) {
                     onClick={() => {
                         
                             props.changeBackMode(BACKGROUND_LIGHT);
+                            setBackgroundToLocalStorage(BACKGROUND_LIGHT);
                             props.newNotification({
                                 msg: props.language.notification_light_mode_changed
                             } as NOTIFY_MESSAGE)
@@ -59,6 +73,7 @@ export function DarkModeTool(props: any) {
                     onClick={() => {
 
                             props.changeBackMode(BACKGROUND_DARK);
+                            setBackgroundToLocalStorage(BACKGROUND_DARK);
                             props.newNotification({
                                 msg: props.language.notification_dark_mode_changed
                             } as NOTIFY_MESSAGE);
