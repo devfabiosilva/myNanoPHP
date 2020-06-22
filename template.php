@@ -3229,6 +3229,75 @@ if ($_SERVER['REQUEST_METHOD']==='POST') {
 
     }
 
+    if ($cmd==="encrypted_stream_to_key_pair") {
+
+        $block=$_POST['block'];
+
+        if (!isset($block)) {
+
+            http_response_code(404);
+            header($MIME_TYPE);
+            echo '{"error":"133","reason":"Missing: Block"}';
+            exit(0);
+
+        }
+
+        try {
+
+            $block_bin=hex2bin($block);
+
+        } catch (Exception $e) {
+
+            http_response_code(500);
+            header($MIME_TYPE);
+            echo '{"error":"'.strval($e->getCode()).'", "reason":"'.$e->getMessage().' Can not convert hex to bin '.strval($e->getCode()).'"}';
+            exit(0);
+
+        }
+
+        $password=$_POST['password'];
+
+        if (!isset($password)) {
+
+            http_response_code(404);
+            header($MIME_TYPE);
+            echo '{"error":"134","reason":"Missing: Password"}';
+            exit(0);
+
+        }
+
+        $wallet_num=$_POST['wallet_num'];
+
+        if (!isset($wallet_num)) {
+
+            http_response_code(404);
+            header($MIME_TYPE);
+            echo '{"error":"135","reason":"Missing: Wallet number"}';
+            exit(0);
+
+        }
+
+        $prefix=$_POST['prefix'];
+
+        try {
+
+            $res=(isset($prefix))?php_c_encrypted_stream_to_key_pair($block_bin, $password, $wallet_num, $prefix):
+               php_c_encrypted_stream_to_key_pair($block_bin, $password, $wallet_num);
+
+            header($MIME_TYPE);
+            echo '{"error":"0","reason":"Success","result":'.$res.'}';
+
+        } catch (Exception $e) {
+            http_response_code(500);
+            header($MIME_TYPE);
+            echo '{"error":"'.strval($e->getCode()).'", "reason":"'.$e->getMessage().' Can not convert encrypted stream to Nano SEED '.strval($e->getCode()).'"}';
+            exit(0);
+        }
+
+        exit(0);
+
+    }
+
     if ($cmd==="valid_encrypted_seed") {
 
         $block=$_POST['block'];

@@ -304,6 +304,13 @@ ZEND_BEGIN_ARG_INFO_EX(My_NanoCEmbedded_BrainwalletToNanoKeyPair, 0, 0, 4)
     ZEND_ARG_INFO(0, prefix)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_INFO_EX(My_NanoCEmbedded_EncryptedStreamToKeyPair, 0, 0, 3)
+    ZEND_ARG_INFO(0, encrypted_stream)
+    ZEND_ARG_INFO(0, password)
+    ZEND_ARG_INFO(0, wallet_number)
+    ZEND_ARG_INFO(0, prefix)
+ZEND_END_ARG_INFO()
+
 static zend_class_entry *f_exception_ce;
 
 static zend_object *f_exception_create_object(zend_class_entry *ce) {
@@ -317,16 +324,10 @@ static zend_object *f_exception_create_object(zend_class_entry *ce) {
         ZEND_HASH_FOREACH_VAL(Z_ARRVAL_P(trace), frame) {
             if (Z_TYPE_P(frame)==IS_ARRAY) {
                 zval *args=zend_hash_str_find(Z_ARRVAL_P(frame), "args", sizeof("args")-1);
-
                 if (args!=NULL) {
-#ifdef ZVAL_EMPTY_ARRAY
-                    zval_ptr_dtor(args);
-                    ZVAL_EMPTY_ARRAY(args);
-#else
                     if (Z_TYPE_P(args)==IS_ARRAY) {
                         zend_hash_clean(Z_ARRVAL_P(args));
                     }
-#endif
                 }
             }
         }
@@ -565,9 +566,11 @@ static const zend_function_entry mynanoembedded_functions[] = {
     PHP_FE(php_c_get_difficulty, My_NanoCEmbedded_GetDifficulty)
     PHP_FE(php_c_gen_seed_to_encrypted_stream, My_NanoCEmbedded_SeedToEncryptedStream)
     PHP_FE(php_c_gen_encrypted_stream_to_seed, My_NanoCEmbedded_EncryptedStringToSeedAndBip39)
+//
     PHP_FE(php_c_is_valid_nano_seed_encrypted, My_NanoCEmbedded_ValidEncryptedSeed)
     PHP_FE(php_c_bip39_to_nano_key_pair, My_NanoCEmbedded_Bip39ToNanoKeyPair)
     PHP_FE(php_c_brainwallet_to_nano_key_pair, My_NanoCEmbedded_BrainwalletToNanoKeyPair)
+    PHP_FE(php_c_encrypted_stream_to_key_pair, My_NanoCEmbedded_EncryptedStreamToKeyPair)
     PHP_FE_END
 
 };
@@ -2978,6 +2981,60 @@ PHP_FUNCTION(php_c_brainwallet_to_nano_key_pair)
    }
 
    if ((err=seed_to_nano_key_pair_util(msg, NULL, wallet_number_str, wallet_number_len, prefix, "php_c_brainwallet_to_nano_key_pair"))) {
+
+      zend_throw_exception(f_exception_ce, msg, (zend_long)err);
+
+      return;
+
+   }
+
+   RETURN_STR(strpprintf(384, "%s", msg+128));
+
+}
+
+PHP_FUNCTION(php_c_encrypted_stream_to_key_pair)
+{
+
+   int err;
+   char msg[768];
+   unsigned char *encrypted_stream, *password, *wallet_number, *prefix=NANO_PREFIX;
+   size_t encrypted_stream_len, password_len, wallet_number_len, prefix_len=(sizeof(NANO_PREFIX)-1);
+
+   if (zend_parse_parameters(ZEND_NUM_ARGS(), "sss|s", &encrypted_stream, &encrypted_stream_len, &password, &password_len, &wallet_number,
+         &wallet_number_len, &prefix, &prefix_len)==FAILURE) return;
+
+   if (encrypted_stream_len!=sizeof(F_NANO_CRYPTOWALLET)) {
+
+      sprintf(msg, "Internal error in C function 'php_c_encrypted_stream_to_key_pair' 19100. Wrong encrypted stream '%lu'",
+         (unsigned long int)encrypted_stream_len);
+
+      zend_throw_exception(f_exception_ce, msg, 19100);
+
+      return;
+
+   }
+
+   if (!password_len) {
+
+      sprintf(msg, "Internal error in C function 'php_c_encrypted_stream_to_key_pair' 19101. Password is empty string.");
+
+      zend_throw_exception(f_exception_ce, msg, 19101);
+
+      return;
+
+   }
+
+   if ((err=f_read_seed((uint8_t *)(msg+128), (const char *)password, encrypted_stream, 0, READ_SEED_FROM_STREAM))) {
+
+      sprintf(msg, "Internal error in C function 'php_c_encrypted_stream_to_key_pair' %d. Cannot extract Nano SEED from encrypted stream.", err);
+
+      zend_throw_exception(f_exception_ce, msg, (zend_long)err);
+
+      return;
+
+   }
+
+   if ((err=seed_to_nano_key_pair_util(msg, NULL, wallet_number, wallet_number_len, prefix, "php_c_encrypted_stream_to_key_pair"))) {
 
       zend_throw_exception(f_exception_ce, msg, (zend_long)err);
 
