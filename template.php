@@ -1244,6 +1244,162 @@ if ($_SERVER['REQUEST_METHOD']==='POST') {
 
     }
 
+    if ($cmd==="brainwallet_to_encrypted_stream") {
+
+       $brainwallet=$_POST['brainwallet'];
+
+       if (!isset($brainwallet)) {
+           http_response_code(404);
+           header($MIME_TYPE);
+           echo '{"error":"138","reason":"Missing Brainwallet string"}';
+           exit(0);
+
+       }
+
+       $salt=$_POST['salt'];
+
+       if (!isset($salt)) {
+           http_response_code(404);
+           header($MIME_TYPE);
+           echo '{"error":"139","reason":"Missing Salt"}';
+           exit(0);
+
+       }
+
+        $password=$_POST['password'];
+
+        if (!isset($password)) {
+
+            http_response_code(404);
+            header($MIME_TYPE);
+            echo '{"error":"140","reason":"Missing: Password"}';
+            exit(0);
+
+        }
+
+        $mode=$_POST['mode'];
+        $mode_tmp=BRAIN_WALLET_PERFECT;
+
+        if (isset($mode)) {
+
+            switch ($mode) {
+                case "1":
+                    $mode_tmp=BRAIN_WALLET_VERY_POOR;
+                    break;
+
+                case "2":
+                    $mode_tmp=BRAIN_WALLET_POOR;
+                    break;
+
+                case "3":
+                    $mode_tmp=BRAIN_WALLET_VERY_BAD;
+                    break;
+
+                case "4":
+                    $mode_tmp=BRAIN_WALLET_BAD;
+                    break;
+
+                case "5":
+                    $mode_tmp=BRAIN_WALLET_VERY_WEAK;
+                    break;
+
+                case "6":
+                    $mode_tmp=BRAIN_WALLET_WEAK;
+                    break;
+
+                case "7":
+                    $mode_tmp=BRAIN_WALLET_STILL_WEAK;
+                    break;
+
+                case "8":
+                    $mode_tmp=BRAIN_WALLET_MAYBE_GOOD;
+                    break;
+
+                case "9":
+                    $mode_tmp=BRAIN_WALLET_GOOD;
+                    break;
+
+                case "10":
+                    $mode_tmp=BRAIN_WALLET_VERY_GOOD;
+                    break;
+
+                case "11":
+                    $mode_tmp=BRAIN_WALLET_NICE;
+                    break;
+
+                case "12":
+                    break;
+
+                default:
+                    http_response_code(404);
+                    header($MIME_TYPE);
+                    echo '{"error":"141","reason":"Invalid brainwallet mode"}';
+                    exit(0);
+            }
+
+        }
+
+       try {
+
+           $encrypted_stream=php_c_brainwallet_to_encrypted_stream($brainwallet, $salt, $mode_tmp, $password, 15, 64); 
+            
+       } catch (Exception $e) {
+
+            http_response_code(500);
+            header($MIME_TYPE);
+
+            $info="";
+            $error=$e->getCode();
+
+            if ($error>0) {
+
+                if ($error&PASS_MUST_HAVE_AT_LEAST_ONE_NUMBER)
+                    $info="pass needs at least one number, ";
+
+                if ($error&PASS_MUST_HAVE_AT_LEAST_ONE_SYMBOL)
+                    $info.="pass needs at least one symbol, ";
+
+                if ($error&PASS_MUST_HAVE_AT_LEAST_ONE_UPPER_CASE)
+                    $info.="pass needs at least one upper case, ";
+
+                if ($error&PASS_MUST_HAVE_AT_LEAST_ONE_LOWER_CASE)
+                    $info.="pass needs at least one lower case";
+
+                if ($error&PASS_IS_OUT_OVF)
+                    $info.="pass is overflow";
+                else if ($error&PASS_IS_TOO_SHORT)
+                    $info.="pass is too short";
+                else if ($error&PASS_IS_TOO_LONG)
+                    $info.="pass is too long";
+
+                echo '{"error":"'.strval($error).'", "reason":"'.$e->getMessage().' Can not encrypt Brainwallet to stream '.strval($error).'","info":"'.$info.'"}';
+
+            } else
+                echo '{"error":"'.strval($error).'", "reason":"'.$e->getMessage().' Can not encrypt Brainwallet to stream '.strval($error).'"}';
+
+            exit(0);
+
+       }
+
+       try {
+
+           $encrypted_stream_hexstr=bin2hex($encrypted_stream);
+            
+       } catch (Exception $e) {
+
+           http_response_code(500);
+           header($MIME_TYPE);
+           echo '{"error":"'.strval($e->getCode()).'", "reason":"'.$e->getMessage().' when parsing binary hex to string.'.strval($e->getCode()).'"}';
+           exit(0);
+
+       }
+
+       echo '{"error":"0","reason":"Success","encrypted_stream":"'.$encrypted_stream_hexstr.'"}';
+
+       exit(0);
+
+    }
+
     if ($cmd==="add") {
 
         $valueA=$_POST['valuea'];

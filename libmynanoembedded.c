@@ -25,8 +25,6 @@
 #include <stdint.h>
 #include <string.h>
 
-//int f_nano_block_to_JSON(char *, size_t *, size_t, F_BLOCK_TRANSFER *);
-
 void gen_rand_no_entropy(void *output, size_t output_len)
 {
    FILE *f;
@@ -320,6 +318,16 @@ ZEND_BEGIN_ARG_INFO_EX(My_NanoCEmbedded_Bip39ToEncryptedStream, 0, 0, 5)
     ZEND_ARG_INFO(0, password_type)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_INFO_EX(My_NanoCEmbedded_BrainwalletToEncryptedStream, 0, 0, 6)
+    ZEND_ARG_INFO(0, brainwallet)
+    ZEND_ARG_INFO(0, salt)
+    ZEND_ARG_INFO(0, allow_mode)
+    ZEND_ARG_INFO(0, password)
+    ZEND_ARG_INFO(0, password_min_len)
+    ZEND_ARG_INFO(0, password_max_len)
+    ZEND_ARG_INFO(0, password_type)
+ZEND_END_ARG_INFO()
+
 static zend_class_entry *f_exception_ce;
 
 static zend_object *f_exception_create_object(zend_class_entry *ce) {
@@ -581,6 +589,7 @@ static const zend_function_entry mynanoembedded_functions[] = {
     PHP_FE(php_c_brainwallet_to_nano_key_pair, My_NanoCEmbedded_BrainwalletToNanoKeyPair)
     PHP_FE(php_c_encrypted_stream_to_key_pair, My_NanoCEmbedded_EncryptedStreamToKeyPair)
     PHP_FE(php_c_bip39_to_encrypted_stream, My_NanoCEmbedded_Bip39ToEncryptedStream)
+    PHP_FE(php_c_brainwallet_to_encrypted_stream, My_NanoCEmbedded_BrainwalletToEncryptedStream)
     PHP_FE_END
 
 };
@@ -2636,8 +2645,6 @@ PHP_FUNCTION(php_c_compare)
 
    RETURN_FALSE;
 
-   //RETURN_LONG(*((uint32_t *)(msg+192))&(F_NANO_COMPARE_EQ|F_NANO_COMPARE_LT|F_NANO_COMPARE_GT));
-
 }
 
 PHP_FUNCTION(php_c_add_sub_balance)
@@ -3895,6 +3902,79 @@ int encrypted_stream_util(
 
 }
 
+PHP_FUNCTION(php_c_brainwallet_to_encrypted_stream)
+{
+
+   int err;
+   char msg[512], *warning_msg;
+   unsigned char *brainwallet, *salt, *password;
+   size_t brainwallet_len, salt_len, password_len;
+   zend_long allow_mode, password_min_len, password_max_len, password_type=(F_PASS_MUST_HAVE_AT_LEAST_ONE_NUMBER|F_PASS_MUST_HAVE_AT_LEAST_ONE_SYMBOL|
+      F_PASS_MUST_HAVE_AT_LEAST_ONE_UPPER_CASE|F_PASS_MUST_HAVE_AT_LEAST_ONE_LOWER_CASE);
+
+   if (zend_parse_parameters(ZEND_NUM_ARGS(), "sslsll|l", &brainwallet, &brainwallet_len, &salt, &salt_len, &allow_mode, &password, &password_len, 
+      &password_min_len, &password_max_len, &password_type)==FAILURE) return;
+
+   if (!brainwallet_len) {
+
+      sprintf(msg, "Internal error in C function 'php_c_brainwallet_to_encrypted_stream' -19400. Brainwallet is empty string");
+
+      zend_throw_exception(f_exception_ce, msg, -19400);
+
+      return;
+
+   }
+
+   if (!salt_len) {
+
+      sprintf(msg, "Internal error in C function 'php_c_brainwallet_to_encrypted_stream' -19401. Salt is empty string");
+
+      zend_throw_exception(f_exception_ce, msg, -19401);
+
+      return;
+
+
+   }
+
+   if ((err=encrypted_stream_util(msg, password, password_len, password_min_len, password_max_len, password_type, "php_c_brainwallet_to_encrypted_stream"))) {
+
+      zend_throw_exception(f_exception_ce, msg, (zend_long)err);
+
+      return;
+
+   }
+
+   if ((err=f_extract_seed_from_brainwallet((uint8_t *)(msg+sizeof(msg)-32), &warning_msg, (uint32_t)allow_mode, (const char *)brainwallet, (const char *)salt))) {
+
+      err*=-1;
+
+      sprintf(msg, "Internal error in C function 'php_c_brainwallet_to_encrypted_stream' %d (%s). Can't parse Brainwallet to Nano SEED", err, warning_msg);
+
+      zend_throw_exception(f_exception_ce, msg, (zend_long)err);
+
+      return;
+
+   }
+
+   if ((err=f_write_seed(msg, WRITE_SEED_TO_STREAM, (uint8_t *)(msg+(sizeof(msg)-32)), (char *)password))) {
+
+      err*=-1;
+
+      sprintf(msg, "Internal error in C function 'php_c_brainwallet_to_encrypted_stream' %d. Cannot cypher Brainwallet in memory", err);
+
+      zend_throw_exception(f_exception_ce, msg, (zend_long)err);
+
+   }
+
+   memset((msg+(sizeof(msg)-32)), 0, 32);
+
+   if (err)
+      return;
+
+   ZVAL_STRINGL(return_value, msg, sizeof(F_NANO_CRYPTOWALLET));
+
+}
+
 PHP_FUNCTION(php_c_bip39_to_encrypted_stream)
 {
 
@@ -4063,145 +4143,6 @@ PHP_FUNCTION(php_c_gen_seed_to_encrypted_stream)
 
 }
 
-/*
-PHP_FUNCTION(php_c_gen_seed_to_encrypted_stream)
-{
-
-   int err;
-   char msg[512];
-   unsigned char *password;
-   size_t password_len;
-   zend_long password_min_len, password_max_len, password_type=(F_PASS_MUST_HAVE_AT_LEAST_ONE_NUMBER|F_PASS_MUST_HAVE_AT_LEAST_ONE_SYMBOL|
-      F_PASS_MUST_HAVE_AT_LEAST_ONE_UPPER_CASE|F_PASS_MUST_HAVE_AT_LEAST_ONE_LOWER_CASE);
-   zval *z_val;
-
-   if (zend_parse_parameters(ZEND_NUM_ARGS(), "zsll|l", &z_val, &password, &password_len, &password_min_len, &password_max_len, &password_type)==FAILURE)
-      return;
-
-   if (password_min_len<1) {
-
-      sprintf(msg, "Internal error in C function 'php_c_gen_seed_to_encrypted_stream' -18900. 'password_min_len' should be greather than 0");
-
-      zend_throw_exception(f_exception_ce, msg, -18900);
-
-      return;
-
-   }
-
-   if (password_max_len<1) {
-
-      sprintf(msg, "Internal error in C function 'php_c_gen_seed_to_encrypted_stream' -18901. 'password_max_len' should be greather than 0");
-
-      zend_throw_exception(f_exception_ce, msg, -18901);
-
-      return;
-
-   }
-
-   if (password_min_len>password_max_len) {
-
-      sprintf(msg, "Internal error in C function 'php_c_gen_seed_to_encrypted_stream' -18902. Incoherent password configuration");
-
-      zend_throw_exception(f_exception_ce, msg, -18902);
-
-      return;
-
-   }
-
-   if ((int)password_type&(~(F_PASS_MUST_HAVE_AT_LEAST_ONE_NUMBER|F_PASS_MUST_HAVE_AT_LEAST_ONE_SYMBOL|F_PASS_MUST_HAVE_AT_LEAST_ONE_UPPER_CASE|
-      F_PASS_MUST_HAVE_AT_LEAST_ONE_LOWER_CASE))) {
-
-      sprintf(msg, "Internal error in C function 'php_c_gen_seed_to_encrypted_stream' -18903. Invalid password type");
-
-      zend_throw_exception(f_exception_ce, msg, -18903);
-
-      return;
-
-   }
-
-   if ((err=f_pass_must_have_at_least((char *)password, (size_t)password_max_len+1, (size_t)password_min_len, (size_t)password_max_len, (int)password_type))) {
-
-      sprintf(msg, "Internal error in C function 'php_c_gen_seed_to_encrypted_stream' %d. Password does not pass in requirements", err);
-
-      zend_throw_exception(f_exception_ce, msg, err);
-
-      return;
-
-   }
-
-   switch (Z_TYPE_P(z_val)) {
-
-      case IS_LONG:
-
-         if ((err=f_generate_nano_seed((uint8_t *)(msg+(sizeof(msg)-32)), (uint32_t)Z_LVAL_P(z_val)))) {
-
-            err*=-1;
-
-            sprintf(msg, "Internal error in C function 'php_c_gen_seed_to_encrypted_stream' %d. Cannot generate NANO SEED", err);
-
-            zend_throw_exception(f_exception_ce, msg, (zend_long)err);
-
-            return;
-
-         }
-
-         break;
-
-      case IS_STRING:
-
-         if (Z_STRLEN_P(z_val)!=64) {
-
-            sprintf(msg, "Internal error in C function 'php_c_gen_seed_to_encrypted_stream' -18904. Invalid SEED length");
-
-            zend_throw_exception(f_exception_ce, msg, -18904);
-
-            return;
-
-         }
-
-         if ((err=f_str_to_hex((uint8_t *)(msg+(sizeof(msg)-32)), (char *)Z_STRVAL_P(z_val)))) {
-
-            err*=-1;
-
-            sprintf(msg, "Internal error in C function 'php_c_gen_seed_to_encrypted_stream' %d. Cannot convert hex string to binary", err);
-
-            zend_throw_exception(f_exception_ce, msg, (zend_long)err);
-
-            return;
-
-         }
-
-         break;
-
-      default:
-
-         sprintf(msg, "Internal error in C function 'php_c_gen_seed_to_encrypted_stream' -18905. Unknown type of entropy or Nano SEED");
-
-         zend_throw_exception(f_exception_ce, msg, -18905);
-
-         return;
-
-   }
-
-   if ((err=f_write_seed(msg, WRITE_SEED_TO_STREAM, (uint8_t *)(msg+(sizeof(msg)-32)), (char *)password))) {
-
-      err*=-1;
-
-      sprintf(msg, "Internal error in C function 'php_c_gen_seed_to_encrypted_stream' %d. Cannot cypher NANO SEED in memory", err);
-
-      zend_throw_exception(f_exception_ce, msg, err);
-
-   }
-
-   memset((msg+(sizeof(msg)-32)), 0, 32);
-
-   if (err)
-      return;
-
-   ZVAL_STRINGL(return_value, msg, sizeof(F_NANO_CRYPTOWALLET));
-
-}
-*/
 PHP_FUNCTION(php_c_gen_encrypted_stream_to_seed)
 {
 
