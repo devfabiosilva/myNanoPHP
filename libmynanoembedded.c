@@ -311,6 +311,15 @@ ZEND_BEGIN_ARG_INFO_EX(My_NanoCEmbedded_EncryptedStreamToKeyPair, 0, 0, 3)
     ZEND_ARG_INFO(0, prefix)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_INFO_EX(My_NanoCEmbedded_Bip39ToEncryptedStream, 0, 0, 5)
+    ZEND_ARG_INFO(0, bip39)
+    ZEND_ARG_INFO(0, dictionary)
+    ZEND_ARG_INFO(0, password)
+    ZEND_ARG_INFO(0, password_min_len)
+    ZEND_ARG_INFO(0, password_max_len)
+    ZEND_ARG_INFO(0, password_type)
+ZEND_END_ARG_INFO()
+
 static zend_class_entry *f_exception_ce;
 
 static zend_object *f_exception_create_object(zend_class_entry *ce) {
@@ -571,6 +580,7 @@ static const zend_function_entry mynanoembedded_functions[] = {
     PHP_FE(php_c_bip39_to_nano_key_pair, My_NanoCEmbedded_Bip39ToNanoKeyPair)
     PHP_FE(php_c_brainwallet_to_nano_key_pair, My_NanoCEmbedded_BrainwalletToNanoKeyPair)
     PHP_FE(php_c_encrypted_stream_to_key_pair, My_NanoCEmbedded_EncryptedStreamToKeyPair)
+    PHP_FE(php_c_bip39_to_encrypted_stream, My_NanoCEmbedded_Bip39ToEncryptedStream)
     PHP_FE_END
 
 };
@@ -3825,6 +3835,235 @@ PHP_FUNCTION(php_c_get_difficulty)
 
 }
 
+int encrypted_stream_util(
+
+   char *msg,
+   unsigned char *password,
+   size_t password_len,
+   zend_long password_min_len,
+   zend_long password_max_len,
+   zend_long password_type,
+   const char *function_name
+
+)
+{
+
+   int err;
+
+   if (password_min_len<1) {
+
+      sprintf(msg, "Internal error in C function '%s' -18900. 'password_min_len' should be greather than 0", function_name);
+
+      return -18900;
+
+   }
+
+   if (password_max_len<1) {
+
+      sprintf(msg, "Internal error in C function '%s' -18901. 'password_max_len' should be greather than 0", function_name);
+
+      return -18901;
+
+   }
+
+   if (password_min_len>password_max_len) {
+
+      sprintf(msg, "Internal error in C function '%s' -18902. Incoherent password configuration", function_name);
+
+      return -18902;
+
+   }
+
+   if ((int)password_type&(~(F_PASS_MUST_HAVE_AT_LEAST_ONE_NUMBER|F_PASS_MUST_HAVE_AT_LEAST_ONE_SYMBOL|F_PASS_MUST_HAVE_AT_LEAST_ONE_UPPER_CASE|
+      F_PASS_MUST_HAVE_AT_LEAST_ONE_LOWER_CASE))) {
+
+      sprintf(msg, "Internal error in C function '%s' -18903. Invalid password type", function_name);
+
+      return -18903;
+
+   }
+
+   if ((err=f_pass_must_have_at_least((char *)password, (size_t)password_max_len+1, (size_t)password_min_len, (size_t)password_max_len, (int)password_type))) {
+
+      sprintf(msg, "Internal error in C function '%s' %d. Password does not pass in requirements", function_name, err);
+
+      return err;
+
+   }
+
+   return 0;
+
+}
+
+PHP_FUNCTION(php_c_bip39_to_encrypted_stream)
+{
+
+   int err;
+   char msg[512];
+   unsigned char *bip39, *password, *dictionary;
+   size_t bip39_len, password_len, dictionary_len;
+   zend_long password_min_len, password_max_len, password_type=(F_PASS_MUST_HAVE_AT_LEAST_ONE_NUMBER|F_PASS_MUST_HAVE_AT_LEAST_ONE_SYMBOL|
+      F_PASS_MUST_HAVE_AT_LEAST_ONE_UPPER_CASE|F_PASS_MUST_HAVE_AT_LEAST_ONE_LOWER_CASE);
+
+   if (zend_parse_parameters(ZEND_NUM_ARGS(), "sssll|l", &bip39, &bip39_len, &dictionary, &dictionary_len, &password, &password_len, &password_min_len,
+      &password_max_len, &password_type)==FAILURE) return;
+
+   if (!bip39_len) {
+
+      sprintf(msg, "Internal error in C function 'php_c_bip39_to_encrypted_stream' -19300. Bip39 is empty string");
+
+      zend_throw_exception(f_exception_ce, msg, -19300);
+
+      return;
+
+   }
+
+   if (!dictionary_len) {
+
+      sprintf(msg, "Internal error in C function 'php_c_bip39_to_encrypted_stream' -19301. Missing. Bip39 Dictionary file");
+
+      zend_throw_exception(f_exception_ce, msg, -19301);
+
+      return;
+
+   }
+
+   if ((err=encrypted_stream_util(msg, password, password_len, password_min_len, password_max_len, password_type, "php_c_bip39_to_encrypted_stream"))) {
+
+      zend_throw_exception(f_exception_ce, msg, (zend_long)err);
+
+      return;
+
+   }
+
+   if ((err=f_bip39_to_nano_seed((uint8_t *)(msg+sizeof(msg)-32), (char *)bip39, (char *)dictionary))) {
+
+      err*=-1;
+
+      sprintf(msg, "Internal error in C function 'php_c_bip39_to_encrypted_stream' %d. Can't parse Bip39 to Nano SEED", err);
+
+      zend_throw_exception(f_exception_ce, msg, (zend_long)err);
+
+      return;
+
+   }
+
+   if ((err=f_write_seed(msg, WRITE_SEED_TO_STREAM, (uint8_t *)(msg+(sizeof(msg)-32)), (char *)password))) {
+
+      err*=-1;
+
+      sprintf(msg, "Internal error in C function 'php_c_bip39_to_encrypted_stream' %d. Cannot cypher Bip39 in memory", err);
+
+      zend_throw_exception(f_exception_ce, msg, (zend_long)err);
+
+   }
+
+   memset((msg+(sizeof(msg)-32)), 0, 32);
+
+   if (err)
+      return;
+
+   ZVAL_STRINGL(return_value, msg, sizeof(F_NANO_CRYPTOWALLET));
+
+}
+
+
+PHP_FUNCTION(php_c_gen_seed_to_encrypted_stream)
+{
+
+   int err;
+   char msg[512];
+   unsigned char *password;
+   size_t password_len;
+   zend_long password_min_len, password_max_len, password_type=(F_PASS_MUST_HAVE_AT_LEAST_ONE_NUMBER|F_PASS_MUST_HAVE_AT_LEAST_ONE_SYMBOL|
+      F_PASS_MUST_HAVE_AT_LEAST_ONE_UPPER_CASE|F_PASS_MUST_HAVE_AT_LEAST_ONE_LOWER_CASE);
+   zval *z_val;
+
+   if (zend_parse_parameters(ZEND_NUM_ARGS(), "zsll|l", &z_val, &password, &password_len, &password_min_len, &password_max_len, &password_type)==FAILURE)
+      return;
+
+   if ((err=encrypted_stream_util(msg, password, password_len, password_min_len, password_max_len, password_type, "php_c_gen_seed_to_encrypted_stream"))) {
+
+      zend_throw_exception(f_exception_ce, msg, (zend_long)err);
+
+      return;
+
+   }
+
+   switch (Z_TYPE_P(z_val)) {
+
+      case IS_LONG:
+
+         if ((err=f_generate_nano_seed((uint8_t *)(msg+(sizeof(msg)-32)), (uint32_t)Z_LVAL_P(z_val)))) {
+
+            err*=-1;
+
+            sprintf(msg, "Internal error in C function 'php_c_gen_seed_to_encrypted_stream' %d. Cannot generate NANO SEED", err);
+
+            zend_throw_exception(f_exception_ce, msg, (zend_long)err);
+
+            return;
+
+         }
+
+         break;
+
+      case IS_STRING:
+
+         if (Z_STRLEN_P(z_val)!=64) {
+
+            sprintf(msg, "Internal error in C function 'php_c_gen_seed_to_encrypted_stream' -18904. Invalid SEED length");
+
+            zend_throw_exception(f_exception_ce, msg, -18904);
+
+            return;
+
+         }
+
+         if ((err=f_str_to_hex((uint8_t *)(msg+(sizeof(msg)-32)), (char *)Z_STRVAL_P(z_val)))) {
+
+            err*=-1;
+
+            sprintf(msg, "Internal error in C function 'php_c_gen_seed_to_encrypted_stream' %d. Cannot convert hex string to binary", err);
+
+            zend_throw_exception(f_exception_ce, msg, (zend_long)err);
+
+            return;
+
+         }
+
+         break;
+
+      default:
+
+         sprintf(msg, "Internal error in C function 'php_c_gen_seed_to_encrypted_stream' -18905. Unknown type of entropy or Nano SEED");
+
+         zend_throw_exception(f_exception_ce, msg, -18905);
+
+         return;
+
+   }
+
+   if ((err=f_write_seed(msg, WRITE_SEED_TO_STREAM, (uint8_t *)(msg+(sizeof(msg)-32)), (char *)password))) {
+
+      err*=-1;
+
+      sprintf(msg, "Internal error in C function 'php_c_gen_seed_to_encrypted_stream' %d. Cannot cypher NANO SEED in memory", err);
+
+      zend_throw_exception(f_exception_ce, msg, (zend_long)err);
+
+   }
+
+   memset((msg+(sizeof(msg)-32)), 0, 32);
+
+   if (err)
+      return;
+
+   ZVAL_STRINGL(return_value, msg, sizeof(F_NANO_CRYPTOWALLET));
+
+}
+
+/*
 PHP_FUNCTION(php_c_gen_seed_to_encrypted_stream)
 {
 
@@ -3962,7 +4201,7 @@ PHP_FUNCTION(php_c_gen_seed_to_encrypted_stream)
    ZVAL_STRINGL(return_value, msg, sizeof(F_NANO_CRYPTOWALLET));
 
 }
-
+*/
 PHP_FUNCTION(php_c_gen_encrypted_stream_to_seed)
 {
 

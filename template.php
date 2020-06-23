@@ -3174,6 +3174,93 @@ if ($_SERVER['REQUEST_METHOD']==='POST') {
 
     }
 
+    if ($cmd==="bip39_to_encrypted_stream") {
+
+        $bip39=$_POST['bip39'];
+
+        if (!isset($bip39)) {
+
+            http_response_code(404);
+            header($MIME_TYPE);
+            echo '{"error":"136","reason":"Missing: Bip39"}';
+            exit(0);
+
+        }
+
+        $password=$_POST['password'];
+
+        if (!isset($password)) {
+
+            http_response_code(404);
+            header($MIME_TYPE);
+            echo '{"error":"137","reason":"Missing: Password"}';
+            exit(0);
+
+        }
+
+
+        try {
+
+            $encrypted_bin=php_c_bip39_to_encrypted_stream($bip39, DICTIONARY_PATH, $password, 15, 64, PASS_MUST_HAVE_AT_LEAST_ONE_NUMBER|
+                PASS_MUST_HAVE_AT_LEAST_ONE_SYMBOL|PASS_MUST_HAVE_AT_LEAST_ONE_UPPER_CASE|PASS_MUST_HAVE_AT_LEAST_ONE_LOWER_CASE);
+
+        } catch (Exception $e) {
+
+            http_response_code(500);
+            header($MIME_TYPE);
+
+            $info="";
+            $error=$e->getCode();
+
+            if ($error>0) {
+
+                if ($error&PASS_MUST_HAVE_AT_LEAST_ONE_NUMBER)
+                    $info="pass needs at least one number, ";
+
+                if ($error&PASS_MUST_HAVE_AT_LEAST_ONE_SYMBOL)
+                    $info.="pass needs at least one symbol, ";
+
+                if ($error&PASS_MUST_HAVE_AT_LEAST_ONE_UPPER_CASE)
+                    $info.="pass needs at least one upper case, ";
+
+                if ($error&PASS_MUST_HAVE_AT_LEAST_ONE_LOWER_CASE)
+                    $info.="pass needs at least one lower case";
+
+                if ($error&PASS_IS_OUT_OVF)
+                    $info.="pass is overflow";
+                else if ($error&PASS_IS_TOO_SHORT)
+                    $info.="pass is too short";
+                else if ($error&PASS_IS_TOO_LONG)
+                    $info.="pass is too long";
+
+                echo '{"error":"'.strval($error).'", "reason":"'.$e->getMessage().' Can not encrypt Nano SEED to stream '.strval($error).'","info":"'.$info.'"}';
+
+            } else
+                echo '{"error":"'.strval($error).'", "reason":"'.$e->getMessage().' Can not encrypt Nano SEED to stream '.strval($error).'"}';
+
+            exit(0);
+
+        }
+
+        try {
+
+            $encrypted_hex=bin2hex($encrypted_bin);
+
+            header($MIME_TYPE);
+            echo '{"error":"0","reason":"Success","encrypted_stream":"'.$encrypted_hex.'"}';
+
+        } catch (Exception $e) {
+
+            http_response_code(500);
+            header($MIME_TYPE);
+            echo '{"error":"'.strval($e->getCode()).'", "reason":"'.$e->getMessage().' Can not convert bin to hex string '.strval($e->getCode()).'"}';
+
+        }
+
+        exit(0);
+
+    }
+
     if ($cmd==="encrypted_stream_to_seed") {
 
         $block=$_POST['block'];

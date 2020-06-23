@@ -5045,6 +5045,26 @@ Extension [ <persistent> extension #15 mynanoembedded version 1.0 ] {
         Parameter #4 [ <optional> $prefix ]
       }
     }
+    Function [ <internal:mynanoembedded> function php_c_encrypted_stream_to_key_pair ] {
+
+      - Parameters [4] {
+        Parameter #0 [ <required> $encrypted_stream ]
+        Parameter #1 [ <required> $password ]
+        Parameter #2 [ <required> $wallet_number ]
+        Parameter #3 [ <optional> $prefix ]
+      }
+    }
+    Function [ <internal:mynanoembedded> function php_c_bip39_to_encrypted_stream ] {
+
+      - Parameters [6] {
+        Parameter #0 [ <required> $bip39 ]
+        Parameter #1 [ <required> $dictionary ]
+        Parameter #2 [ <required> $password ]
+        Parameter #3 [ <required> $password_min_len ]
+        Parameter #4 [ <required> $password_max_len ]
+        Parameter #5 [ <optional> $password_type ]
+      }
+    }
   }
 
   - Classes [1] {
