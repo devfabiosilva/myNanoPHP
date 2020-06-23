@@ -20,6 +20,7 @@ body {
 }
 
 body.dark {
+
   --background: #1e3c44;
   --background-content:#244c54; /* #22434a; */
   --color: #e9f6fb;
@@ -30,9 +31,12 @@ body.dark {
   --notification-background: #445159;
   --notification-background-alert: #c5c52cc4;
   --notification-background-error:  #db4343;
+  --background-locked: rgba(160, 155, 155, 0.4);
+
 }
 
 body.light {
+
   --background: #b5b6b7;/* #edeeef; */
   --background-content: #f5f6f8; /* #fff; */
   --color: #696969;
@@ -43,6 +47,8 @@ body.light {
   --notification-background: #6fd0ee;
   --notification-background-alert: #e6d649f3;
   --notification-background-error:  #ff8383;
+  --background-locked: rgba(202, 209, 228, 0.541);
+
 }
 
 button {

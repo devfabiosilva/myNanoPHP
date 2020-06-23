@@ -102,7 +102,9 @@ export const LANG_PT_BR = {
     author_title: "Autor",
     donation: "Doação",
     go_home: "Ir para a página inicial",
-    decrypt_wallet: "Desencriptar carteira"
+    decrypt_wallet: "Desencriptar carteira",
+    your_token_msg: "Seu token. Ele é será requisitado para enviar/receber Nanos, assinar mensagens e alterar número da carteira. Se você esqueceu, não se preocupe. Abra novamente a carteira novamente para gerar outro token",
+    proceed: "Prosseguir",
 
 }
 
@@ -206,7 +208,9 @@ export const LANG_EN_US = {
     author_title: "Author",
     donation: "Donation",
     go_home: "Go to main menu",
-    decrypt_wallet: "Decrypt wallet"
+    decrypt_wallet: "Decrypt wallet",
+    your_token_msg: "Your token. It will be required to send/receive Nanos, sign messages and modify your wallet number. If you forgot this token. Don'r worry. Open your wallet again to generate new token",
+    proceed: "Proceed"
 
 }
 
