@@ -5065,6 +5065,18 @@ Extension [ <persistent> extension #15 mynanoembedded version 1.0 ] {
         Parameter #5 [ <optional> $password_type ]
       }
     }
+    Function [ <internal:mynanoembedded> function php_c_brainwallet_to_encrypted_stream ] {
+
+      - Parameters [7] {
+        Parameter #0 [ <required> $brainwallet ]
+        Parameter #1 [ <required> $salt ]
+        Parameter #2 [ <required> $allow_mode ]
+        Parameter #3 [ <required> $password ]
+        Parameter #4 [ <required> $password_min_len ]
+        Parameter #5 [ <required> $password_max_len ]
+        Parameter #6 [ <optional> $password_type ]
+      }
+    }
   }
 
   - Classes [1] {
