@@ -101,7 +101,8 @@ export const LANG_PT_BR = {
     proof_of_concept: "Prova de conceito",
     author_title: "Autor",
     donation: "Doação",
-    go_home: "Ir para a página inicial"
+    go_home: "Ir para a página inicial",
+    decrypt_wallet: "Desencriptar carteira"
 
 }
 
@@ -204,7 +205,8 @@ export const LANG_EN_US = {
     proof_of_concept: "Proof of Concept",
     author_title: "Author",
     donation: "Donation",
-    go_home: "Go to main menu"
+    go_home: "Go to main menu",
+    decrypt_wallet: "Decrypt wallet"
 
 }
 
