@@ -3302,10 +3302,10 @@ if ($_SERVER['REQUEST_METHOD']==='POST') {
                 else if ($error&PASS_IS_TOO_LONG)
                     $info.="pass is too long";
 
-                echo '{"error":"500", "reason":"'.$e->getMessage().' Can not encrypt Nano SEED to stream '.$error.'","info":"'.$info.'"}';
+                echo '{"error":"'.strval($error).'", "reason":"'.$e->getMessage().' Can not encrypt Nano SEED to stream '.strval($error).'","info":"'.$info.'"}';
 
             } else
-                echo '{"error":"500", "reason":"'.$e->getMessage().' Can not encrypt Nano SEED to stream '.$error.'"}';
+                echo '{"error":"'.strval($error).'", "reason":"'.$e->getMessage().' Can not encrypt Nano SEED to stream '.strval($error).'"}';
 
             exit(0);
 
@@ -3316,7 +3316,7 @@ if ($_SERVER['REQUEST_METHOD']==='POST') {
             $encrypted_hex=bin2hex($encrypted_bin);
 
             header($MIME_TYPE);
-            echo '{"encrypted_seed":"'.$encrypted_hex.'"}';
+            echo '{"error":"0","reason":"Success","encrypted_stream":"'.$encrypted_hex.'"}';
 
         } catch (Exception $e) {
 
@@ -3528,7 +3528,7 @@ if ($_SERVER['REQUEST_METHOD']==='POST') {
                php_c_encrypted_stream_to_key_pair($block_bin, $password, $wallet_num);
 
             header($MIME_TYPE);
-            echo '{"error":"0","reason":"Success","result":'.$res.'}';
+            echo '{"error":"0","reason":"Success","key_pair":'.$res.'}';
 
         } catch (Exception $e) {
             http_response_code(500);

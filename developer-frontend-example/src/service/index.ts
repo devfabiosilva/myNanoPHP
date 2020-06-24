@@ -24,7 +24,8 @@ import {
     PUBLIC_KEY_TO_WALLET_RESPONSE,
     my_wallet,
     BIG_NUMBER_COMPARE_RESPONSE,
-    NEXT_PENDING_BLOCK_RESPONSE
+    NEXT_PENDING_BLOCK_RESPONSE,
+    ENCRYPTED_STREAM_RESULT
 
 } from '../utils/wallet_interface';
 
@@ -219,6 +220,54 @@ export async function my_nano_php_compare(valueA: string, valueB: string, typeA:
     let data: BIG_NUMBER_COMPARE_RESPONSE|MY_NANO_PHP_ERROR;
 
     data = await my_nano_php_api(`command=compare&valuea=${valueA}&typea=${typeA}&valueb=${valueB}&typeb=${typeB}&compare=${condition}`, "my_nano_php_compare");
+
+    return new Promise((res, error) => {
+
+        return (data.error === "0")?res(data):error(data);
+
+    });
+}
+
+export async function my_nano_php_encrypted_stream_to_key_pair(
+    
+    wallet_number: number,
+    password: string, 
+    encrypted_block: string,
+    prefix: string = NANO_PREFIX
+
+)
+{
+
+    let data: MY_NANO_PHP_SEED2KEYPAIR|MY_NANO_PHP_ERROR;
+
+    data = await my_nano_php_api(`command=encrypted_stream_to_key_pair&wallet_num=${wallet_number}&password=${password}&block=${encrypted_block}&prefix=${prefix}`, "my_nano_php_encrypted_stream_to_key_pair");
+
+    return new Promise((res, error) => {
+
+        return (data.error === "0")?res(data):error(data);
+
+    });
+
+}
+
+export async function my_nano_php_bip39_to_encrypted_stream(bip39: string, password: string)
+{
+    let data: ENCRYPTED_STREAM_RESULT|MY_NANO_PHP_ERROR;
+
+    data = await my_nano_php_api(`command=bip39_to_encrypted_stream&bip39=${bip39}&password=${password}`, "my_nano_php_bip39_to_encrypted_stream");
+
+    return new Promise((res, error) => {
+
+        return (data.error === "0")?res(data):error(data);
+
+    });
+}
+
+export async function my_nano_php_seed_to_encrypted_stream(seed: string, password: string)
+{
+    let data: ENCRYPTED_STREAM_RESULT|MY_NANO_PHP_ERROR;
+
+    data = await my_nano_php_api(`command=save_seed_to_encrypted_stream&seed=${seed}&password=${password}`, "my_nano_php_seed_to_encrypted_stream");
 
     return new Promise((res, error) => {
 

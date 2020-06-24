@@ -169,3 +169,11 @@ export interface NOTIFY_MESSAGE {
     timeout?: number,
 
 }
+
+export interface ENCRYPTED_STREAM_RESULT {
+
+    error?: string|number,
+    reason?: string,
+    encrypted_stream?: string
+
+}

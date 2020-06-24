@@ -103,8 +103,15 @@ export const LANG_PT_BR = {
     donation: "Doação",
     go_home: "Ir para a página inicial",
     decrypt_wallet: "Desencriptar carteira",
-    your_token_msg: "Seu token. Ele é será requisitado para enviar/receber Nanos, assinar mensagens e alterar número da carteira. Se você esqueceu, não se preocupe. Abra novamente a carteira novamente para gerar outro token",
+    your_token_msg: "Seu token. Ele é será requisitado para enviar/receber Nanos, assinar mensagens e alterar número da carteira. Se você esqueceu, não se preocupe. Abra a carteira novamente para gerar outro token",
     proceed: "Prosseguir",
+    msg_generating_token: "Gerando token ...",
+    msg_bip39_encrypted_success: "Bip39 criptografado com sucesso",
+    msg_opening_wallet: "Abrindo a carteira ...",
+    msg_encrypting_private_key_with_token: "Criptografando a chave privada com o token ...",
+    msg_extracting_public_key: "Extraindo a chave pública",
+    msg_extracting_seed: "Extraindo a semente ...",
+    msg_extracting_keypair_from_encrypted_block: "Extraindo o par de chaves do bloco criptografado ..."
 
 }
 
@@ -210,7 +217,14 @@ export const LANG_EN_US = {
     go_home: "Go to main menu",
     decrypt_wallet: "Decrypt wallet",
     your_token_msg: "Your token. It will be required to send/receive Nanos, sign messages and modify your wallet number. If you forgot this token. Don'r worry. Open your wallet again to generate new token",
-    proceed: "Proceed"
+    proceed: "Proceed",
+    msg_generating_token: "Generating token ...",
+    msg_bip39_encrypted_success: "Bip39 encrypted successfully",
+    msg_opening_wallet: "Opening wallet ...",
+    msg_encrypting_private_key_with_token: "Encrypting private key with token ...",
+    msg_extracting_public_key: "Extracting public key ...",
+    msg_extracting_seed: "Extracting Nano SEED ...",
+    msg_extracting_keypair_from_encrypted_block: "Extracting KeyPair from encrypted block ..."
 
 }
 
