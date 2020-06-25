@@ -1,24 +1,38 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-
-import './style.css';
-import { getKey } from '../../utils';
 import { FiArrowRight } from 'react-icons/fi';
+import { setTokenAndWindow } from '../../actions';
+import { TOKENIZER } from '../../reducers/tokenizer';
+import './style.css';
 
 export function TokenMsg(props: any) {
 
-    function openWalletWithAfterToken() {
+    useEffect(
+        () => {
+            console.log(props.token)
+        },
+        [props]
+    )
 
-        let window: any = document.getElementById('token-containter-id');
+    function openWalletAfterToken() {
 
-        window.style.display="none";
+        props.closeTokenWindow();
 
     }
 
     return (
 
-        <div className="token-containter" id="token-containter-id">
+        <div
+
+            className="token-containter"
+            style={{
+
+                display: ((props.token as TOKENIZER).showWindow)?"flex":"none"
+
+            }}
+        
+        >
             <div className="token-window">
                 <div className="token-title">
                     { props.language.your_token_msg }
@@ -29,12 +43,12 @@ export function TokenMsg(props: any) {
                     title={ props.language.your_token_msg }
 
                 >
-                    @1A{ getKey() }{ getKey() }
+                    { (props.token as TOKENIZER).token }
                 </div>
 
                 <button 
 
-                    onClick={ () => openWalletWithAfterToken() }
+                    onClick={ () => openWalletAfterToken() }
                     className="proceed-button"
                     title={ props.language.proceed }
 
@@ -50,12 +64,14 @@ export function TokenMsg(props: any) {
 
 const mapStateToProps = (state: any, ownProps: any) => ({
 
-    language: state.lang
+    language: state.lang,
+    token: state.tokenState
 
 });
 
 const mapDispatchToProps = (dispatch: any, ownProps: any) => ({
 
+    closeTokenWindow: () => dispatch(setTokenAndWindow({showWindow: false, token: ""}))
 
 });
 

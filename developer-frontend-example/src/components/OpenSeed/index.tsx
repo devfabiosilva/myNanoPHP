@@ -14,7 +14,8 @@ import {
 
     setPublicKey,
     setNotifyMessage,
-    resetWallet
+    resetWallet,
+    setTokenAndWindow
 
 } from '../../actions';
 
@@ -38,6 +39,7 @@ import {
 
 } from '../../utils';
 
+import { TOKENIZER } from '../../reducers/tokenizer';
 import { FiSkipBack } from 'react-icons/fi';
 import './style.css';
 
@@ -106,6 +108,13 @@ export function OpenSeed(props: any) {
         
                             } as my_wallet);
 
+                            props.openAndSetTokenWindow({ 
+
+                                showWindow: true,
+                                token
+
+                             } as TOKENIZER);
+
                         },
                         (err: any) =>
                             props.newNotification({
@@ -170,7 +179,14 @@ export function OpenSeed(props: any) {
                                 wallet: (public_key_to_wallet_res as PUBLIC_KEY_TO_WALLET_RESPONSE).wallet
         
                             } as my_wallet);
-        
+
+                            props.openAndSetTokenWindow({ 
+
+                                showWindow: true,
+                                token
+
+                             } as TOKENIZER);
+
                         },
                         (public_key_to_wallet_error: any) =>
                             props.newNotification({
@@ -227,6 +243,13 @@ export function OpenSeed(props: any) {
 
                     });
 
+                    props.openAndSetTokenWindow({ 
+
+                        showWindow: false,
+                        token: ""
+
+                     } as TOKENIZER);
+
                 },
                 (public_key_to_wallet_error: any) =>
                     props.newNotification({
@@ -276,6 +299,14 @@ export function OpenSeed(props: any) {
 
                             } as NOTIFY_MESSAGE);
 
+                            props.openAndSetTokenWindow({ 
+
+                                showWindow: true,
+                                token
+
+                             } as TOKENIZER);
+
+
                         },
                         (error_seed2keypair) => 
                             props.newNotification({
@@ -297,6 +328,7 @@ export function OpenSeed(props: any) {
             
             );
         }
+
     }
 
     return (
@@ -383,7 +415,8 @@ const mapDispatchToProps = (dispatch: any, ownProps: any) => ({
 
     wallet_public_key: (public_key: my_wallet) => dispatch(setPublicKey(public_key)),
     newNotification: (msg: NOTIFY_MESSAGE) => dispatch(setNotifyMessage(msg)),
-    goBack: () => dispatch(resetWallet())
+    goBack: () => dispatch(resetWallet()),
+    openAndSetTokenWindow: (tokenizer: TOKENIZER) => dispatch(setTokenAndWindow(tokenizer))
 
 });
   

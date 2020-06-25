@@ -5,6 +5,8 @@ import {
 
 } from '../utils/wallet_interface';
 
+import { TOKENIZER } from '../reducers/tokenizer';
+
 const ACTION_NONE = 0;
 const EXTRACT_PUBLIC_KEY = 1;
 const EXTRACT_ADDRESS_FROM_PUBLIC_KEY = 2;
@@ -21,6 +23,9 @@ const SET_NOTIFY_MESSAGE = 13;
 const REMOVE_NOTIFY_MESSAGE = 14;
 const SHOW_ABOUT = 15;
 const RESET_WALLET = 16;
+const SET_TOKEN = 17;
+const SET_WINDOW_VISIBILITY = 18;
+const SET_WINDOW_AND_TOKEN = 19;
 
 export const NANO_WALLET_ACTIONS = {
 
@@ -39,7 +44,10 @@ export const NANO_WALLET_ACTIONS = {
     SET_NOTIFY_MESSAGE,
     REMOVE_NOTIFY_MESSAGE,
     SHOW_ABOUT,
-    RESET_WALLET
+    RESET_WALLET,
+    SET_TOKEN,
+    SET_WINDOW_VISIBILITY,
+    SET_WINDOW_AND_TOKEN
     
 }
 
@@ -99,4 +107,16 @@ export function showAbout(show: boolean) {
 
 export function resetWallet() {
     return { type: RESET_WALLET };
+}
+
+export function setToken(token: string) {
+    return { type: SET_TOKEN, token };
+}
+
+export function setWindowToken(visible: boolean = false) {
+    return { type: SET_WINDOW_VISIBILITY, visible };
+}
+
+export function setTokenAndWindow(tokenizer: TOKENIZER) {
+    return { type: SET_WINDOW_AND_TOKEN, tokenizer };
 }

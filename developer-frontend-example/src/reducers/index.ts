@@ -19,6 +19,7 @@ import { monitore_pending_amount } from './monitore_pending_amount';
 import { setBackGroundMode } from './backgroundmode';
 import { notifyEvt } from './notifyevents';
 import { showAboutMode } from './about';
+import { tokenState } from './tokenizer';
 
 const nano_wallet_rootReducer = combineReducers(
 
@@ -31,7 +32,8 @@ const nano_wallet_rootReducer = combineReducers(
         monitore_pending_amount,
         setBackGroundMode,
         notifyEvt,
-        showAboutMode
+        showAboutMode,
+        tokenState
         
     }
 
