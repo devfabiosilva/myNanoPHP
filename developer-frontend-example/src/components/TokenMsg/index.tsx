@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { FiArrowRight } from 'react-icons/fi';
 import { setTokenAndWindow } from '../../actions';
@@ -7,13 +7,6 @@ import { TOKENIZER } from '../../reducers/tokenizer';
 import './style.css';
 
 export function TokenMsg(props: any) {
-
-    useEffect(
-        () => {
-            console.log(props.token)
-        },
-        [props]
-    )
 
     function openWalletAfterToken() {
 

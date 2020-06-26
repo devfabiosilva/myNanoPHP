@@ -113,7 +113,14 @@ export const LANG_PT_BR = {
     msg_extracting_seed: "Extraindo a semente ...",
     msg_extracting_keypair_from_encrypted_block: "Extraindo o par de chaves do bloco criptografado ...",
     change_wallet: "Mudar carteira",
-    sign_verify_message: "Assinar/verif. mensagem"
+    sign_verify_message: "Assinar/verif. mensagem",
+    change_wallet_number: "Mudar número da carteira",
+    title_wallet_number: "Número da carteira",
+    password_msg: "Senha",
+    title_close: "Fechar",
+    title_change: "Mudar",
+    msg_empty_wallet_number: "O número da carteira não deve estar vazio",
+    msg_wallet_num_is_nan: "Erro: Número da carteira NÃO é um Número"
 
 }
 
@@ -228,7 +235,14 @@ export const LANG_EN_US = {
     msg_extracting_seed: "Extracting Nano SEED ...",
     msg_extracting_keypair_from_encrypted_block: "Extracting KeyPair from encrypted block ...",
     change_wallet: "Change wallet",
-    sign_verify_message: "Sign/verif. message"
+    sign_verify_message: "Sign/verif. message",
+    change_wallet_number: "Change wallet number",
+    title_wallet_number: "Wallet number",
+    password_msg: "Password",
+    title_close: "Close",
+    title_change: "Mudar",
+    msg_empty_wallet_number: "Wallet number cannot be empty",
+    msg_wallet_num_is_nan: "Error: Wallet NUMBER is not a Number"
 
 }
 

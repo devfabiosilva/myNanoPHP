@@ -47,7 +47,9 @@ import {
   setPendingAmount,
   closeWalletDialog,
   setNotifyMessage,
-  resetWallet
+  resetWallet,
+  changeWalletWindow,
+  walletNumberhasChanged
 
 } from '../../actions';
 
@@ -97,6 +99,13 @@ export function Wallet(props: any) {
       let dest_wallet: string; // destination wallet or link
       let amount_to_send_receive: string;
       let tmp: string;
+
+      if (props.walletNumberHasChangedState) {
+
+        setWalletReady(false);
+        props.walletHasChanged();
+
+      }
 
       if ( (props.dialog_status === SEND_COMMAND) || (props.dialog_status === RECEIVE_COMMAND) ) {
 
@@ -384,6 +393,13 @@ export function Wallet(props: any) {
           <button
 
             className="change-wallet-btn"
+            onClick={ () => { 
+              
+                props.showChangeWalletWindow(); 
+                props.disablePendingMonitor();
+
+              }
+            }
             title={ props.language.change_wallet  }
 
           >
@@ -554,7 +570,8 @@ const mapStateToProps = (state: any, ownProps: any) => ({
   dialog_status: state.transactionDialogStatus,
   monitore_pending: state.monitore_pending_amount,
   dialog_is_open: state.openTransactionDialog,
-  backgroundMode: state.setBackGroundMode
+  backgroundMode: state.setBackGroundMode,
+  walletNumberHasChangedState: state.walletNumberHasChangedState
 
 });
 
@@ -567,7 +584,9 @@ const mapDispatchToProps = (dispatch: any, ownProps: any) => ({
   enablePendingMonitor: (monitorCallback: any) => dispatch(setPendingAmount(monitorCallback)),
   disablePendingMonitor: () => dispatch(clearPendingAmout()),
   newNotification: (msg: NOTIFY_MESSAGE) => dispatch(setNotifyMessage(msg)),
-  goBack: () => dispatch(resetWallet())
+  goBack: () => dispatch(resetWallet()),
+  showChangeWalletWindow: () => dispatch(changeWalletWindow(false)),
+  walletHasChanged: () => dispatch(walletNumberhasChanged())
 
 });
 

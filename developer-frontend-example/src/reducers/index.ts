@@ -21,6 +21,13 @@ import { notifyEvt } from './notifyevents';
 import { showAboutMode } from './about';
 import { tokenState } from './tokenizer';
 
+import { 
+    
+    changeWalletWindowState,
+    walletNumberHasChangedState
+
+} from './change_wallet';
+
 const nano_wallet_rootReducer = combineReducers(
 
     { 
@@ -33,7 +40,9 @@ const nano_wallet_rootReducer = combineReducers(
         setBackGroundMode,
         notifyEvt,
         showAboutMode,
-        tokenState
+        tokenState,
+        changeWalletWindowState,
+        walletNumberHasChangedState
         
     }
 

@@ -1,0 +1,70 @@
+
+.change-wallet-container {
+ 
+    display: none;
+    justify-content: center;
+    align-items: center;
+    justify-items: center;
+    position: fixed; 
+    z-index: 3;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    background-color: var(--background-locked);
+
+}
+
+.change-wallet-window {
+
+    border-radius: 12px;
+    background-color: var(--background-content);
+    width: 404px;
+    height: 250px;
+    color: var(--color);
+
+}
+
+.change-wallet-title {
+
+    font-size: 22px;
+    font-style: italic;
+    font-weight: 700;
+    text-align: center;
+    margin: 15px 0 15px 0;
+
+}
+
+.change-wallet-token-password-box,
+.change-wallet-input-box {
+
+    width: 80%;
+    margin: 0 auto 15px auto;
+
+}
+
+
+.change-wallet-token-password-input,
+.change-wallet-input {
+
+    text-align: center;
+    font-style: italic;
+    width: 100%;
+
+}
+
+.change-wallet-btn-box {
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+}
+
+.change-wallet-change-btn,
+.change-wallet-close-btn {
+
+    width: 100px;
+    margin: 12px;
+
+}

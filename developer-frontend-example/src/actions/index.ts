@@ -26,6 +26,8 @@ const RESET_WALLET = 16;
 const SET_TOKEN = 17;
 const SET_WINDOW_VISIBILITY = 18;
 const SET_WINDOW_AND_TOKEN = 19;
+const CHANGE_WALLET_WINDOW = 20;
+const WALLET_NUMBER_HAS_CHANGED = 21;
 
 export const NANO_WALLET_ACTIONS = {
 
@@ -47,7 +49,9 @@ export const NANO_WALLET_ACTIONS = {
     RESET_WALLET,
     SET_TOKEN,
     SET_WINDOW_VISIBILITY,
-    SET_WINDOW_AND_TOKEN
+    SET_WINDOW_AND_TOKEN,
+    CHANGE_WALLET_WINDOW,
+    WALLET_NUMBER_HAS_CHANGED
     
 }
 
@@ -119,4 +123,12 @@ export function setWindowToken(visible: boolean = false) {
 
 export function setTokenAndWindow(tokenizer: TOKENIZER) {
     return { type: SET_WINDOW_AND_TOKEN, tokenizer };
+}
+
+export function changeWalletWindow(isClosed: boolean = true) {
+    return { type: CHANGE_WALLET_WINDOW, isClosed };
+}
+
+export function walletNumberhasChanged(changed: boolean = false) {
+    return { type: WALLET_NUMBER_HAS_CHANGED, changed };
 }
