@@ -120,7 +120,15 @@ export const LANG_PT_BR = {
     title_close: "Fechar",
     title_change: "Mudar",
     msg_empty_wallet_number: "O número da carteira não deve estar vazio",
-    msg_wallet_num_is_nan: "Erro: Número da carteira NÃO é um Número"
+    msg_wallet_num_is_nan: "Erro: Número da carteira NÃO é um Número",
+    sign_verify_message_title: "Assinar/verificar mensagem ou hash",
+    msg_sign_verify_message_hash: "Digite sua HASH ou MENSAGEM DE TEXTO aqui",
+    msg_message_or_hash: "Mensagem ou hash do bloco",
+    msg_is_blk_hash: "É hash do bloco?",
+    pk_or_nano_wallet_title: "Chave pública ou carteira Nano",
+    signature_title: "Assinatura",
+    verify_title: "Verificar",
+    sign_title: "Assinar"
 
 }
 
@@ -242,7 +250,15 @@ export const LANG_EN_US = {
     title_close: "Close",
     title_change: "Mudar",
     msg_empty_wallet_number: "Wallet number cannot be empty",
-    msg_wallet_num_is_nan: "Error: Wallet NUMBER is not a Number"
+    msg_wallet_num_is_nan: "Error: Wallet NUMBER is not a Number",
+    sign_verify_message_title: "Sign/verify message or hash",
+    msg_sign_verify_message_hash: "Type your HASH or TEXT MESSAGE here",
+    msg_message_or_hash: "Message or block hash",
+    msg_is_blk_hash: "Is hash block?",
+    pk_or_nano_wallet_title: "Public key or Nano wallet",
+    signature_title: "Signature",
+    verify_title: "Verify",
+    sign_title: "Sign"
 
 }
 

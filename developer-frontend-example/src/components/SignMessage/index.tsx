@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 
 import { 
@@ -15,8 +15,19 @@ import './style.css';
 
 export function SignMessage(props: any) {
 
-    const [ walletPublicKeyValue, setWalletPublicKeyValue ] = useState((props.wallet as my_wallet).wallet as string);
+    const [ walletPublicKeyValue, setWalletPublicKeyValue ] = useState("");
+    const [ messageHash, setMessageHash ] = useState("");
+    const [ signature, setSignature ] = useState("");
     
+    useEffect(
+        () => {
+
+            if (!props.isSignedVerifyWindowClosed)
+                setWalletPublicKeyValue((props.wallet as my_wallet).wallet as string);
+
+        }, [ props.isSignedVerifyWindowClosed, props.wallet ]
+    )
+
     return (
         <div 
             
@@ -26,43 +37,67 @@ export function SignMessage(props: any) {
         >
             <div className="sign-message-window">
                 <div className="sign-box-title">
-                    Assinar/verificar mensagem ou hash
+                    { props.language.sign_verify_message_title }
                 </div>
                 <div className="sign-box">
                     <div className="sign-message-title">
                         <div className="sub-sign-message-title">
-                            Mensagem ou hash
+                            { props.language.msg_message_or_hash }
                         </div>
                         <div className="sub-sign-message">
-                            <input type="checkbox" className="sign-is-hash" />
-                            <label htmlFor="sign-is-hash">É hash do bloco?</label>
+                            <input 
+
+                                type="checkbox" 
+                                className="sign-is-hash"
+                                title={ props.language.msg_is_blk_hash }
+
+                            />
+                            <label htmlFor="sign-is-hash">
+                                { props.language.msg_is_blk_hash }
+                            </label>
                         </div>
                     </div>
                     <div className="sign-message-box">
-                        <input type="text" className="sign-message-input" style={{height: "80px"}}/>
+                        <input
+                            
+                            type="text" 
+                            className="sign-message-input"
+                            value={messageHash}
+                            onChange={ (e) => setMessageHash(e.target.value) }
+                            style={{height: "80px"}}
+                            placeholder={ props.language.msg_sign_verify_message_hash }
+                            title={ props.language.msg_sign_verify_message_hash }
+
+                        />
                     </div>
                     <div className="sign-public-key-title">
-                        Chave pública ou carteira Nano
+                        { props.language.pk_or_nano_wallet_title }
                     </div>
                     <div className="sign-public-key-box">
                         <input
                             
                             type="text" 
                             className="sign-public-key-input"
-                            value={ walletPublicKeyValue } 
+                            value={ walletPublicKeyValue }
                             onChange={ (e) => { setWalletPublicKeyValue(e.target.value) } }
+                            placeholder={ props.language.pk_or_nano_wallet_title }
+                            title={ props.language.pk_or_nano_wallet_title }
 
                         />
                     </div>
                     <div className="sign-signature-title">
-                        Assinatura
+                        { props.language.signature_title }
                     </div>
                     <div className="sign-signature-box">
                         <input 
 
                             type="text" 
                             className="sign-signature-input" 
+                            value={ signature }
+                            onChange={ (e) => setSignature(e.target.value) }
                             style={ { height: "60px" } }
+                            placeholder={ props.language.signature_title }
+                            title={ props.language.signature_title }
                         
                         />
                     </div>
@@ -71,19 +106,32 @@ export function SignMessage(props: any) {
                     Caixa de ação
                 </div>
                 <div className="button-box">
-                    <button className="sign-msg-btn">
-                        <FiEdit3 size={22} style={ { marginRight: "4px" } }/>Assinar
+                    <button 
+
+                        className="sign-msg-btn"
+                        placeholder={ props.language.sign_title }
+                        title={ props.language.sign_title }
+
+                    >
+                        <FiEdit3 size={22} style={ { marginRight: "4px" } }/>{ props.language.sign_title }
                     </button>
-                    <button className="sign-verify-btn">
-                        <FiCheck size={22} style={ { marginRight: "4px" } } />Verificar
+                    <button 
+                    
+                        className="sign-verify-btn"
+                        placeholder={ props.language.verify_title }
+                        title={ props.language.verify_title }
+        
+                    >
+                        <FiCheck size={22} style={ { marginRight: "4px" } } />{ props.language.verify_title }
                     </button>
                     <button 
                     
                         className="sign-close-btn"
                         onClick={ () => props.closeSignVerifyWindow() }
+                        title={ props.language.title_close }
                         
                     >
-                        <FiX size={22} style={ { marginRight: "4px" } } />Fechar
+                        <FiX size={22} style={ { marginRight: "4px" } } />{ props.language.title_close }
                     </button>
                 </div>
             </div>
