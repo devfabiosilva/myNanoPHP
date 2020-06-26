@@ -59,7 +59,15 @@ import {
 
 } from '../../utils/wallet_interface';
 
-import { FiSend, FiSkipBack } from 'react-icons/fi';
+import { 
+  
+  FiSend, 
+  FiSkipBack, 
+  FiEdit3
+
+} from 'react-icons/fi';
+
+import { FaWallet } from 'react-icons/fa';
 import './style.css';
 
 export function Wallet(props: any) {
@@ -98,7 +106,6 @@ export function Wallet(props: any) {
 
           if (( amount_to_send_receive = obj_amount_to_send_receive.value.trim() ) === "") {
 
-            //alert( props.language.msg_amount_is_empty );
             props.newNotification({
               notify_type: NOTIFY_TYPE.NOTIFY_TYPE_ERROR,
               msg: props.language.msg_amount_is_empty
@@ -223,7 +230,6 @@ export function Wallet(props: any) {
                     });
                     setRepresentative(props.state.wallet_representative);
                   } else {
-                    //setRepresentative("No representative found");
                     props.setMyWallet({
                       wallet_representative: DEFAULT_REPRESENTATIVE
                     });
@@ -286,10 +292,12 @@ export function Wallet(props: any) {
       }
     },
     [
+
       props,
       walletReady,
       lockInputs,
       openPendingBlock
+      
     ]
   
   );
@@ -364,9 +372,31 @@ export function Wallet(props: any) {
     <div className="wallet-container">
       <Dialog />
       <div className="wallet-number-container">
-        <div className="wallet-number-title">{ props.language.wallet_number }:</div>
-        <div className="wallet-number">
-          { props.state.wallet_number }
+        <div className="wallet-number-div">
+          <div className="wallet-number-title">
+            { props.language.wallet_number }:
+          </div>
+          <div className="wallet-number">
+            { props.state.wallet_number }
+          </div>
+        </div>
+        <div className="button-div">
+          <button
+
+            className="change-wallet-btn"
+            title={ props.language.change_wallet  }
+
+          >
+            <FaWallet size={22} style={ { marginRight: "8px" } } />{ props.language.change_wallet }
+          </button>
+          <button
+
+            className="sign-message-btn"
+            title={ props.language.sign_verify_message }
+
+          >
+            <FiEdit3 size={22} style={ { marginRight: "8px" } } />{ props.language.sign_verify_message }
+          </button>
         </div>
       </div>
       <div className="wallet-address-container">

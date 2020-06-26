@@ -13,7 +13,7 @@ const INITIAL_WALLET: my_wallet = {
 
 }
 
-export function wallet( state: my_wallet = INITIAL_WALLET,  action: any) {
+export function wallet(state: my_wallet = INITIAL_WALLET,  action: any) {
 
     switch (action.type) {
 

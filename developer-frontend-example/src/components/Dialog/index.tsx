@@ -88,7 +88,6 @@ function Dialog(props: any) {
 
             if (password === "") {
 
-                //alert( props.language.dialog_password_empty );
                 props.newNotification(
                     {
                         notify_type: NOTIFY_TYPE.NOTIFY_TYPE_ERROR,

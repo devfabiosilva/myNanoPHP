@@ -111,7 +111,9 @@ export const LANG_PT_BR = {
     msg_encrypting_private_key_with_token: "Criptografando a chave privada com o token ...",
     msg_extracting_public_key: "Extraindo a chave pública",
     msg_extracting_seed: "Extraindo a semente ...",
-    msg_extracting_keypair_from_encrypted_block: "Extraindo o par de chaves do bloco criptografado ..."
+    msg_extracting_keypair_from_encrypted_block: "Extraindo o par de chaves do bloco criptografado ...",
+    change_wallet: "Mudar carteira",
+    sign_verify_message: "Assinar/verif. mensagem"
 
 }
 
@@ -224,7 +226,9 @@ export const LANG_EN_US = {
     msg_encrypting_private_key_with_token: "Encrypting private key with token ...",
     msg_extracting_public_key: "Extracting public key ...",
     msg_extracting_seed: "Extracting Nano SEED ...",
-    msg_extracting_keypair_from_encrypted_block: "Extracting KeyPair from encrypted block ..."
+    msg_extracting_keypair_from_encrypted_block: "Extracting KeyPair from encrypted block ...",
+    change_wallet: "Change wallet",
+    sign_verify_message: "Sign/verif. message"
 
 }
 
