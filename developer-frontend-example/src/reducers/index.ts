@@ -20,6 +20,7 @@ import { setBackGroundMode } from './backgroundmode';
 import { notifyEvt } from './notifyevents';
 import { showAboutMode } from './about';
 import { tokenState } from './tokenizer';
+import { verifySignWindowState } from './verify_sign';
 
 import { 
     
@@ -42,7 +43,8 @@ const nano_wallet_rootReducer = combineReducers(
         showAboutMode,
         tokenState,
         changeWalletWindowState,
-        walletNumberHasChangedState
+        walletNumberHasChangedState,
+        verifySignWindowState
         
     }
 

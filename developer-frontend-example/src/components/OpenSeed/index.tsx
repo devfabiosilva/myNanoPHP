@@ -100,10 +100,10 @@ export function OpenSeed(props: any) {
 
                             props.wallet_public_key({
         
+                                wallet_number: 0,
                                 encrypted_block: (result as ENCRYPTED_STREAM_RESULT).encrypted_stream as string,
                                 origin: WALLET_FROM.FROM_KEY_PAIR,
                                 public_key: (res as MY_NANO_PHP_SEED2KEYPAIR).key_pair.public_key,
-                                wallet_number: 0,
                                 wallet: (res as MY_NANO_PHP_SEED2KEYPAIR).key_pair.wallet
         
                             } as my_wallet);

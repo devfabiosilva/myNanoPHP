@@ -27,9 +27,10 @@ import {
 
 } from '../../actions';
 
-import './style.css';
 import { FiSkipBack } from 'react-icons/fi';
 import { NOTIFY_TYPE } from '../../utils';
+
+import './style.css';
 
 export function Brainwallet(props: any) {
 

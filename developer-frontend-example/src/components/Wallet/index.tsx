@@ -49,7 +49,8 @@ import {
   setNotifyMessage,
   resetWallet,
   changeWalletWindow,
-  walletNumberhasChanged
+  walletNumberhasChanged,
+  changeSignVerifyWindow
 
 } from '../../actions';
 
@@ -70,7 +71,9 @@ import {
 } from 'react-icons/fi';
 
 import { FaWallet } from 'react-icons/fa';
+import SignMessage from '../SignMessage';
 import './style.css';
+import { TOKENIZER } from '../../reducers/tokenizer';
 
 export function Wallet(props: any) {
 
@@ -174,7 +177,9 @@ export function Wallet(props: any) {
         
           if (props.dialog_status === "")
             if (!props.monitore_pending.pending_function)
-              props.enablePendingMonitor(verifyPendingRef.current);
+              if ((props.isSignedVerifyWindowClosed)&&((props.token as TOKENIZER).showWindow === false))
+                 if (props.closedChangeWalletState)
+                    props.enablePendingMonitor(verifyPendingRef.current);
 
         }
 
@@ -316,7 +321,7 @@ export function Wallet(props: any) {
     let pending_value: any = (props.state as my_wallet).pending;
     let block: string;
     let amount: string;
-
+console.log("tic-tac")
     if ( (pending_value !== '0.0') ) {
       props.disablePendingMonitor();
       nano_rpc_get_pending( (props.state as my_wallet).wallet as string ).then(
@@ -395,8 +400,8 @@ export function Wallet(props: any) {
             className="change-wallet-btn"
             onClick={ () => { 
               
-                props.showChangeWalletWindow(); 
                 props.disablePendingMonitor();
+                props.showChangeWalletWindow(); 
 
               }
             }
@@ -409,6 +414,12 @@ export function Wallet(props: any) {
 
             className="sign-message-btn"
             title={ props.language.sign_verify_message }
+            onClick={ () => {
+              
+              props.disablePendingMonitor();
+              props.openSignVerifyWindow();
+
+            }}
 
           >
             <FiEdit3 size={22} style={ { marginRight: "8px" } } />{ props.language.sign_verify_message }
@@ -541,7 +552,12 @@ export function Wallet(props: any) {
         <button 
 
           className="back-button"
-          onClick={ () => props.goBack() }
+          onClick={ () => {
+
+              props.disablePendingMonitor();
+              props.goBack();
+            
+            }}
           title={ props.language.go_back }
 
         >
@@ -558,6 +574,7 @@ export function Wallet(props: any) {
 
         />
       </div>
+      <SignMessage />
     </div>
   );
 
@@ -571,7 +588,10 @@ const mapStateToProps = (state: any, ownProps: any) => ({
   monitore_pending: state.monitore_pending_amount,
   dialog_is_open: state.openTransactionDialog,
   backgroundMode: state.setBackGroundMode,
-  walletNumberHasChangedState: state.walletNumberHasChangedState
+  walletNumberHasChangedState: state.walletNumberHasChangedState,
+  isSignedVerifyWindowClosed: state.verifySignWindowState,
+  token: state.tokenState,
+  closedChangeWalletState: state.changeWalletWindowState
 
 });
 
@@ -586,7 +606,8 @@ const mapDispatchToProps = (dispatch: any, ownProps: any) => ({
   newNotification: (msg: NOTIFY_MESSAGE) => dispatch(setNotifyMessage(msg)),
   goBack: () => dispatch(resetWallet()),
   showChangeWalletWindow: () => dispatch(changeWalletWindow(false)),
-  walletHasChanged: () => dispatch(walletNumberhasChanged())
+  walletHasChanged: () => dispatch(walletNumberhasChanged()),
+  openSignVerifyWindow: () => dispatch(changeSignVerifyWindow(false))
 
 });
 

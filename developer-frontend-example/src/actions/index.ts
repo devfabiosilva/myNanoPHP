@@ -28,6 +28,7 @@ const SET_WINDOW_VISIBILITY = 18;
 const SET_WINDOW_AND_TOKEN = 19;
 const CHANGE_WALLET_WINDOW = 20;
 const WALLET_NUMBER_HAS_CHANGED = 21;
+const CHANGE_VERIFY_SIGN_WINDOW = 22;
 
 export const NANO_WALLET_ACTIONS = {
 
@@ -51,7 +52,8 @@ export const NANO_WALLET_ACTIONS = {
     SET_WINDOW_VISIBILITY,
     SET_WINDOW_AND_TOKEN,
     CHANGE_WALLET_WINDOW,
-    WALLET_NUMBER_HAS_CHANGED
+    WALLET_NUMBER_HAS_CHANGED,
+    CHANGE_VERIFY_SIGN_WINDOW
     
 }
 
@@ -131,4 +133,8 @@ export function changeWalletWindow(isClosed: boolean = true) {
 
 export function walletNumberhasChanged(changed: boolean = false) {
     return { type: WALLET_NUMBER_HAS_CHANGED, changed };
+}
+
+export function changeSignVerifyWindow(isClosed: boolean = true) {
+    return { type: CHANGE_VERIFY_SIGN_WINDOW, isClosed };
 }
