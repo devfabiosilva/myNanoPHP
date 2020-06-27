@@ -9,8 +9,32 @@ import {
 
 } from 'react-icons/fi';
 
-import { my_wallet } from '../../utils/wallet_interface';
-import { changeSignVerifyWindow } from '../../actions';
+import { 
+    
+    my_wallet, 
+    NOTIFY_MESSAGE, 
+    SIGNATURE_VERIFY,
+    MY_NANO_PHP_ERROR
+
+} from '../../utils/wallet_interface';
+
+import { 
+    
+    changeSignVerifyWindow, 
+    setNotifyMessage 
+
+} from '../../actions';
+
+import { my_nano_php_verify_message_sig } from '../../service';
+
+import { 
+    
+    NOTIFY_TYPE,
+    MY_NANO_PHP_VERIFY_SIG_HASH,
+    MY_NANO_PHP_VERIFY_SIG_MSG
+
+} from '../../utils';
+
 import './style.css';
 
 export function SignMessage(props: any) {
@@ -27,6 +51,88 @@ export function SignMessage(props: any) {
 
         }, [ props.isSignedVerifyWindowClosed, props.wallet ]
     )
+
+    function verifyMessageHash() {
+
+        let isHash: any = document.getElementById('sign-is-hash-id');
+
+        if (walletPublicKeyValue === "") {
+
+            props.newNotification({
+
+                notify_type: NOTIFY_TYPE.NOTIFY_TYPE_ERROR,
+                msg: props.language.msg_requires_nano_wallet_pk,
+                timeout: 1000
+
+            } as NOTIFY_MESSAGE);
+
+            return;
+
+        }
+
+        if (messageHash === "") {
+
+            props.newNotification({
+
+                notify_type: NOTIFY_TYPE.NOTIFY_TYPE_ERROR,
+                msg: props.language.msg_missing_message_or_hash,
+                timeout: 1000
+
+            } as NOTIFY_MESSAGE);
+
+            return;
+
+        }
+
+        if (signature === "") {
+
+            props.newNotification({
+
+                notify_type: NOTIFY_TYPE.NOTIFY_TYPE_ERROR,
+                msg: props.language.msg_missing_signature,
+                timeout: 1000
+
+            } as NOTIFY_MESSAGE);
+
+            return;
+
+        }
+
+        props.newNotification({
+
+            msg: props.language.msg_checking_signature,
+            timeout: 600
+
+        } as NOTIFY_MESSAGE);
+
+        my_nano_php_verify_message_sig(signature, messageHash, walletPublicKeyValue, (isHash.checked)?MY_NANO_PHP_VERIFY_SIG_HASH:MY_NANO_PHP_VERIFY_SIG_MSG).then(
+            (sign_res: any) =>
+                ((sign_res as SIGNATURE_VERIFY).valid === "1")?
+                props.newNotification({
+
+                    msg: props.language.msg_valid_signature,
+                    timeout: 1000
+        
+                } as NOTIFY_MESSAGE):
+                props.newNotification({
+
+                    notify_type: NOTIFY_TYPE.NOTIFY_TYPE_ERROR,
+                    msg: props.language.msg_invalid_signature,
+                    timeout: 1000
+        
+                } as NOTIFY_MESSAGE),
+            (sign_err) => 
+                props.newNotification({
+
+                    notify_type: NOTIFY_TYPE.NOTIFY_TYPE_ERROR,
+                    msg: `${(sign_err as MY_NANO_PHP_ERROR).error} ${(sign_err as MY_NANO_PHP_ERROR).reason}`,
+                    timeout: 1000
+    
+                } as NOTIFY_MESSAGE)
+
+        )
+
+    }
 
     return (
         <div 
@@ -49,6 +155,7 @@ export function SignMessage(props: any) {
 
                                 type="checkbox" 
                                 className="sign-is-hash"
+                                id="sign-is-hash-id"
                                 title={ props.language.msg_is_blk_hash }
 
                             />
@@ -118,6 +225,7 @@ export function SignMessage(props: any) {
                     <button 
                     
                         className="sign-verify-btn"
+                        onClick={ () => verifyMessageHash() }
                         placeholder={ props.language.verify_title }
                         title={ props.language.verify_title }
         
@@ -150,6 +258,7 @@ const mapStateToProps = (state: any, ownProps: any) => ({
 
 const mapDispatchToProps = (dispatch: any, ownProps: any) => ({
 
+    newNotification: (msg: NOTIFY_MESSAGE) => dispatch(setNotifyMessage(msg)),
     closeSignVerifyWindow: () => dispatch(changeSignVerifyWindow())
 
 });

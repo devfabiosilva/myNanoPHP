@@ -27,13 +27,13 @@ import { getLanguageFromLocalStorage } from '../../utils/language';
 
 import LanguageTool from '../../components/LanguageTool';
 import DarkModeTool from '../../components/DarkModeTool';
-import { Brand } from '../../components/Brand';
-import './style.css';
+import Brand from '../../components/Brand';
 import Welcome from '../../components/Welcome';
 import Notify from '../../components/Notification';
 import About from '../../components/About';
 import TokenMsg from '../../components/TokenMsg';
 import ChangeWallet from '../../components/ChangeWalletDialog';
+import './style.css';
 
 export function MainContainer(props: any) {
 

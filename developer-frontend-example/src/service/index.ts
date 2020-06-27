@@ -10,7 +10,8 @@ import {
 
     NANO_PREFIX,
     UNKNOWN_MY_NANO_PHP_SERVER_ERROR,
-    changeToNanoPrefix
+    changeToNanoPrefix,
+    MY_NANO_PHP_VERIFY_SIG_MSG
 
 } from '../utils';
 
@@ -25,7 +26,8 @@ import {
     my_wallet,
     BIG_NUMBER_COMPARE_RESPONSE,
     NEXT_PENDING_BLOCK_RESPONSE,
-    ENCRYPTED_STREAM_RESULT
+    ENCRYPTED_STREAM_RESULT,
+    SIGNATURE_VERIFY
 
 } from '../utils/wallet_interface';
 
@@ -268,6 +270,20 @@ export async function my_nano_php_seed_to_encrypted_stream(seed: string, passwor
     let data: ENCRYPTED_STREAM_RESULT|MY_NANO_PHP_ERROR;
 
     data = await my_nano_php_api(`command=save_seed_to_encrypted_stream&seed=${seed}&password=${password}`, "my_nano_php_seed_to_encrypted_stream");
+
+    return new Promise((res, error) => {
+
+        return (data.error === "0")?res(data):error(data);
+
+    });
+}
+
+
+export async function my_nano_php_verify_message_sig(signature: string, message: string, public_key: string, type: string = MY_NANO_PHP_VERIFY_SIG_MSG)
+{
+    let data: SIGNATURE_VERIFY|MY_NANO_PHP_ERROR;
+
+    data = await my_nano_php_api(`command=check_message_sig&signature=${signature}&pk=${public_key}&message=${message}&type=${type}`, "my_nano_php_verify_message_sig");
 
     return new Promise((res, error) => {
 

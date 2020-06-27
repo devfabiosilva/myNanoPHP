@@ -128,7 +128,13 @@ export const LANG_PT_BR = {
     pk_or_nano_wallet_title: "Chave pública ou carteira Nano",
     signature_title: "Assinatura",
     verify_title: "Verificar",
-    sign_title: "Assinar"
+    sign_title: "Assinar",
+    msg_requires_nano_wallet_pk: "Chave pública ou carteira Nano é necessária",
+    msg_missing_message_or_hash: "Mensagem ou Hash do bloco é necessário",
+    msg_missing_signature: "Faltando: Assinatura",
+    msg_checking_signature: "Verificando a assinatura ...",
+    msg_valid_signature: "Assinatura VÁLIDA",
+    msg_invalid_signature: "Assinatura INVÁLIDA"
 
 }
 
@@ -258,7 +264,13 @@ export const LANG_EN_US = {
     pk_or_nano_wallet_title: "Public key or Nano wallet",
     signature_title: "Signature",
     verify_title: "Verify",
-    sign_title: "Sign"
+    sign_title: "Sign",
+    msg_requires_nano_wallet_pk: "Missing Nano Wallet or public key",
+    msg_missing_message_or_hash: "Missing: Message or hash block",
+    msg_missing_signature: "Missing: Signature",
+    msg_checking_signature: "Checking signature ...",
+    msg_valid_signature: "VALID signature",
+    msg_invalid_signature: "INVALID signature"
 
 }
 

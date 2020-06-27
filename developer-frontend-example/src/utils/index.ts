@@ -15,6 +15,8 @@ export const QR_CODE_BG_LIGHT = "#f5f6f8";
 export const QR_CODE_FG_LIGHT = "#696969";
 export const DEFAULT_NOTIFY_TIMEOUT = 5000; // in milliseconds
 export const MY_NANO_PHP_DARK_MODE = "myNanoPHPDarkMode";
+export const MY_NANO_PHP_VERIFY_SIG_HASH = "hash";
+export const MY_NANO_PHP_VERIFY_SIG_MSG = "msg";
 
 export const NOTIFY_TYPE = {
 

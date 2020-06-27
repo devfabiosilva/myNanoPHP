@@ -177,3 +177,11 @@ export interface ENCRYPTED_STREAM_RESULT {
     encrypted_stream?: string
 
 }
+
+export interface SIGNATURE_VERIFY {
+
+    error?: string|number,
+    reason?: string,
+    valid?: string|number
+    
+}
