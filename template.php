@@ -3541,6 +3541,153 @@ if ($_SERVER['REQUEST_METHOD']==='POST') {
 
     }
 
+    if ($cmd==="check_message_sig") {
+
+        $sig=$_POST['signature'];
+
+        if (!isset($sig)) {
+
+            http_response_code(404);
+            header($MIME_TYPE);
+            echo '{"error":"142","reason":"Missing: Signature"}';
+            exit(0);
+
+        }
+
+        $pk=$_POST['pk'];
+
+        if (!isset($pk)) {
+
+            http_response_code(404);
+            header($MIME_TYPE);
+            echo '{"error":"143","reason":"Missing: Public key or Nano Wallet"}';
+            exit(0);
+
+        }
+
+        $message=$_POST['message'];
+
+        if (!isset($message)) {
+
+            http_response_code(404);
+            header($MIME_TYPE);
+            echo '{"error":"144","reason":"Missing: Message/data or Block hash"}';
+            exit(0);
+
+        }
+
+        $message_type=$_POST['type'];
+
+        if (isset($message_type)) {
+
+            if ($message_type==='msg')
+               $type=MESSAGE_IS_DATA;
+            else if ($message_type==='hash')
+               $type=MESSAGE_IS_BLOCK_HASH_STR;
+            else {
+
+                http_response_code(404);
+                header($MIME_TYPE);
+                echo '{"error":"145","reason":"Missing: Unknown message type"}';
+                exit(0);
+
+            }
+
+        } else
+            $type=MESSAGE_IS_DATA;
+
+        try {
+
+            $valid=php_c_check_message_sig($sig, $message, $pk, $type);
+
+            echo '{"error":"0","reason":"Success","valid":"'.(($valid)?'1':'0').'"}';
+
+        } catch (Exception $e) {
+
+            http_response_code(500);
+            header($MIME_TYPE);
+            echo '{"error":"'.strval($e->getCode()).'", "reason":"'.$e->getMessage().' Can not verify message '.strval($e->getCode()).'"}';
+
+        }
+
+        exit(0);
+
+    }
+
+    if ($cmd==="sign_message") {
+
+        $sk=$_POST['private_key'];
+
+        if (!isset($sk)) {
+
+            http_response_code(404);
+            header($MIME_TYPE);
+            echo '{"error":"146","reason":"Missing: Private key"}';
+            exit(0);
+
+        }
+
+        $message=$_POST['message'];
+
+        if (!isset($message)) {
+
+            http_response_code(404);
+            header($MIME_TYPE);
+            echo '{"error":"146","reason":"Missing: Message/data or Block hash"}';
+            exit(0);
+
+        }
+
+        $message_type=$_POST['type'];
+
+        if (isset($message_type)) {
+
+            if ($message_type==='msg')
+               $type=MESSAGE_IS_DATA;
+            else if ($message_type==='hash')
+               $type=MESSAGE_IS_BLOCK_HASH_STR;
+            else {
+
+                http_response_code(404);
+                header($MIME_TYPE);
+                echo '{"error":"146","reason":"Missing: Unknown message type"}';
+                exit(0);
+
+            }
+
+        } else
+            $type=MESSAGE_IS_DATA;
+
+        try {
+
+            $sig_bin=php_c_sign_message($message, $sk, $type);
+
+        } catch (Exception $e) {
+
+            http_response_code(500);
+            header($MIME_TYPE);
+            echo '{"error":"'.strval($e->getCode()).'", "reason":"'.$e->getMessage().' Can not sign message/hash '.strval($e->getCode()).'"}';
+            exit(0);
+
+        }
+
+        try {
+
+            $sig_hex=bin2hex($sig_bin);
+            echo '{"error":"0","reason":"Success","signature":"'.$sig_hex.'"}';
+
+        } catch (Exception $e) {
+
+            http_response_code(500);
+            header($MIME_TYPE);
+            echo '{"error":"'.strval($e->getCode()).'", "reason":"'.$e->getMessage().' Can not parse binary signature to hex string '.strval($e->getCode()).'"}';
+
+        }
+
+        exit(0);
+
+    }
+
     if ($cmd==="valid_encrypted_seed") {
 
         $block=$_POST['block'];

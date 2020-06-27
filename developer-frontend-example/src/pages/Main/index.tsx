@@ -35,7 +35,7 @@ import About from '../../components/About';
 import TokenMsg from '../../components/TokenMsg';
 import ChangeWallet from '../../components/ChangeWalletDialog';
 
-export function MainContainer( props: any) {
+export function MainContainer(props: any) {
 
     return (
         <div className="body-container">

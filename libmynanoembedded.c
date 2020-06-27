@@ -328,6 +328,19 @@ ZEND_BEGIN_ARG_INFO_EX(My_NanoCEmbedded_BrainwalletToEncryptedStream, 0, 0, 6)
     ZEND_ARG_INFO(0, password_type)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_INFO_EX(My_NanoCEmbedded_SignMessage, 0, 0, 2)
+    ZEND_ARG_INFO(0, message)
+    ZEND_ARG_INFO(0, private_key)
+    ZEND_ARG_INFO(0, type)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(My_NanoCEmbedded_CheckMessageSignature, 0, 0, 3)
+    ZEND_ARG_INFO(0, signature)
+    ZEND_ARG_INFO(0, message)
+    ZEND_ARG_INFO(0, publickey)
+    ZEND_ARG_INFO(0, type)
+ZEND_END_ARG_INFO()
+
 static zend_class_entry *f_exception_ce;
 
 static zend_object *f_exception_create_object(zend_class_entry *ce) {
@@ -371,6 +384,9 @@ static zend_object *f_exception_create_object(zend_class_entry *ce) {
 #define WORKER_FEE_HEX F_NANO_B_RAW_128
 #define WORKER_FEE_REAL F_NANO_B_REAL_STRING
 #define WORKER_FEE_RAW F_NANO_B_RAW_STRING
+#define MESSAGE_IS_DATA (uint32_t)32
+#define MESSAGE_IS_BLOCK_HASH (uint32_t)64
+#define MESSAGE_IS_BLOCK_HASH_STR (uint32_t)128
 
 PHP_MINIT_FUNCTION(mynanoembedded)
 {
@@ -448,6 +464,9 @@ PHP_MINIT_FUNCTION(mynanoembedded)
    REGISTER_LONG_CONSTANT("PASS_IS_TOO_LONG", F_PASS_IS_TOO_LONG, CONST_CS|CONST_PERSISTENT);
    REGISTER_LONG_CONSTANT("READ_SEED_FROM_STREAM", READ_SEED_FROM_STREAM, CONST_CS|CONST_PERSISTENT);
    REGISTER_LONG_CONSTANT("READ_SEED_FROM_FILE", READ_SEED_FROM_FILE, CONST_CS|CONST_PERSISTENT);
+   REGISTER_LONG_CONSTANT("MESSAGE_IS_DATA", MESSAGE_IS_DATA, CONST_CS|CONST_PERSISTENT);
+   REGISTER_LONG_CONSTANT("MESSAGE_IS_BLOCK_HASH", MESSAGE_IS_BLOCK_HASH, CONST_CS|CONST_PERSISTENT);
+   REGISTER_LONG_CONSTANT("MESSAGE_IS_BLOCK_HASH_STR", MESSAGE_IS_BLOCK_HASH_STR, CONST_CS|CONST_PERSISTENT);
    f_random_attach(gen_rand_no_entropy);
 
    return SUCCESS;
@@ -490,6 +509,7 @@ PHP_FUNCTION(php_c_nano_check_sig)
    size_t msg_len;
    size_t publickey_len;
    size_t signature_len;
+   char err_msg[512];
 
    if (zend_parse_parameters(ZEND_NUM_ARGS(), "sss", &signature, &signature_len, &msg, &msg_len, &publickey, &publickey_len)==FAILURE) return;
 
@@ -511,6 +531,14 @@ PHP_FUNCTION(php_c_nano_check_sig)
 
    }
 
+   if (!publickey_len) {
+
+      zend_throw_exception(f_exception_ce , "Public key is empty", 15003);
+
+      return;
+
+   }
+
    ((is_nano_prefix((const char *)publickey, NANO_PREFIX))||(is_nano_prefix((const char *)publickey, XRB_PREFIX)))?
       (type=F_VERIFY_SIG_NANO_WALLET):(type=F_VERIFY_SIG_ASCII_HEX);
 
@@ -524,8 +552,8 @@ PHP_FUNCTION(php_c_nano_check_sig)
 
    if (err) {
 
-      sprintf(msg, "Internal error in 'f_verify_signed_data' %d", err);
-      zend_throw_exception(f_exception_ce, msg, (zend_long)err);
+      sprintf(err_msg, "Internal error in 'f_verify_signed_data' %d", err);
+      zend_throw_exception(f_exception_ce, err_msg, (zend_long)err);
       return;
 
    }
@@ -590,6 +618,8 @@ static const zend_function_entry mynanoembedded_functions[] = {
     PHP_FE(php_c_encrypted_stream_to_key_pair, My_NanoCEmbedded_EncryptedStreamToKeyPair)
     PHP_FE(php_c_bip39_to_encrypted_stream, My_NanoCEmbedded_Bip39ToEncryptedStream)
     PHP_FE(php_c_brainwallet_to_encrypted_stream, My_NanoCEmbedded_BrainwalletToEncryptedStream)
+    PHP_FE(php_c_sign_message, My_NanoCEmbedded_SignMessage)
+    PHP_FE(php_c_check_message_sig, My_NanoCEmbedded_CheckMessageSignature)
     PHP_FE_END
 
 };
@@ -617,9 +647,7 @@ PHP_FUNCTION(php_c_get_block_hash)
 
    if (Z_TYPE_P(z_block)!=IS_STRING) {
 
-      sprintf(msg, "Internal error in C function 'php_c_get_block_hash' 18400. User block is not raw data");
-
-      zend_throw_exception(f_exception_ce, msg, 18400);
+      zend_throw_exception(f_exception_ce, "Internal error in C function 'php_c_get_block_hash' 18400. User block is not raw data", 18400);
 
       return;
 
@@ -627,9 +655,7 @@ PHP_FUNCTION(php_c_get_block_hash)
 
    if (Z_STRLEN_P(z_block)!=sizeof(F_BLOCK_TRANSFER)) {
 
-      sprintf(msg, "Internal error in C function 'php_c_get_block_hash' 18401. Invalid user block size");
-
-      zend_throw_exception(f_exception_ce, msg, 18401);
+      zend_throw_exception(f_exception_ce, "Internal error in C function 'php_c_get_block_hash' 18401. Invalid user block size", 18401);
 
       return;
 
@@ -637,9 +663,9 @@ PHP_FUNCTION(php_c_get_block_hash)
 
    if (!f_nano_is_valid_block(block=(F_BLOCK_TRANSFER *)Z_STRVAL_P(z_block))) {
 
-      sprintf(msg, "Internal error in C function 'php_c_get_block_hash' 18402. Invalid block", err);
+      sprintf(msg, "Internal error in C function 'php_c_get_block_hash' %d. Invalid block", err);
 
-      zend_throw_exception(f_exception_ce, msg, 18402);
+      zend_throw_exception(f_exception_ce, msg, (zend_long)err);
 
       return;
 
@@ -676,9 +702,7 @@ PHP_FUNCTION(php_c_block_to_p2pow)
 
    if (Z_TYPE_P(z_block)!=IS_STRING) {
 
-      sprintf(msg, "Internal error in C function 'php_c_block_to_p2pow' 18500. User block is not raw data");
-
-      zend_throw_exception(f_exception_ce, msg, 18500);
+      zend_throw_exception(f_exception_ce, "Internal error in C function 'php_c_block_to_p2pow' 18500. User block is not raw data", 18500);
 
       return;
 
@@ -686,9 +710,7 @@ PHP_FUNCTION(php_c_block_to_p2pow)
 
    if (Z_STRLEN_P(z_block)!=sizeof(F_BLOCK_TRANSFER)) {
 
-      sprintf(msg, "Internal error in C function 'php_c_block_to_p2pow' 18501. Invalid user block size");
-
-      zend_throw_exception(f_exception_ce, msg, 18501);
+      zend_throw_exception(f_exception_ce, "Internal error in C function 'php_c_block_to_p2pow' 18501. Invalid user block size", 18501);
 
       return;
 
@@ -706,9 +728,7 @@ PHP_FUNCTION(php_c_block_to_p2pow)
 
    if (!worker_wallet_len) {
 
-      sprintf(msg, "Internal error in C function 'php_c_block_to_p2pow' 18503. Invalid worker wallet with length 0");
-
-      zend_throw_exception(f_exception_ce, msg, 18503);
+      zend_throw_exception(f_exception_ce, "Internal error in C function 'php_c_block_to_p2pow' 18503. Invalid worker wallet with length 0", 18503);
 
       return;
 
@@ -716,9 +736,7 @@ PHP_FUNCTION(php_c_block_to_p2pow)
 
    if (!worker_fee_len) {
 
-      sprintf(msg, "Internal error in C function 'php_c_block_to_p2pow' 18504. Invalid worker fee length 0");
-
-      zend_throw_exception(f_exception_ce, msg, 18504);
+      zend_throw_exception(f_exception_ce, "Internal error in C function 'php_c_block_to_p2pow' 18504. Invalid worker fee length 0", 18504);
 
       return;
 
@@ -747,9 +765,7 @@ PHP_FUNCTION(php_c_block_to_p2pow)
 
    if (!f_nano_is_valid_block((F_BLOCK_TRANSFER *)memcpy(msg, Z_STRVAL_P(z_block), sizeof(F_BLOCK_TRANSFER)))) {
 
-      sprintf(msg, "Internal error in C function 'php_c_block_to_p2pow' 16508. Invalid Nano block");
-
-      zend_throw_exception(f_exception_ce, msg, 16508);
+      zend_throw_exception(f_exception_ce, "Internal error in C function 'php_c_block_to_p2pow' 16508. Invalid Nano block", 16508);
 
       return;
 
@@ -867,7 +883,7 @@ php_c_block_to_p2pow_EXIT2:
 
       if (worker_fee_len!=32) {
 
-         sprintf(msg, "Internal error in C function 'php_c_block_to_p2pow' 16511. Invalid fee hex length '%lu'", err, worker_fee_len);
+         sprintf(msg, "Internal error in C function 'php_c_block_to_p2pow' %d. Invalid fee hex length '%lu'", err, worker_fee_len);
 
          zend_throw_exception(f_exception_ce, msg, 16511);
 
@@ -902,9 +918,7 @@ php_c_block_to_p2pow_EXIT2:
 
    if (compare&F_NANO_COMPARE_EQ) {
 
-      sprintf(msg, "Internal error in C function 'php_c_block_to_p2pow' 16512. Worker fee value is zero");
-
-      zend_throw_exception(f_exception_ce, msg, 16512);
+      zend_throw_exception(f_exception_ce, "Internal error in C function 'php_c_block_to_p2pow' 16512. Worker fee value is zero", 16512);
 
       return;
 
@@ -938,9 +952,7 @@ PHP_FUNCTION(php_c_p2pow_to_json)
 
    if (Z_TYPE_P(z_block)!=IS_STRING) {
 
-      sprintf(buffer, "Internal error in C function 'php_c_p2pow_to_json' 18900. User block is not raw data");
-
-      zend_throw_exception(f_exception_ce, buffer, 18900);
+      zend_throw_exception(f_exception_ce, "Internal error in C function 'php_c_p2pow_to_json' 18900. User block is not raw data", 18900);
 
       return;
 
@@ -948,9 +960,7 @@ PHP_FUNCTION(php_c_p2pow_to_json)
 
    if (Z_STRLEN_P(z_block)!=2*sizeof(F_BLOCK_TRANSFER)) {
 
-      sprintf(buffer, "Internal error in C function 'php_c_p2pow_to_json' 18901. Invalid user block size");
-
-      zend_throw_exception(f_exception_ce, buffer, 18901);
+      zend_throw_exception(f_exception_ce, "Internal error in C function 'php_c_p2pow_to_json' 18901. Invalid user block size", 18901);
 
       return;
 
@@ -1549,9 +1559,7 @@ PHP_FUNCTION(php_c_parse_block_to_json)
 
    if (Z_TYPE_P(z_block)!=IS_STRING) {
 
-      sprintf(msg, "Internal error in C function 'php_c_block_to_JSON' 18300. User block is not raw data");
-
-      zend_throw_exception(f_exception_ce, msg, 18300);
+      zend_throw_exception(f_exception_ce, "Internal error in C function 'php_c_block_to_JSON' 18300. User block is not raw data", 18300);
 
       return;
 
@@ -1559,9 +1567,7 @@ PHP_FUNCTION(php_c_parse_block_to_json)
 
    if (Z_STRLEN_P(z_block)!=sizeof(F_BLOCK_TRANSFER)) {
 
-      sprintf(msg, "Internal error in C function 'php_c_block_to_JSON' 18301. Invalid user block size");
-
-      zend_throw_exception(f_exception_ce, msg, 18301);
+      zend_throw_exception(f_exception_ce, "Internal error in C function 'php_c_block_to_JSON' 18301. Invalid user block size", 18301);
 
       return;
 
@@ -1621,9 +1627,7 @@ PHP_FUNCTION(php_c_calculate_work_from_block)
 
    if (Z_TYPE_P(z_block)!=IS_STRING) {
 
-      sprintf(msg, "Internal error in C function 'php_c_calculate_work_from_block' 18201. User block is not raw data");
-
-      zend_throw_exception(f_exception_ce, msg, 18201);
+      zend_throw_exception(f_exception_ce, "Internal error in C function 'php_c_calculate_work_from_block' 18201. User block is not raw data", 18201);
 
       return;
 
@@ -1631,9 +1635,7 @@ PHP_FUNCTION(php_c_calculate_work_from_block)
 
    if (Z_STRLEN_P(z_block)!=sizeof(F_BLOCK_TRANSFER)) {
 
-      sprintf(msg, "Internal error in C function 'php_c_calculate_work_from_block' 18202. Invalid user block size");
-
-      zend_throw_exception(f_exception_ce, msg, 18202);
+      zend_throw_exception(f_exception_ce, "Internal error in C function 'php_c_calculate_work_from_block' 18202. Invalid user block size", 18202);
 
       return;
 
@@ -1894,8 +1896,7 @@ PHP_FUNCTION(php_c_generate_block)
 
    if (account_len==0) {
 
-      sprintf(msg, "Internal error in C function 'php_c_generate_block' 16100. Account can not be empty string");
-      zend_throw_exception(f_exception_ce, msg, 16100);
+      zend_throw_exception(f_exception_ce, "Internal error in C function 'php_c_generate_block' 16100. Account can not be empty string", 16100);
 
       return;
 
@@ -1905,8 +1906,7 @@ PHP_FUNCTION(php_c_generate_block)
 
    if (representative_len==0) {
 
-      sprintf(msg, "Internal error in C function 'php_c_generate_block' 16103. Representative account can not be empty string");
-      zend_throw_exception(f_exception_ce, msg, 16103);
+      zend_throw_exception(f_exception_ce, "Internal error in C function 'php_c_generate_block' 16103. Representative account can not be empty string", 16103);
 
       return;
 
@@ -1914,8 +1914,7 @@ PHP_FUNCTION(php_c_generate_block)
 
    if (link_len==0) {
 
-      sprintf(msg, "Internal error in C function 'php_c_generate_block' 16104. Link or destination wallet can not be empty string");
-      zend_throw_exception(f_exception_ce, msg, 16104);
+      zend_throw_exception(f_exception_ce, "Internal error in C function 'php_c_generate_block' 16104. Link or destination wallet can not be empty string", 16104);
 
       return;
 
@@ -1923,9 +1922,7 @@ PHP_FUNCTION(php_c_generate_block)
 
    if (balance_len==0) {
 
-      sprintf(msg, "Internal error in C function 'php_c_generate_block' 16110. Balance value can not be an empty string");
-
-      zend_throw_exception(f_exception_ce, msg, 16110);
+      zend_throw_exception(f_exception_ce, "Internal error in C function 'php_c_generate_block' 16110. Balance value can not be an empty string", 16110);
 
       return;
 
@@ -1933,9 +1930,7 @@ PHP_FUNCTION(php_c_generate_block)
 
    if (value_send_rec_len==0) {
 
-      sprintf(msg, "Internal error in C function 'php_c_generate_block' 16111. Value to send/receive can not be an empty string");
-
-      zend_throw_exception(f_exception_ce, msg, 16111);
+      zend_throw_exception(f_exception_ce, "Internal error in C function 'php_c_generate_block' 16111. Value to send/receive can not be an empty string", 16111);
 
       return;
 
@@ -1947,9 +1942,8 @@ PHP_FUNCTION(php_c_generate_block)
       add_sub_type=F_NANO_ADD_A_B;
    else {
 
-      sprintf(msg, "Internal error in C function 'php_c_generate_block' 16112. Invalid direction. Select send amout or receive amount");
-
-      zend_throw_exception(f_exception_ce, msg, 16112);
+      zend_throw_exception(f_exception_ce, 
+       "Internal error in C function 'php_c_generate_block' 16112. Invalid direction. Select send amout or receive amount", 16112);
 
       return;
 
@@ -2022,9 +2016,7 @@ PHP_FUNCTION(php_c_generate_block)
 
    if (compare&F_NANO_COMPARE_EQ) {
 
-      sprintf(msg, "Internal error in C function 'php_c_generate_block' 16116. Value to send/receive is zero");
-
-      zend_throw_exception(f_exception_ce, msg, 16116);
+      zend_throw_exception(f_exception_ce, "Internal error in C function 'php_c_generate_block' 16116. Value to send/receive is zero", 16116);
 
       return;
 
@@ -2200,9 +2192,8 @@ PHP_FUNCTION(php_c_generate_block)
 
    } else if (direction&VALUE_TO_SEND) {
 
-      sprintf(msg, "Internal error in C function 'php_c_generate_block' 16110. Can't create block to send Nano. Open block first with receiving amount");
-
-      zend_throw_exception(f_exception_ce, msg, 16110);
+      zend_throw_exception(f_exception_ce, 
+         "Internal error in C function 'php_c_generate_block' 16110. Can't create block to send Nano. Open block first with receiving amount", 16110);
 
       return;
 
@@ -2242,9 +2233,7 @@ PHP_FUNCTION(php_c_sign_block)
 
    if (private_key_len!=128) {
 
-      sprintf(msg, "Internal error in C function 'php_c_sign_block' 16200. Invalid private key size");
-
-      zend_throw_exception(f_exception_ce, msg, 16200);
+      zend_throw_exception(f_exception_ce, "Internal error in C function 'php_c_sign_block' 16200. Invalid private key size", 16200);
 
       return;
 
@@ -2252,9 +2241,7 @@ PHP_FUNCTION(php_c_sign_block)
 
    if (Z_TYPE_P(z_user_block)!=IS_STRING) {
 
-      sprintf(msg, "Internal error in C function 'php_c_sign_block' 16201. User block is not raw data");
-
-      zend_throw_exception(f_exception_ce, msg, 16201);
+      zend_throw_exception(f_exception_ce, "Internal error in C function 'php_c_sign_block' 16201. User block is not raw data", 16201);
 
       return;
 
@@ -2262,9 +2249,7 @@ PHP_FUNCTION(php_c_sign_block)
 
    if (Z_STRLEN_P(z_user_block)!=sizeof(F_BLOCK_TRANSFER)) {
 
-      sprintf(msg, "Internal error in C function 'php_c_sign_block' 16202. Invalid user block size");
-
-      zend_throw_exception(f_exception_ce, msg, 16202);
+      zend_throw_exception(f_exception_ce, "Internal error in C function 'php_c_sign_block' 16202. Invalid user block size", 16202);
 
       return;
 
@@ -2274,9 +2259,7 @@ PHP_FUNCTION(php_c_sign_block)
 
       if (Z_STRLEN_P(z_user_block)!=sizeof(F_BLOCK_TRANSFER)) {
 
-         sprintf(msg, "Internal error in C function 'php_c_sign_block' 16203. Invalid fee block size");
-
-         zend_throw_exception(f_exception_ce, msg, 16203);
+         zend_throw_exception(f_exception_ce, "Internal error in C function 'php_c_sign_block' 16203. Invalid fee block size", 16203);
 
          return;
 
@@ -2287,9 +2270,7 @@ PHP_FUNCTION(php_c_sign_block)
    } else if (type==IS_NULL) fee_block=NULL;
    else {
 
-      sprintf(msg, "Internal error in C function 'php_c_sign_block' 16204. Invalid fee block type");
-
-      zend_throw_exception(f_exception_ce, msg, 16204);
+      zend_throw_exception(f_exception_ce, "Internal error in C function 'php_c_sign_block' 16204. Invalid fee block type", 16204);
 
       return;
 
@@ -2854,9 +2835,7 @@ PHP_FUNCTION(php_c_bip39_to_nano_key_pair)
 
    if (!bip39_len) {
 
-      sprintf(msg, "Internal error in C function 'php_c_bip39_to_nano_key_pair' 19101. Bip39 can not be empty string");
-
-      zend_throw_exception(f_exception_ce, msg, 19101);
+      zend_throw_exception(f_exception_ce, "Internal error in C function 'php_c_bip39_to_nano_key_pair' 19101. Bip39 can not be empty string", 19101);
 
       return;
 
@@ -2864,9 +2843,7 @@ PHP_FUNCTION(php_c_bip39_to_nano_key_pair)
 
    if (!dictionary_len) {
 
-      sprintf(msg, "Internal error in C function 'php_c_bip39_to_nano_key_pair' 19102. Mandatory: Filepath");
-
-      zend_throw_exception(f_exception_ce, msg, 19102);
+      zend_throw_exception(f_exception_ce, "Internal error in C function 'php_c_bip39_to_nano_key_pair' 19102. Mandatory: Filepath", 19102);
 
       return;
 
@@ -2959,9 +2936,7 @@ PHP_FUNCTION(php_c_brainwallet_to_nano_key_pair)
 
    if (!brainwallet_len) {
 
-      sprintf(msg, "Internal error in C function 'php_c_brainwallet_to_nano_key_pair' 19201. Brainwallet cannot be empty string");
-
-      zend_throw_exception(f_exception_ce, msg, 19201);
+      zend_throw_exception(f_exception_ce, "Internal error in C function 'php_c_brainwallet_to_nano_key_pair' 19201. Brainwallet cannot be empty string", 19201);
 
       return;
 
@@ -2979,9 +2954,7 @@ PHP_FUNCTION(php_c_brainwallet_to_nano_key_pair)
 
    if (!salt_len) {
 
-      sprintf(msg, "Internal error in C function 'php_c_brainwallet_to_nano_key_pair' 19203. Salt cannot be empty string");
-
-      zend_throw_exception(f_exception_ce, msg, 19203);
+      zend_throw_exception(f_exception_ce,  "Internal error in C function 'php_c_brainwallet_to_nano_key_pair' 19203. Salt cannot be empty string", 19203);
 
       return;
 
@@ -3033,9 +3006,7 @@ PHP_FUNCTION(php_c_encrypted_stream_to_key_pair)
 
    if (!password_len) {
 
-      sprintf(msg, "Internal error in C function 'php_c_encrypted_stream_to_key_pair' 19101. Password is empty string.");
-
-      zend_throw_exception(f_exception_ce, msg, 19101);
+      zend_throw_exception(f_exception_ce, "Internal error in C function 'php_c_encrypted_stream_to_key_pair' 19101. Password is empty string.", 19101);
 
       return;
 
@@ -3085,9 +3056,7 @@ PHP_FUNCTION(php_c_bip39_to_nano_seed)
 
    if (!path_len) {
 
-      sprintf(msg, "Internal error in C function 'php_c_bip39_to_nano_seed' 15501. Path cannot be an empty string");
-
-      zend_throw_exception(f_exception_ce, msg, 15501);
+      zend_throw_exception(f_exception_ce, "Internal error in C function 'php_c_bip39_to_nano_seed' 15501. Path cannot be an empty string", 15501);
 
       return;
 
@@ -3152,9 +3121,7 @@ PHP_FUNCTION(php_c_nano_seed_to_bip39)
 
    if (!path_len) {
 
-      sprintf(msg, "Internal error in C function 'php_c_nano_seed_to_bip39' 15401. Path cannot be an empty string");
-
-      zend_throw_exception(f_exception_ce, msg, 15401);
+      zend_throw_exception(f_exception_ce, "Internal error in C function 'php_c_nano_seed_to_bip39' 15401. Path cannot be an empty string", 15401);
 
       return;
 
@@ -3357,9 +3324,7 @@ PHP_FUNCTION(php_c_convert_balance)
 
       default:
 
-         sprintf(msg, "Internal error in C function 'php_c_convert_balance' 15301. Unknown type");
-
-         zend_throw_exception(f_exception_ce, msg, 15301);
+         zend_throw_exception(f_exception_ce, "Internal error in C function 'php_c_convert_balance' 15301. Unknown type", 15301);
 
          return;
 
@@ -3499,8 +3464,7 @@ PHP_FUNCTION(php_c_nano_proof_of_work)
 
    if (n_thr_str_len>13) {
 
-      sprintf(msg, "Internal error in 'php_c_nano_proof_of_work'. Integer string length is too long");
-      zend_throw_exception(f_exception_ce, msg, 15101);
+      zend_throw_exception(f_exception_ce, "Internal error in 'php_c_nano_proof_of_work'. Integer string length is too long", 15101);
 
       return;
 
@@ -3538,8 +3502,7 @@ PHP_FUNCTION(php_c_nano_proof_of_work)
 
       if (!threshold) {
 
-         sprintf(msg, "Internal error in 'php_c_nano_proof_of_work' 15103. Threshold can not be zero");
-         zend_throw_exception(f_exception_ce, msg, 15103);
+         zend_throw_exception(f_exception_ce, "Internal error in 'php_c_nano_proof_of_work' 15103. Threshold can not be zero", 15103);
 
          return;
 
@@ -3680,9 +3643,7 @@ PHP_FUNCTION(php_c_sign_p2pow_block)
 
    if (Z_TYPE_P(z_block)!=IS_STRING) {
 
-      sprintf(msg, "Internal error in C function 'php_c_sign_p2pow_block' 18600. User block is not raw data");
-
-      zend_throw_exception(f_exception_ce, msg, 18600);
+      zend_throw_exception(f_exception_ce, "Internal error in C function 'php_c_sign_p2pow_block' 18600. User block is not raw data", 18600);
 
       return;
 
@@ -3690,9 +3651,7 @@ PHP_FUNCTION(php_c_sign_p2pow_block)
 
    if (Z_STRLEN_P(z_block)!=2*sizeof(F_BLOCK_TRANSFER)) {
 
-      sprintf(msg, "Internal error in C function 'php_c_sign_p2pow_block' 18601. Invalid user block size");
-
-      zend_throw_exception(f_exception_ce, msg, 18601);
+      zend_throw_exception(f_exception_ce, "Internal error in C function 'php_c_sign_p2pow_block' 18601. Invalid user block size", 18601);
 
       return;
 
@@ -3700,9 +3659,7 @@ PHP_FUNCTION(php_c_sign_p2pow_block)
 
    if (!f_nano_is_valid_block(block=(F_BLOCK_TRANSFER *)memcpy(msg, Z_STRVAL_P(z_block), 2*sizeof(F_BLOCK_TRANSFER)))) {
 
-      sprintf(msg, "Internal error in C function 'php_c_sign_p2pow_block' 18602. Invalid user block");
-
-      zend_throw_exception(f_exception_ce, msg, 18602);
+      zend_throw_exception(f_exception_ce, "Internal error in C function 'php_c_sign_p2pow_block' 18602. Invalid user block", 18602);
 
       return;
 
@@ -3710,9 +3667,7 @@ PHP_FUNCTION(php_c_sign_p2pow_block)
 
    if (!f_nano_is_valid_block(&block[1])) {
 
-      sprintf(msg, "Internal error in C function 'php_c_sign_p2pow_block' 18603. Invalid worker block");
-
-      zend_throw_exception(f_exception_ce, msg, 18603);
+      zend_throw_exception(f_exception_ce, "Internal error in C function 'php_c_sign_p2pow_block' 18603. Invalid worker block", 18603);
 
       return;
 
@@ -3917,9 +3872,7 @@ PHP_FUNCTION(php_c_brainwallet_to_encrypted_stream)
 
    if (!brainwallet_len) {
 
-      sprintf(msg, "Internal error in C function 'php_c_brainwallet_to_encrypted_stream' -19400. Brainwallet is empty string");
-
-      zend_throw_exception(f_exception_ce, msg, -19400);
+      zend_throw_exception(f_exception_ce, "Internal error in C function 'php_c_brainwallet_to_encrypted_stream' -19400. Brainwallet is empty string", -19400);
 
       return;
 
@@ -3927,9 +3880,7 @@ PHP_FUNCTION(php_c_brainwallet_to_encrypted_stream)
 
    if (!salt_len) {
 
-      sprintf(msg, "Internal error in C function 'php_c_brainwallet_to_encrypted_stream' -19401. Salt is empty string");
-
-      zend_throw_exception(f_exception_ce, msg, -19401);
+      zend_throw_exception(f_exception_ce, "Internal error in C function 'php_c_brainwallet_to_encrypted_stream' -19401. Salt is empty string", -19401);
 
       return;
 
@@ -3990,9 +3941,7 @@ PHP_FUNCTION(php_c_bip39_to_encrypted_stream)
 
    if (!bip39_len) {
 
-      sprintf(msg, "Internal error in C function 'php_c_bip39_to_encrypted_stream' -19300. Bip39 is empty string");
-
-      zend_throw_exception(f_exception_ce, msg, -19300);
+      zend_throw_exception(f_exception_ce, "Internal error in C function 'php_c_bip39_to_encrypted_stream' -19300. Bip39 is empty string", -19300);
 
       return;
 
@@ -4000,9 +3949,7 @@ PHP_FUNCTION(php_c_bip39_to_encrypted_stream)
 
    if (!dictionary_len) {
 
-      sprintf(msg, "Internal error in C function 'php_c_bip39_to_encrypted_stream' -19301. Missing. Bip39 Dictionary file");
-
-      zend_throw_exception(f_exception_ce, msg, -19301);
+      zend_throw_exception(f_exception_ce, "Internal error in C function 'php_c_bip39_to_encrypted_stream' -19301. Missing. Bip39 Dictionary file", -19301);
 
       return;
 
@@ -4092,9 +4039,7 @@ PHP_FUNCTION(php_c_gen_seed_to_encrypted_stream)
 
          if (Z_STRLEN_P(z_val)!=64) {
 
-            sprintf(msg, "Internal error in C function 'php_c_gen_seed_to_encrypted_stream' -18904. Invalid SEED length");
-
-            zend_throw_exception(f_exception_ce, msg, -18904);
+            zend_throw_exception(f_exception_ce, "Internal error in C function 'php_c_gen_seed_to_encrypted_stream' -18904. Invalid SEED length", -18904);
 
             return;
 
@@ -4116,9 +4061,8 @@ PHP_FUNCTION(php_c_gen_seed_to_encrypted_stream)
 
       default:
 
-         sprintf(msg, "Internal error in C function 'php_c_gen_seed_to_encrypted_stream' -18905. Unknown type of entropy or Nano SEED");
-
-         zend_throw_exception(f_exception_ce, msg, -18905);
+         zend_throw_exception(f_exception_ce, 
+            "Internal error in C function 'php_c_gen_seed_to_encrypted_stream' -18905. Unknown type of entropy or Nano SEED", -18905);
 
          return;
 
@@ -4159,9 +4103,8 @@ PHP_FUNCTION(php_c_gen_encrypted_stream_to_seed)
 
    if (Z_TYPE_P(z_encrypted_stream)!=IS_STRING) {
 
-      sprintf(msg, "Internal error in C function 'php_c_gen_seed_to_encrypted_stream' 18700. Encrypted Nano SEED has an invalid type");
-
-      zend_throw_exception(f_exception_ce, msg, 18700);
+      zend_throw_exception(f_exception_ce,
+         "Internal error in C function 'php_c_gen_seed_to_encrypted_stream' 18700. Encrypted Nano SEED has an invalid type", 18700);
 
       return;
 
@@ -4169,9 +4112,7 @@ PHP_FUNCTION(php_c_gen_encrypted_stream_to_seed)
 
    if (Z_STRLEN_P(z_encrypted_stream)!=sizeof(F_NANO_CRYPTOWALLET)) {
 
-      sprintf(msg, "Internal error in C function 'php_c_gen_seed_to_encrypted_stream' 18701. Encrypted Nano SEED invalid size");
-
-      zend_throw_exception(f_exception_ce, msg, 18701);
+      zend_throw_exception(f_exception_ce, "Internal error in C function 'php_c_gen_seed_to_encrypted_stream' 18701. Encrypted Nano SEED invalid size", 18701);
 
       return;
 
@@ -4179,9 +4120,7 @@ PHP_FUNCTION(php_c_gen_encrypted_stream_to_seed)
 
    if (!dictionary_file_len) {
 
-      sprintf(msg, "Internal error in C function 'php_c_gen_seed_to_encrypted_stream' 18702. Dictionary file not found");
-
-      zend_throw_exception(f_exception_ce, msg, 18702);
+      zend_throw_exception(f_exception_ce, "Internal error in C function 'php_c_gen_seed_to_encrypted_stream' 18702. Dictionary file not found", 18702);
 
       return;
 
@@ -4217,9 +4156,8 @@ PHP_FUNCTION(php_c_is_valid_nano_seed_encrypted)
 
    if (Z_TYPE_P(z_val)!=IS_STRING) {
 
-      sprintf(msg, "Internal error in C function 'php_c_is_valid_nano_seed_encrypted' 19000. Encrypted Nano SEED is not binary block");
-
-      zend_throw_exception(f_exception_ce, msg, 19000);
+      zend_throw_exception(f_exception_ce, 
+         "Internal error in C function 'php_c_is_valid_nano_seed_encrypted' 19000. Encrypted Nano SEED is not binary block", 19000);
 
       return;
 
@@ -4241,6 +4179,188 @@ PHP_FUNCTION(php_c_is_valid_nano_seed_encrypted)
    RETURN_FALSE;
 
 }
+
+PHP_FUNCTION(php_c_sign_message)
+{
+
+   int err;
+   char msg[512];
+   unsigned char *message, *private_key, *p;
+   size_t message_len, private_key_len, size_tmp;
+   zend_long type=MESSAGE_IS_BLOCK_HASH_STR;
+
+   if (zend_parse_parameters(ZEND_NUM_ARGS(), "ss|l", &message, &message_len, &private_key, &private_key_len, &type)==FAILURE)
+      return;
+
+
+   if (private_key_len!=128) {
+
+      zend_throw_exception(f_exception_ce, "Internal error in C function 'php_c_sign_message' 19500. Wrong private key size", 19500);
+
+      return;
+
+   }
+
+   if (!message_len) {
+
+      zend_throw_exception(f_exception_ce, "Internal error in C function 'php_c_sign_message' 19501. Message or hash can't be empty", 19501);
+
+      return;
+
+   }
+
+   if (type&(~(MESSAGE_IS_DATA|MESSAGE_IS_BLOCK_HASH|MESSAGE_IS_BLOCK_HASH_STR))) {
+
+      zend_throw_exception(f_exception_ce, "Internal error in C function 'php_c_sign_message' 19504. Wrong type", 19504);
+
+      return;
+
+   }
+
+   p=message;
+   size_tmp=message_len;
+
+   if (type&MESSAGE_IS_BLOCK_HASH) {
+
+      if (message_len!=32) {
+
+         zend_throw_exception(f_exception_ce, "Internal error in C function 'php_c_sign_message' 19502. Wrong binary hash size", 19502);
+
+         return;
+
+      }
+
+   } else if (type&MESSAGE_IS_BLOCK_HASH_STR) {
+
+      if (message_len!=64) {
+
+         zend_throw_exception(f_exception_ce, "Internal error in C function 'php_c_sign_message' 19503. Wrong hash string size", 19503);
+
+         return;
+
+      }
+
+      if ((err=f_str_to_hex((uint8_t *)(p=(msg+128)), (char *)message))) {
+
+         sprintf(msg, "Internal error in C function 'php_c_sign_message' %d. Can't parse string to hex", err);
+
+         zend_throw_exception(f_exception_ce, msg, (zend_long)err);
+
+         return;
+
+      }
+
+      size_tmp=32;
+
+   }
+
+   if ((err=f_str_to_hex((uint8_t *)(msg+sizeof(msg)-64), (char *)private_key))) {
+
+      memset((msg+sizeof(msg)-64), 0, 64);
+
+      sprintf(msg, "Internal error in C function 'php_c_sign_message' %d. Can't parse private key to binary", err);
+
+      zend_throw_exception(f_exception_ce, msg, (zend_long)err);
+
+      return;
+
+   }
+
+   if ((err=f_sign_data((unsigned char *)msg, NULL, F_SIGNATURE_RAW, (const unsigned char *)p, size_tmp, (const unsigned char *)(msg+sizeof(msg)-64)))) {
+
+      sprintf(msg, "Internal error in C function 'php_c_sign_message' %d. Can't sign hash/message data", err);
+
+      zend_throw_exception(f_exception_ce, msg, (zend_long)err);
+
+   }
+
+   memset((msg+sizeof(msg)-64), 0, 64);
+
+   if (err)
+      return;
+
+   ZVAL_STRINGL(return_value, msg, 64);
+
+}
+
+PHP_FUNCTION(php_c_check_message_sig)
+{
+   int err;
+   unsigned char *msg;
+   unsigned char *publickey;
+   unsigned char *signature;
+   uint32_t type;
+   size_t msg_len;
+   size_t publickey_len;
+   size_t signature_len;
+   zend_long msg_type=MESSAGE_IS_DATA;
+   char err_msg[512];
+
+   if (zend_parse_parameters(ZEND_NUM_ARGS(), "sss|l", &signature, &signature_len, &msg, &msg_len, &publickey, &publickey_len, &msg_type)==FAILURE) return;
+
+   if (signature_len!=128) {
+
+      zend_throw_exception(f_exception_ce, "Internal error in C function 'php_c_check_message_sig' 19600. Wrong signature size", 19600);
+      return;
+
+   }
+
+   if (!msg_len) {
+
+      zend_throw_exception(f_exception_ce, "Internal error in C function 'php_c_check_message_sig' 19601. Message can't be empty", 19601);
+      return;
+
+   }
+
+   if (!publickey_len) {
+
+      zend_throw_exception(f_exception_ce, "Internal error in C function 'php_c_check_message_sig' 19602. Empty public key", 19602);
+      return;
+
+   }
+
+   if (publickey_len>MAX_STR_NANO_CHAR) {
+
+      zend_throw_exception(f_exception_ce , "Internal error in C function 'php_c_check_message_sig' 19603. Wrong Wallet/Public key size", 15003);
+
+      return;
+
+   }
+
+   if (msg_type&(~(MESSAGE_IS_DATA|MESSAGE_IS_BLOCK_HASH_STR))) {
+
+      zend_throw_exception(f_exception_ce, "Internal error in C function 'php_c_check_message_sig' 19604. Wrong type", 19604);
+
+      return;
+
+   }
+
+   ((is_nano_prefix((const char *)publickey, NANO_PREFIX))||(is_nano_prefix((const char *)publickey, XRB_PREFIX)))?
+      (type=F_VERIFY_SIG_NANO_WALLET):(type=F_VERIFY_SIG_ASCII_HEX);
+
+   if (msg_type&MESSAGE_IS_BLOCK_HASH_STR)
+      type|=F_MESSAGE_IS_HASH_STRING;
+
+   if ((err=(f_verify_signed_data(
+      (const unsigned char *)signature,
+      (const unsigned char *)msg,
+      msg_len,
+      (const void *)publickey,
+      type|F_IS_SIGNATURE_RAW_HEX_STRING)))>0)
+      RETURN_TRUE;
+
+   if (err) {
+
+      sprintf(err_msg, "Internal error in C function 'php_c_check_message_sig' %d. Can't verify message or hash %d", err);
+      zend_throw_exception(f_exception_ce, err_msg, (zend_long)err);
+      return;
+
+   }
+
+   RETURN_FALSE;
+
+}
+
 /*
 PHP_FUNCTION(php_c_change_representative)
 {

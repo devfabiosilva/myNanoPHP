@@ -4603,7 +4603,7 @@ php --re mynanoembedded
 ```sh
 Extension [ <persistent> extension #15 mynanoembedded version 1.0 ] {
 
-  - Constants [66] {
+  - Constants [69] {
     Constant [ string DEFAULT_NANO_POW_THRESHOLD ] { 0xffffffc000000000 }
     Constant [ string NANO_PREFIX ] { nano_ }
     Constant [ string XRB_PREFIX ] { xrb_ }
@@ -4670,6 +4670,9 @@ Extension [ <persistent> extension #15 mynanoembedded version 1.0 ] {
     Constant [ integer PASS_IS_TOO_LONG ] { 256 }
     Constant [ integer READ_SEED_FROM_STREAM ] { 1 }
     Constant [ integer READ_SEED_FROM_FILE ] { 2 }
+    Constant [ integer MESSAGE_IS_DATA ] { 32 }
+    Constant [ integer MESSAGE_IS_BLOCK_HASH ] { 64 }
+    Constant [ integer MESSAGE_IS_BLOCK_HASH_STR ] { 128 }
   }
 
   - Functions {
@@ -5075,6 +5078,23 @@ Extension [ <persistent> extension #15 mynanoembedded version 1.0 ] {
         Parameter #4 [ <required> $password_min_len ]
         Parameter #5 [ <required> $password_max_len ]
         Parameter #6 [ <optional> $password_type ]
+      }
+    }
+    Function [ <internal:mynanoembedded> function php_c_sign_message ] {
+
+      - Parameters [3] {
+        Parameter #0 [ <required> $message ]
+        Parameter #1 [ <required> $private_key ]
+        Parameter #2 [ <optional> $type ]
+      }
+    }
+    Function [ <internal:mynanoembedded> function php_c_check_message_sig ] {
+
+      - Parameters [4] {
+        Parameter #0 [ <required> $signature ]
+        Parameter #1 [ <required> $message ]
+        Parameter #2 [ <required> $publickey ]
+        Parameter #3 [ <optional> $type ]
       }
     }
   }

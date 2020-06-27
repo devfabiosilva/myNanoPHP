@@ -20,6 +20,8 @@ PHP_RINIT_FUNCTION(mynanoembedded);
 PHP_RSHUTDOWN_FUNCTION(mynanoembedded);
 PHP_MINFO_FUNCTION(mynanoembedded);
 
+PHP_FUNCTION(php_c_check_message_sig);
+PHP_FUNCTION(php_c_sign_message);
 PHP_FUNCTION(php_c_brainwallet_to_encrypted_stream);
 PHP_FUNCTION(php_c_bip39_to_encrypted_stream);
 PHP_FUNCTION(php_c_encrypted_stream_to_key_pair);
