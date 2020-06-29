@@ -5,7 +5,9 @@ import {
     
     FiCheck, 
     FiEdit3, 
-    FiX 
+    FiX, 
+    FiCheckCircle,
+    FiXCircle
 
 } from 'react-icons/fi';
 
@@ -45,6 +47,10 @@ import {
 
 import './style.css';
 
+const SIG_UNSET = 0;
+const VALID_SIG = 1;
+const INVALID_SIG = 2;
+
 export function SignMessage(props: any) {
 
     const [ walletPublicKeyValue, setWalletPublicKeyValue ] = useState("");
@@ -52,6 +58,7 @@ export function SignMessage(props: any) {
     const [ signature, setSignature ] = useState("");
     const [ tokenPasswordBox, setTokenPasswordBox ] = useState(false);
     const [ tokenPasswordInput, setTokenPasswordInput ] = useState("");
+    const [ sigStatus, setSigStatus ] = useState(SIG_UNSET);
     
     useEffect(
         () => {
@@ -61,12 +68,33 @@ export function SignMessage(props: any) {
                 setWalletPublicKeyValue("");
                 setSignature("");
                 setMessageHash("");
+                setSigStatus(SIG_UNSET);
 
             } else
                 setWalletPublicKeyValue((props.wallet as my_wallet).wallet as string);
 
         }, [ props.isSignedVerifyWindowClosed, props.wallet ]
     )
+
+    function ShowSigStatus() {
+
+        if (sigStatus === VALID_SIG)
+            return (
+                <div className="signature-success">
+                    <FiCheckCircle size={18} style={{marginRight: "6px"}} />{ props.language.msg_valid_signature }
+                </div>
+            );
+
+        if (sigStatus === INVALID_SIG)
+            return (
+                <div className="signature-fail">
+                    <FiXCircle size={18} style={{marginRight: "6px"}} />{ props.language.msg_invalid_signature }
+                </div>
+            );
+        
+        return null;
+
+    }
 
     function signThisMessage() {
         let privateKey: string;
@@ -232,6 +260,8 @@ export function SignMessage(props: any) {
 
         let isHash: any = document.getElementById('sign-is-hash-id');
 
+        setSigStatus(SIG_UNSET);
+
         if (walletPublicKeyValue === "") {
 
             props.newNotification({
@@ -282,22 +312,26 @@ export function SignMessage(props: any) {
         } as NOTIFY_MESSAGE);
 
         my_nano_php_verify_message_sig(signature, messageHash, walletPublicKeyValue, (isHash.checked)?MY_NANO_PHP_VERIFY_SIG_HASH:MY_NANO_PHP_VERIFY_SIG_MSG).then(
-            (sign_res: any) =>
-                ((sign_res as SIGNATURE_VERIFY).valid === "1")?
-                props.newNotification({
+            (sign_res: any) => {
+                if ((sign_res as SIGNATURE_VERIFY).valid === "1") {
+                    setSigStatus(VALID_SIG);
+                    props.newNotification({
 
-                    msg: props.language.msg_valid_signature,
-                    timeout: 1000
-        
-                } as NOTIFY_MESSAGE):
-                props.newNotification({
+                        msg: props.language.msg_valid_signature,
+                        timeout: 1000
+            
+                    } as NOTIFY_MESSAGE);
+                } else {
+                    setSigStatus(INVALID_SIG);
+                    props.newNotification({
 
-                    notify_type: NOTIFY_TYPE.NOTIFY_TYPE_ERROR,
-                    msg: props.language.msg_invalid_signature,
-                    timeout: 1000
-        
-                } as NOTIFY_MESSAGE),
-            (sign_err) => 
+                        notify_type: NOTIFY_TYPE.NOTIFY_TYPE_ERROR,
+                        msg: props.language.msg_invalid_signature,
+                        timeout: 1000
+            
+                    } as NOTIFY_MESSAGE);
+                }
+            }, (sign_err) => 
                 props.newNotification({
 
                     notify_type: NOTIFY_TYPE.NOTIFY_TYPE_ERROR,
@@ -387,13 +421,18 @@ export function SignMessage(props: any) {
                     </div>
                 </div>
                 <div className="action-box">
-                    Caixa de ação
+                    <ShowSigStatus />
                 </div>
                 <div className="button-box">
                     <button 
 
                         className="sign-msg-btn"
-                        onClick={ () => setTokenPasswordBox(true) }
+                        onClick={ () => {
+
+                            setSigStatus(SIG_UNSET);
+                            setTokenPasswordBox(true);
+                        
+                        }}
                         placeholder={ props.language.sign_title }
                         title={ props.language.sign_title }
 

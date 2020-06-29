@@ -152,3 +152,11 @@
     background-color: var(--background);
 
 }
+
+.signature-success {
+    color: var(--valid-sig-color);
+}
+
+.signature-fail {
+    color: var(--invalid-sig-color);
+}
