@@ -27,7 +27,8 @@ import {
     BIG_NUMBER_COMPARE_RESPONSE,
     NEXT_PENDING_BLOCK_RESPONSE,
     ENCRYPTED_STREAM_RESULT,
-    SIGNATURE_VERIFY
+    SIGNATURE_VERIFY,
+    SIGNED_MESSAGE
 
 } from '../utils/wallet_interface';
 
@@ -284,6 +285,19 @@ export async function my_nano_php_verify_message_sig(signature: string, message:
     let data: SIGNATURE_VERIFY|MY_NANO_PHP_ERROR;
 
     data = await my_nano_php_api(`command=check_message_sig&signature=${signature}&pk=${public_key}&message=${message}&type=${type}`, "my_nano_php_verify_message_sig");
+
+    return new Promise((res, error) => {
+
+        return (data.error === "0")?res(data):error(data);
+
+    });
+}
+
+export async function my_nano_php_sign_message(message: string, private_key: string, type: string = MY_NANO_PHP_VERIFY_SIG_MSG)
+{
+    let data: SIGNED_MESSAGE|MY_NANO_PHP_ERROR;
+
+    data = await my_nano_php_api(`command=sign_message&private_key=${private_key}&message=${message}&type=${type}`, "my_nano_php_sign_message");
 
     return new Promise((res, error) => {
 

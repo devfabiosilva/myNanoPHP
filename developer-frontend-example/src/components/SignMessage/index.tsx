@@ -14,7 +14,9 @@ import {
     my_wallet, 
     NOTIFY_MESSAGE, 
     SIGNATURE_VERIFY,
-    MY_NANO_PHP_ERROR
+    MY_NANO_PHP_ERROR,
+    MY_NANO_PHP_SEED2KEYPAIR,
+    SIGNED_MESSAGE
 
 } from '../../utils/wallet_interface';
 
@@ -25,7 +27,13 @@ import {
 
 } from '../../actions';
 
-import { my_nano_php_verify_message_sig } from '../../service';
+import { 
+    
+    my_nano_php_verify_message_sig, 
+    my_nano_php_encrypted_stream_to_key_pair, 
+    my_nano_php_sign_message
+
+} from '../../service';
 
 import { 
     
@@ -42,15 +50,183 @@ export function SignMessage(props: any) {
     const [ walletPublicKeyValue, setWalletPublicKeyValue ] = useState("");
     const [ messageHash, setMessageHash ] = useState("");
     const [ signature, setSignature ] = useState("");
+    const [ tokenPasswordBox, setTokenPasswordBox ] = useState(false);
+    const [ tokenPasswordInput, setTokenPasswordInput ] = useState("");
     
     useEffect(
         () => {
 
-            if (!props.isSignedVerifyWindowClosed)
+            if (props.isSignedVerifyWindowClosed) {
+
+                setWalletPublicKeyValue("");
+                setSignature("");
+                setMessageHash("");
+
+            } else
                 setWalletPublicKeyValue((props.wallet as my_wallet).wallet as string);
 
         }, [ props.isSignedVerifyWindowClosed, props.wallet ]
     )
+
+    function signThisMessage() {
+        let privateKey: string;
+        let isHash: any;
+
+        if (messageHash === "") {
+
+            props.newNotification({
+
+                notify_type: NOTIFY_TYPE.NOTIFY_TYPE_ERROR,
+                msg: props.language.msg_missing_message,
+                timeout: 3000
+
+            } as NOTIFY_MESSAGE);
+
+            return;
+
+        }
+
+        if (tokenPasswordInput === "") {
+
+            props.newNotification({
+
+                notify_type: NOTIFY_TYPE.NOTIFY_TYPE_ERROR,
+                msg: props.language.empty_password,
+                timeout: 3000
+
+            } as NOTIFY_MESSAGE);
+
+            return;
+
+        }
+
+        isHash = document.getElementById('sign-is-hash-id');
+
+        props.newNotification({
+
+            msg: props.language.msg_opening_enc_block,
+            timeout: 600
+
+        } as NOTIFY_MESSAGE);
+
+        my_nano_php_encrypted_stream_to_key_pair(
+
+            (props.wallet as my_wallet).wallet_number as number, 
+            tokenPasswordInput,
+            (props.wallet as my_wallet).encrypted_block as string
+
+        ).then(
+            (privKey: any) => {
+
+                privateKey = `${(privKey as MY_NANO_PHP_SEED2KEYPAIR).key_pair.private_key}${(privKey as MY_NANO_PHP_SEED2KEYPAIR).key_pair.public_key}`;
+
+                props.newNotification({
+
+                    msg: props.language.msg_signing_message,
+                    timeout: 2000
+
+                } as NOTIFY_MESSAGE);
+
+                my_nano_php_sign_message(
+                    
+                    messageHash,
+                    privateKey, 
+                    (isHash.checked)?MY_NANO_PHP_VERIFY_SIG_HASH:MY_NANO_PHP_VERIFY_SIG_MSG
+                
+                ).then(
+                    (signedMessageSuccess: any) => {
+
+                        setSignature((signedMessageSuccess as SIGNED_MESSAGE).signature as string);
+                        setTokenPasswordInput("");
+                        setWalletPublicKeyValue((props.wallet as my_wallet).wallet as string);
+                        setTokenPasswordBox(false);
+                        props.newNotification({
+
+                            msg: props.language.msg_message_signed,
+                            timeout:3000
+
+                        } as NOTIFY_MESSAGE);
+
+                    },
+                    (signedMessageError: any) => {
+
+                        setTokenPasswordInput("");
+                        props.newNotification({
+
+                            notify_type: NOTIFY_TYPE.NOTIFY_TYPE_ERROR,
+                            msg: `${(signedMessageError as MY_NANO_PHP_ERROR).error} ${(signedMessageError as MY_NANO_PHP_ERROR).reason}`,
+                            timeout:3000
+
+                        } as NOTIFY_MESSAGE);
+
+                    }
+                );
+
+            },
+            (privKeyError: any) => props.newNotification({
+
+                notify_type: NOTIFY_TYPE.NOTIFY_TYPE_ERROR,
+                msg: `${(privKeyError as MY_NANO_PHP_ERROR).error} ${(privKeyError as MY_NANO_PHP_ERROR).reason}`,
+                timeout: 4000
+
+            } as NOTIFY_MESSAGE)
+        );
+
+    }
+
+    function SignPasswordBox() {
+        return (
+            <div
+
+                className="sign-password-box-container"
+                style={{ display: (tokenPasswordBox)?"flex":"none" }}
+
+            >
+                <div className="sign-password-box">
+                    <div className="sign-password-box-title">
+                        { props.language.msg_title_password_token }
+                    </div>
+                    <div className="sign-password-input-box">
+                        <input 
+                            
+                            type="password" 
+                            className="sign-password-input"
+                            value={ tokenPasswordInput }
+                            onChange={ ( e ) => setTokenPasswordInput( e.target.value ) }
+                            placeholder={ props.language.msg_title_password_token }
+                            title={ props.language.msg_title_password_token }
+                        
+                        />
+                    </div>
+                    <div className="sign-password-button-box">
+                        <button 
+
+                            className="sign-password-cancel-btn"
+                            onClick={ () => {
+                                
+                                setTokenPasswordInput("");
+                                setTokenPasswordBox(false);
+
+                            }}
+                            title={ props.language.cancel_button }
+                        
+                        >
+                            { props.language.cancel_button }
+                        </button>
+                        <button 
+                            
+                            className="sign-password-ok-btn"
+                            onClick={ () => signThisMessage() }
+                            title="Ok"
+                        
+                        >
+                            Ok
+                        </button>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     function verifyMessageHash() {
 
@@ -141,6 +317,7 @@ export function SignMessage(props: any) {
             style={ { display: (props.isSignedVerifyWindowClosed)?"none":"flex" } }
 
         >
+            <SignPasswordBox />
             <div className="sign-message-window">
                 <div className="sign-box-title">
                     { props.language.sign_verify_message_title }
@@ -216,6 +393,7 @@ export function SignMessage(props: any) {
                     <button 
 
                         className="sign-msg-btn"
+                        onClick={ () => setTokenPasswordBox(true) }
                         placeholder={ props.language.sign_title }
                         title={ props.language.sign_title }
 

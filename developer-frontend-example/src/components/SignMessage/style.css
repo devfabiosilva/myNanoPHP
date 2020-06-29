@@ -14,12 +14,20 @@
 
 }
 
+.sign-password-input-box,
+.sign-password-button-box,
 .action-box,
 .sign-box,
 .button-box {
 
     margin: 15px auto 0 auto;
     width: 95%;
+
+}
+
+.sign-password-input-box {
+
+    height: 45%;
 
 }
 
@@ -31,8 +39,9 @@
     height: 50px;
 
 }
-
+.sign-password-button-box,
 .button-box {
+
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -48,7 +57,7 @@
     color: var(--color);
 
 }
-
+.sign-password-box-title,
 .sign-box-title {
 
     width: 95%;
@@ -75,6 +84,7 @@
 
 }
 
+.sign-password-input,
 .sign-message-input,
 .sign-public-key-input,
 .sign-signature-input {
@@ -84,7 +94,8 @@
     font-style: italic;
 
 }
-
+.sign-password-cancel-btn,
+.sign-password-ok-btn,
 .sign-msg-btn,
 .sign-verify-btn,
 .sign-close-btn {
@@ -113,5 +124,31 @@
     display: flex;
     align-items: center;
     justify-content: center;
+
+}
+
+.sign-password-box-container {
+
+    display: none;
+    justify-content: center;
+    align-items: center;
+    justify-items: center;
+    position: fixed; 
+    z-index: 4;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    background-color: var(--background-locked);
+
+}
+
+.sign-password-box {
+
+    width: 480px;
+    height: 297px;
+    padding: 15px;
+    border-radius: 15px;
+    background-color: var(--background);
 
 }

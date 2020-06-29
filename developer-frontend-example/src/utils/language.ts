@@ -134,7 +134,11 @@ export const LANG_PT_BR = {
     msg_missing_signature: "Faltando: Assinatura",
     msg_checking_signature: "Verificando a assinatura ...",
     msg_valid_signature: "Assinatura VÁLIDA",
-    msg_invalid_signature: "Assinatura INVÁLIDA"
+    msg_invalid_signature: "Assinatura INVÁLIDA",
+    msg_title_password_token: "Senha/Token",
+    msg_signing_message: "Assinando a mensagem ...",
+    msg_message_signed: "Mensagem assinada com sucesso",
+    msg_missing_message: "Faltando: Hash do bloco/Mensagem para ser assinado(a)"
 
 }
 
@@ -270,7 +274,11 @@ export const LANG_EN_US = {
     msg_missing_signature: "Missing: Signature",
     msg_checking_signature: "Checking signature ...",
     msg_valid_signature: "VALID signature",
-    msg_invalid_signature: "INVALID signature"
+    msg_invalid_signature: "INVALID signature",
+    msg_title_password_token: "Password/Token",
+    msg_signing_message: "Signing message ...",
+    msg_message_signed: "Message signed successfully",
+    msg_missing_message: "Missing: Hash block/message to be signed"
 
 }
 

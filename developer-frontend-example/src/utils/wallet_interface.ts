@@ -185,3 +185,11 @@ export interface SIGNATURE_VERIFY {
     valid?: string|number
     
 }
+
+export interface SIGNED_MESSAGE {
+
+    error?: string|number,
+    reason?: string,
+    signature?: string
+
+}
