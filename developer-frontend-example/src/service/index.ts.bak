@@ -1,5 +1,11 @@
 import axios from 'axios';
-
+/*
+    my_nano_php_open_encrypted_seed, DIED
+    my_nano_php_extract_key_pair_from_nano_seed,
+    my_nano_php_seed2keypair,
+    my_nano_php_extract_key_pair_from_bip39,
+    my_nano_php_brainwallet_to_keypair,
+*/
 import {
 
     NANO_NODE_URL
@@ -69,7 +75,36 @@ export async function my_nano_php_api(send: any, function_name: string) {
         {error: "-1", reason: "Something went wrong with " + function_name};
 
 }
+/*
+export async function my_nano_php_extract_key_pair_from_nano_seed
+(
+    wallet_number: number,
+    seed: string, 
+    prefix: string|null=null
+) 
+{
+    return await my_nano_php_api(`command=seed2key_pair&seed=${seed}&wallet_number=${wallet_number.toString()}${(prefix)?"&prefix="+prefix:""}`, "my_nano_php_extract_key_pair_from_nano_seed");
+}
+*/
+/*
+export async function my_nano_php_extract_key_pair_from_bip39
+(
+    wallet_number: number,
+    bip39: string, 
+    prefix: string|null=null
+) 
+{
+    let data: MY_NANO_PHP_SEED2KEYPAIR|MY_NANO_PHP_ERROR;
+    data = await my_nano_php_api(`command=bip39_2_key_pair&bip39=${bip39}&wallet_number=${wallet_number.toString()}${(prefix)?"&prefix="+prefix:""}`, "my_nano_php_extract_key_pair_from_bip39");
 
+    return new Promise((res, error) => {
+        
+        return (data.error === "0")?res(data as MY_NANO_PHP_SEED2KEYPAIR):error(data as MY_NANO_PHP_ERROR);
+
+    });
+
+}
+*/
 export async function my_nano_php_nano2pk(wallet: string) {
 
     let data: any;
@@ -97,7 +132,7 @@ export async function my_nano_php_raw2real(balance: string) {
     });
 
 }
-
+/*
 export async function my_nano_php_open_encrypted_seed(block: string, password: string)
 {
     let data: any;
@@ -110,7 +145,8 @@ export async function my_nano_php_open_encrypted_seed(block: string, password: s
 
     });
 }
-
+*/
+/*
 export async function my_nano_php_seed2keypair(wallet_number: number, seed: string, prefix:string = NANO_PREFIX)
 {
     let data: MY_NANO_PHP_SEED2KEYPAIR|MY_NANO_PHP_ERROR;
@@ -123,7 +159,7 @@ export async function my_nano_php_seed2keypair(wallet_number: number, seed: stri
 
     });
 }
-
+*/
 export async function my_nano_php_public_key2address(public_key: string, prefix:string = NANO_PREFIX)
 {
     let data: PUBLIC_KEY2ADDRESS|MY_NANO_PHP_ERROR;
@@ -176,7 +212,20 @@ export async function my_nano_php_public_key_to_wallet(public_key:string, prefix
 
     });
 }
+/*
+export async function my_nano_php_brainwallet_to_keypair(wallet_number: number, brainwallet:string, salt: string, prefix: string = NANO_PREFIX)
+{
+    let data: MY_NANO_PHP_SEED2KEYPAIR|MY_NANO_PHP_ERROR;
 
+    data = await my_nano_php_api(`command=brainwallet_2_key_pair&wallet_number=${wallet_number.toString()}&brainwallet=${brainwallet}&salt=${salt}&prefix=${prefix}`, "my_nano_php_brainwallet_to_keypair");
+
+    return new Promise((res, error) => {
+
+        return (data.error === "0")?res(data):error(data);
+
+    });
+}
+*/
 export async function my_nano_php_compare(valueA: string, valueB: string, typeA: string, typeB: string, condition: string)
 {
     let data: BIG_NUMBER_COMPARE_RESPONSE|MY_NANO_PHP_ERROR;

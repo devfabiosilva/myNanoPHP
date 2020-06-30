@@ -11,7 +11,8 @@ import {
 } from '../../actions';
 
 import {
-  
+ 
+  PUBLIC_KEY2ADDRESS, 
   my_wallet,
   WALLET_FROM,
   MY_NANO_PHP_SEED2KEYPAIR,
@@ -19,7 +20,13 @@ import {
 
 } from '../../utils/wallet_interface';
 
-import { my_nano_php_encrypted_stream_to_key_pair } from '../../service';
+import {
+
+  my_nano_php_open_encrypted_seed,
+  my_nano_php_seed2keypair,
+  my_nano_php_public_key2address,
+
+} from '../../service';
 
 import { FiSkipBack, FiFile, FiUnlock } from 'react-icons/fi';
 import { NOTIFY_TYPE } from '../../utils';
@@ -87,27 +94,60 @@ export function OpenEncryptedWalletFile(props: any) {
     reader.onloadend = function () {
       encrypted_data = Buffer.from(reader.result as any).toString('hex');
 
-      my_nano_php_encrypted_stream_to_key_pair(0, password.value, encrypted_data).then(
-        (unencrypted_data_result: any) =>
-          props.wallet_public_key(
-            {
+      my_nano_php_open_encrypted_seed(encrypted_data, password.value).then(
+        (d: any) => {
+          my_nano_php_seed2keypair(0, d.result.seed).then(
+            (key_pair) => {
 
-              origin: WALLET_FROM.FROM_ENCRYPTED_FILE,
-              encrypted_block: encrypted_data,
-              wallet_number: 0,
-              wallet: (unencrypted_data_result as MY_NANO_PHP_SEED2KEYPAIR).key_pair.wallet,
-              public_key: (unencrypted_data_result as MY_NANO_PHP_SEED2KEYPAIR).key_pair.public_key,
+              my_nano_php_public_key2address((key_pair as MY_NANO_PHP_SEED2KEYPAIR).key_pair.public_key).then(
+                (wallet_address) => {
 
-            } as my_wallet
-          ),
-        (unencrypted_data_error: any) =>
+                  props.wallet_public_key(
+                    {
+
+                      origin: WALLET_FROM.FROM_ENCRYPTED_FILE,
+                      wallet: (wallet_address as PUBLIC_KEY2ADDRESS).wallet,
+                      public_key: (key_pair as MY_NANO_PHP_SEED2KEYPAIR).key_pair.public_key,
+                      wallet_number: 0,
+                      encrypted_block: encrypted_data
+
+                    }
+                  );
+
+                  fileUploader.value='';
+
+                },
+                (error) => {
+
+                  props.newNotification({
+
+                    notify_type: NOTIFY_TYPE.NOTIFY_TYPE_ERROR,
+                    msg: `${error.error} ${error.reason}`
+
+                  } as NOTIFY_MESSAGE);
+                
+                });
+            },
+            (key_pair_err) => {
+              props.newNotification({
+
+                notify_type: NOTIFY_TYPE.NOTIFY_TYPE_ERROR,
+                msg: `${key_pair_err.error} ${key_pair_err.reason}`
+
+              } as NOTIFY_MESSAGE);
+            }
+          );
+        },
+        (e) => {
+          
           props.newNotification({
 
             notify_type: NOTIFY_TYPE.NOTIFY_TYPE_ERROR,
-            msg: `${unencrypted_data_error.error} ${unencrypted_data_error.reason}`,
-            timeout: 2500
+            msg: `${e.error} ${e.reason}`
 
-          } as NOTIFY_MESSAGE)
+          } as NOTIFY_MESSAGE);
+
+        }
       );
 
     }
