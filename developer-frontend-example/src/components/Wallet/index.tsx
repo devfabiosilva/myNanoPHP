@@ -58,7 +58,8 @@ import {
 
   my_wallet, 
   PENDING_AMOUNT_TO_POCKET, 
-  NOTIFY_MESSAGE
+  NOTIFY_MESSAGE,
+  WALLET_FROM
 
 } from '../../utils/wallet_interface';
 
@@ -72,8 +73,8 @@ import {
 
 import { FaWallet } from 'react-icons/fa';
 import SignMessage from '../SignMessage';
-import './style.css';
 import { TOKENIZER } from '../../reducers/tokenizer';
+import './style.css';
 
 export function Wallet(props: any) {
 
@@ -102,6 +103,18 @@ export function Wallet(props: any) {
       let dest_wallet: string; // destination wallet or link
       let amount_to_send_receive: string;
       let tmp: string;
+
+      let changeWalletBtn: any = document.getElementById('change-wallet-btn-id');
+      let sendButton: any = document.getElementById('send-button-id');
+      let destinationWallet: any = document.getElementById('destination-wallet-id');
+      let valueToSend: any = document.getElementById('value-to-send-id');
+      let feeCheckBox: any = document.getElementById('fee-checkbox-id');
+
+      sendButton.disabled = ((props.state as my_wallet).origin === WALLET_FROM.FROM_PUBLIC_KEY);
+      destinationWallet.disabled = sendButton.disabled;
+      valueToSend.disabled = sendButton.disabled;
+      feeCheckBox.disabled = sendButton.disabled;
+      changeWalletBtn.disabled = ((props.state as my_wallet).origin === WALLET_FROM.FROM_KEY_PAIR)||sendButton.disabled;
 
       if (props.walletNumberHasChangedState) {
 
@@ -174,12 +187,13 @@ export function Wallet(props: any) {
 
           if (lockInputs)
             setLockInputs(false);
-        
-          if (props.dialog_status === "")
-            if (!props.monitore_pending.pending_function)
-              if ((props.isSignedVerifyWindowClosed)&&((props.token as TOKENIZER).showWindow === false))
-                 if (props.closedChangeWalletState)
-                    props.enablePendingMonitor(verifyPendingRef.current);
+
+          if ((props.state as my_wallet).origin !== WALLET_FROM.FROM_PUBLIC_KEY )
+            if (props.dialog_status === "")
+              if (!props.monitore_pending.pending_function)
+                if ((props.isSignedVerifyWindowClosed)&&((props.token as TOKENIZER).showWindow === false))
+                   if (props.closedChangeWalletState)
+                      props.enablePendingMonitor(verifyPendingRef.current);
 
         }
 
@@ -398,6 +412,7 @@ console.log("tic-tac")
           <button
 
             className="change-wallet-btn"
+            id="change-wallet-btn-id"
             onClick={ () => { 
               
                 props.disablePendingMonitor();
@@ -497,6 +512,7 @@ console.log("tic-tac")
             <input 
 
               className="fee-checkbox"
+              id="fee-checkbox-id"
               type="checkbox" 
               checked={ fee }
               onChange={() => setFee(!fee)}
@@ -534,6 +550,7 @@ console.log("tic-tac")
         <button 
 
           className="send-button"
+          id="send-button-id"
           onClick={ () => beginSendAmount() }
           title={ props.language.btn_send_title }
 

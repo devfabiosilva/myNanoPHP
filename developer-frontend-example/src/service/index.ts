@@ -28,7 +28,8 @@ import {
     NEXT_PENDING_BLOCK_RESPONSE,
     ENCRYPTED_STREAM_RESULT,
     SIGNATURE_VERIFY,
-    SIGNED_MESSAGE
+    SIGNED_MESSAGE,
+    OPEN_ENCRYPTED_SEED_RESPONSE
 
 } from '../utils/wallet_interface';
 
@@ -100,7 +101,7 @@ export async function my_nano_php_raw2real(balance: string) {
 
 export async function my_nano_php_open_encrypted_seed(block: string, password: string)
 {
-    let data: any;
+    let data: OPEN_ENCRYPTED_SEED_RESPONSE|MY_NANO_PHP_ERROR;
 
     data = await my_nano_php_api(`command=encrypted_stream_to_seed&block=${block}&password=${password}`, "my_nano_php_open_encrypted_seed");
 

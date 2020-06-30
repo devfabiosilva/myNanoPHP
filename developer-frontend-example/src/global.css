@@ -78,6 +78,14 @@ button:hover {
   
 }
 
+button[disabled],
+input[disabled] {
+
+  background-color: #cccccc;
+  color: #6666662e;
+  
+}
+
 input[type=text],
 input[type=password] {
 

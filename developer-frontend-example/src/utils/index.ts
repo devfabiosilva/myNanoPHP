@@ -41,6 +41,10 @@ export function getKey() {
 
 }
 
+export function generateToken(): string {
+    return `@1A${getKey()}${getKey()}`;
+}
+
 export function saveToBinaryEncryptedStream(encrypted_stream: string) {
 
     let binary_blob: any;

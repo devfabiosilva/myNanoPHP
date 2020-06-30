@@ -18,7 +18,9 @@ import {
     SIGNATURE_VERIFY,
     MY_NANO_PHP_ERROR,
     MY_NANO_PHP_SEED2KEYPAIR,
-    SIGNED_MESSAGE
+    SIGNED_MESSAGE,
+    WALLET_FROM,
+    OPEN_ENCRYPTED_SEED_RESPONSE
 
 } from '../../utils/wallet_interface';
 
@@ -33,7 +35,8 @@ import {
     
     my_nano_php_verify_message_sig, 
     my_nano_php_encrypted_stream_to_key_pair, 
-    my_nano_php_sign_message
+    my_nano_php_sign_message,
+    my_nano_php_open_encrypted_seed
 
 } from '../../service';
 
@@ -57,11 +60,14 @@ export function SignMessage(props: any) {
     const [ messageHash, setMessageHash ] = useState("");
     const [ signature, setSignature ] = useState("");
     const [ tokenPasswordBox, setTokenPasswordBox ] = useState(false);
-    const [ tokenPasswordInput, setTokenPasswordInput ] = useState("");
     const [ sigStatus, setSigStatus ] = useState(SIG_UNSET);
     
     useEffect(
         () => {
+
+            let signButton: any = document.getElementById('sign-msg-btn-id');
+
+            signButton.disabled = ((props.wallet as my_wallet).origin === WALLET_FROM.FROM_PUBLIC_KEY);
 
             if (props.isSignedVerifyWindowClosed) {
 
@@ -99,6 +105,7 @@ export function SignMessage(props: any) {
     function signThisMessage() {
         let privateKey: string;
         let isHash: any;
+        let tokenPasswordInput: any = document.getElementById('sign-password-input-id');
 
         if (messageHash === "") {
 
@@ -114,7 +121,7 @@ export function SignMessage(props: any) {
 
         }
 
-        if (tokenPasswordInput === "") {
+        if (tokenPasswordInput.value === "") {
 
             props.newNotification({
 
@@ -137,68 +144,122 @@ export function SignMessage(props: any) {
 
         } as NOTIFY_MESSAGE);
 
-        my_nano_php_encrypted_stream_to_key_pair(
+        ((props.wallet as my_wallet).origin === WALLET_FROM.FROM_KEY_PAIR)?
+            my_nano_php_open_encrypted_seed((props.wallet as my_wallet).encrypted_block as string, tokenPasswordInput.value).then(
+                (unencryptedSeedResult: any) => {
 
-            (props.wallet as my_wallet).wallet_number as number, 
-            tokenPasswordInput,
-            (props.wallet as my_wallet).encrypted_block as string
+                    privateKey = `${(unencryptedSeedResult as OPEN_ENCRYPTED_SEED_RESPONSE).result.seed}${(props.wallet as my_wallet).public_key}`;
 
-        ).then(
-            (privKey: any) => {
-
-                privateKey = `${(privKey as MY_NANO_PHP_SEED2KEYPAIR).key_pair.private_key}${(privKey as MY_NANO_PHP_SEED2KEYPAIR).key_pair.public_key}`;
-
-                props.newNotification({
-
-                    msg: props.language.msg_signing_message,
-                    timeout: 2000
-
-                } as NOTIFY_MESSAGE);
-
-                my_nano_php_sign_message(
+                    my_nano_php_sign_message(
+                        
+                        messageHash,
+                        privateKey, 
+                        (isHash.checked)?MY_NANO_PHP_VERIFY_SIG_HASH:MY_NANO_PHP_VERIFY_SIG_MSG
                     
-                    messageHash,
-                    privateKey, 
-                    (isHash.checked)?MY_NANO_PHP_VERIFY_SIG_HASH:MY_NANO_PHP_VERIFY_SIG_MSG
-                
-                ).then(
-                    (signedMessageSuccess: any) => {
+                    ).then(
+                        (signedMessageSuccess: any) => {
 
-                        setSignature((signedMessageSuccess as SIGNED_MESSAGE).signature as string);
-                        setTokenPasswordInput("");
-                        setWalletPublicKeyValue((props.wallet as my_wallet).wallet as string);
-                        setTokenPasswordBox(false);
-                        props.newNotification({
+                            setSignature((signedMessageSuccess as SIGNED_MESSAGE).signature as string);
+                            tokenPasswordInput.value = "";
+                            setWalletPublicKeyValue((props.wallet as my_wallet).wallet as string);
+                            setTokenPasswordBox(false);
+                            props.newNotification({
 
-                            msg: props.language.msg_message_signed,
-                            timeout:3000
+                                msg: props.language.msg_message_signed,
+                                timeout:3000
 
-                        } as NOTIFY_MESSAGE);
+                            } as NOTIFY_MESSAGE);
 
-                    },
-                    (signedMessageError: any) => {
+                        },
+                        (signedMessageError: any) => {
 
-                        setTokenPasswordInput("");
-                        props.newNotification({
+                            tokenPasswordInput.value = "";
+                            props.newNotification({
 
-                            notify_type: NOTIFY_TYPE.NOTIFY_TYPE_ERROR,
-                            msg: `${(signedMessageError as MY_NANO_PHP_ERROR).error} ${(signedMessageError as MY_NANO_PHP_ERROR).reason}`,
-                            timeout:3000
+                                notify_type: NOTIFY_TYPE.NOTIFY_TYPE_ERROR,
+                                msg: `${(signedMessageError as MY_NANO_PHP_ERROR).error} ${(signedMessageError as MY_NANO_PHP_ERROR).reason}`,
+                                timeout:3000
 
-                        } as NOTIFY_MESSAGE);
+                            } as NOTIFY_MESSAGE);
 
-                    }
-                );
+                        }
+                    );
 
-            },
-            (privKeyError: any) => props.newNotification({
+                },
+                (unencryptedSeedError: any) => {
+                    tokenPasswordInput.value = "";
+                    props.newNotification({
 
-                notify_type: NOTIFY_TYPE.NOTIFY_TYPE_ERROR,
-                msg: `${(privKeyError as MY_NANO_PHP_ERROR).error} ${(privKeyError as MY_NANO_PHP_ERROR).reason}`,
-                timeout: 4000
+                        notify_type: NOTIFY_TYPE.NOTIFY_TYPE_ERROR,
+                        msg: `${(unencryptedSeedError as MY_NANO_PHP_ERROR).error} ${(unencryptedSeedError as MY_NANO_PHP_ERROR).reason}`,
+                        timeout:3000
 
-            } as NOTIFY_MESSAGE)
-        );
+                    } as NOTIFY_MESSAGE);
+                }
+            )
+        :
+            my_nano_php_encrypted_stream_to_key_pair(
+
+                (props.wallet as my_wallet).wallet_number as number, 
+                tokenPasswordInput.value,
+                (props.wallet as my_wallet).encrypted_block as string
+
+            ).then(
+                (privKey: any) => {
+
+                    privateKey = `${(privKey as MY_NANO_PHP_SEED2KEYPAIR).key_pair.private_key}${(privKey as MY_NANO_PHP_SEED2KEYPAIR).key_pair.public_key}`;
+
+                    props.newNotification({
+
+                        msg: props.language.msg_signing_message,
+                        timeout: 2000
+
+                    } as NOTIFY_MESSAGE);
+
+                    my_nano_php_sign_message(
+                        
+                        messageHash,
+                        privateKey, 
+                        (isHash.checked)?MY_NANO_PHP_VERIFY_SIG_HASH:MY_NANO_PHP_VERIFY_SIG_MSG
+                    
+                    ).then(
+                        (signedMessageSuccess: any) => {
+
+                            setSignature((signedMessageSuccess as SIGNED_MESSAGE).signature as string);
+                            tokenPasswordInput.value = "";
+                            setWalletPublicKeyValue((props.wallet as my_wallet).wallet as string);
+                            setTokenPasswordBox(false);
+                            props.newNotification({
+
+                                msg: props.language.msg_message_signed,
+                                timeout:3000
+
+                            } as NOTIFY_MESSAGE);
+
+                        },
+                        (signedMessageError: any) => {
+
+                            tokenPasswordInput.value = "";
+                            props.newNotification({
+
+                                notify_type: NOTIFY_TYPE.NOTIFY_TYPE_ERROR,
+                                msg: `${(signedMessageError as MY_NANO_PHP_ERROR).error} ${(signedMessageError as MY_NANO_PHP_ERROR).reason}`,
+                                timeout:3000
+
+                            } as NOTIFY_MESSAGE);
+
+                        }
+                    );
+
+                },
+                (privKeyError: any) => props.newNotification({
+
+                    notify_type: NOTIFY_TYPE.NOTIFY_TYPE_ERROR,
+                    msg: `${(privKeyError as MY_NANO_PHP_ERROR).error} ${(privKeyError as MY_NANO_PHP_ERROR).reason}`,
+                    timeout: 4000
+
+                } as NOTIFY_MESSAGE)
+            );
 
     }
 
@@ -219,8 +280,7 @@ export function SignMessage(props: any) {
                             
                             type="password" 
                             className="sign-password-input"
-                            value={ tokenPasswordInput }
-                            onChange={ ( e ) => setTokenPasswordInput( e.target.value ) }
+                            id="sign-password-input-id"
                             placeholder={ props.language.msg_title_password_token }
                             title={ props.language.msg_title_password_token }
                         
@@ -232,7 +292,8 @@ export function SignMessage(props: any) {
                             className="sign-password-cancel-btn"
                             onClick={ () => {
                                 
-                                setTokenPasswordInput("");
+                                let tokenPasswordInput: any = document.getElementById('sign-password-input-id');
+                                tokenPasswordInput.value = "";
                                 setTokenPasswordBox(false);
 
                             }}
@@ -410,7 +471,7 @@ export function SignMessage(props: any) {
                         <input 
 
                             type="text" 
-                            className="sign-signature-input" 
+                            className="sign-signature-input"
                             value={ signature }
                             onChange={ (e) => setSignature(e.target.value) }
                             style={ { height: "60px" } }
@@ -427,6 +488,7 @@ export function SignMessage(props: any) {
                     <button 
 
                         className="sign-msg-btn"
+                        id="sign-msg-btn-id"
                         onClick={ () => {
 
                             setSigStatus(SIG_UNSET);

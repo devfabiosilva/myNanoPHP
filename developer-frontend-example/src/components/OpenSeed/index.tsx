@@ -35,7 +35,7 @@ import {
 import { 
     
     NOTIFY_TYPE, 
-    getKey 
+    generateToken
 
 } from '../../utils';
 
@@ -73,7 +73,7 @@ export function OpenSeed(props: any) {
 
             } as NOTIFY_MESSAGE);
 
-            token = `@1A${getKey()}${getKey()}`;
+            token = generateToken();
     
         }
 
@@ -102,7 +102,7 @@ export function OpenSeed(props: any) {
         
                                 wallet_number: 0,
                                 encrypted_block: (result as ENCRYPTED_STREAM_RESULT).encrypted_stream as string,
-                                origin: WALLET_FROM.FROM_KEY_PAIR,
+                                origin: WALLET_FROM.FROM_BIP39,
                                 public_key: (res as MY_NANO_PHP_SEED2KEYPAIR).key_pair.public_key,
                                 wallet: (res as MY_NANO_PHP_SEED2KEYPAIR).key_pair.wallet
         

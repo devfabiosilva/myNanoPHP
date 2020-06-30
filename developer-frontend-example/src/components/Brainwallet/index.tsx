@@ -4,7 +4,8 @@ import { connect } from 'react-redux';
 import { 
 
     my_nano_php_open_brainwallet,
-    my_nano_php_seed2keypair
+    my_nano_php_seed2keypair,
+    my_nano_php_seed_to_encrypted_stream
 
 } from '../../service';
 
@@ -15,7 +16,8 @@ import {
     NANO_KEY_PAIR, 
     my_wallet, 
     WALLET_FROM,
-    NOTIFY_MESSAGE
+    NOTIFY_MESSAGE,
+    ENCRYPTED_STREAM_RESULT
 
 } from '../../utils/wallet_interface';
 
@@ -23,14 +25,21 @@ import {
     
     setPublicKey, 
     resetWallet, 
-    setNotifyMessage
+    setNotifyMessage,
+    setTokenAndWindow
 
 } from '../../actions';
 
-import { FiSkipBack } from 'react-icons/fi';
-import { NOTIFY_TYPE } from '../../utils';
+import {
+    
+    NOTIFY_TYPE,
+    generateToken 
 
+} from '../../utils';
+
+import { FiSkipBack } from 'react-icons/fi';
 import './style.css';
+import { TOKENIZER } from '../../reducers/tokenizer';
 
 export function Brainwallet(props: any) {
 
@@ -39,7 +48,8 @@ export function Brainwallet(props: any) {
         let brainwallet: any = document.getElementById("word-phrases-id");
         let salt: any = document.getElementById("salt-id");
         let braiwallet_value: string;
-        let salt_value: string
+        let salt_value: string;
+        let token: string;
 
         if ((braiwallet_value = brainwallet.value.trim()) === "") {
 
@@ -66,47 +76,92 @@ export function Brainwallet(props: any) {
 
         }
 
+        props.setNotifyMessage({
+
+            msg: props.language.msg_generating_token,
+            timeout: 400
+
+        } as NOTIFY_MESSAGE);
+
+        token = generateToken();
+
+        props.setNotifyMessage({
+
+            msg: props.language.msg_extracting_seed_from_brainwallet,
+            timeout: 400
+
+        } as NOTIFY_MESSAGE);
+
         my_nano_php_open_brainwallet(braiwallet_value, salt_value).then(
             (result) => {
 
                 props.setNotifyMessage({
 
                     msg: `${(result as BRAINWALLET_RESPONSE).extracted.warning_msg} ${(result as BRAINWALLET_RESPONSE).warning}`,
-                    timeout: 15000
+                    timeout: 5000
 
                 } as NOTIFY_MESSAGE);
 
                 my_nano_php_seed2keypair(0, (result as BRAINWALLET_RESPONSE).extracted.result.seed).then(
                     (seed2keypair: any) => {
-                        console.log((seed2keypair.key_pair as NANO_KEY_PAIR));
+                        
+                        props.setNotifyMessage({
 
-                        props.wallet_public_key(
-                            {
+                            msg: props.language.msg_encrypting_brainwallet_seed,
+                            timeout: 400
+                
+                        } as NOTIFY_MESSAGE);
 
-                                origin: WALLET_FROM.FROM_BRAINWALLET,
-                                public_key: (seed2keypair.key_pair as NANO_KEY_PAIR).public_key,
-                                wallet_number: (seed2keypair.key_pair as NANO_KEY_PAIR).wallet_number,
-                                wallet: (seed2keypair.key_pair as NANO_KEY_PAIR).wallet
+                        my_nano_php_seed_to_encrypted_stream((result as BRAINWALLET_RESPONSE).extracted.result.seed as string, token).then(
+                            (encypted_stream_result: any) => {
+                                props.wallet_public_key(
+                                    {
 
-                            }
+                                        origin: WALLET_FROM.FROM_BRAINWALLET,
+                                        encrypted_block: ((encypted_stream_result as ENCRYPTED_STREAM_RESULT).encrypted_stream as string),
+                                        wallet_number: 0,
+                                        public_key: (seed2keypair.key_pair as NANO_KEY_PAIR).public_key,
+                                        wallet: (seed2keypair.key_pair as NANO_KEY_PAIR).wallet
+
+                                    } as my_wallet
+                                );
+
+                                props.openAndSetTokenWindow({
+
+                                    showWindow: true,
+                                    token
+
+                                } as TOKENIZER);
+
+                            },
+                            (encrypted_stream_error) =>
+                                props.setNotifyMessage({
+
+                                    notify_type: NOTIFY_TYPE.NOTIFY_TYPE_ERROR,
+                                    msg: `${(encrypted_stream_error as MY_NANO_PHP_ERROR).error} ${(encrypted_stream_error as MY_NANO_PHP_ERROR).reason}`,
+                                    timeout: 10000
+                
+                                } as NOTIFY_MESSAGE)
                         );
                     },
-                    (seed2keypair_error) => {
-                        console.log(seed2keypair_error);
-                    }
+                    (seed2keypair_error) =>                 
+                        props.setNotifyMessage({
+
+                        notify_type: NOTIFY_TYPE.NOTIFY_TYPE_ERROR,
+                        msg: `${(seed2keypair_error as MY_NANO_PHP_ERROR).error} ${(seed2keypair_error as MY_NANO_PHP_ERROR).reason}`,
+                        timeout: 10000
+    
+                    } as NOTIFY_MESSAGE)
                 );
             },
-            (error) => {
-
+            (error) =>
                 props.setNotifyMessage({
 
                     notify_type: NOTIFY_TYPE.NOTIFY_TYPE_ERROR,
-                    msg: (error as MY_NANO_PHP_ERROR).reason,
+                    msg: `${(error as MY_NANO_PHP_ERROR).error} ${(error as MY_NANO_PHP_ERROR).reason}`,
                     timeout: 10000
 
-                } as NOTIFY_MESSAGE);
-
-            }
+                } as NOTIFY_MESSAGE)
         )
 
     }
@@ -183,7 +238,8 @@ const mapDispatchToProps = (dispatch: any, ownProps: any) => ({
 
     wallet_public_key: (public_key: my_wallet) => dispatch(setPublicKey(public_key)),
     setNotifyMessage: (msg: NOTIFY_MESSAGE) => dispatch(setNotifyMessage(msg)),
-    goBack: () => dispatch(resetWallet())
+    goBack: () => dispatch(resetWallet()),
+    openAndSetTokenWindow: (tokenizer: TOKENIZER) => dispatch(setTokenAndWindow(tokenizer))
 
 });
   
