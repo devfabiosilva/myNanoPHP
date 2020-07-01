@@ -193,3 +193,12 @@ export interface SIGNED_MESSAGE {
     signature?: string
 
 }
+
+export interface WALLET_TO_PUBLIC_KEY {
+
+    error?: string|number,
+    reason?: string,
+    wallet?: string,
+    public_key?: string
+
+}

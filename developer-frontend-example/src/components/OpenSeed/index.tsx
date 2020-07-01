@@ -6,7 +6,8 @@ import {
     my_nano_php_public_key_to_wallet,
     my_nano_php_bip39_to_encrypted_stream,
     my_nano_php_encrypted_stream_to_key_pair,
-    my_nano_php_seed_to_encrypted_stream
+    my_nano_php_seed_to_encrypted_stream,
+    my_nano_php_wallet_to_public_key
 
 } from '../../service';
 
@@ -28,14 +29,17 @@ import {
     NOTIFY_MESSAGE,
     ENCRYPTED_STREAM_RESULT,
     MY_NANO_PHP_ERROR,
-    MY_NANO_PHP_SEED2KEYPAIR
+    MY_NANO_PHP_SEED2KEYPAIR,
+    WALLET_TO_PUBLIC_KEY
 
 } from '../../utils/wallet_interface';
 
 import { 
     
     NOTIFY_TYPE, 
-    generateToken
+    generateToken,
+    NANO_PREFIX,
+    XRB_PREFIX
 
 } from '../../utils';
 
@@ -210,57 +214,94 @@ export function OpenSeed(props: any) {
 
         } else if (props.publicKey) {
 
-            if (seed_value.length!==64) {
+            if ( (seed_value.indexOf(NANO_PREFIX) > -1) || (seed_value.indexOf(XRB_PREFIX) > -1) )
+                my_nano_php_wallet_to_public_key(seed_value).then(
+                    (extracted_public_key_result: any) => {
+                        props.newNotification({
 
-                props.newNotification({
+                            msg: props.language.msg_extracting_public_key,
+                            timeout: 400
+            
+                        } as NOTIFY_MESSAGE);
 
-                    notify_type: NOTIFY_TYPE.NOTIFY_TYPE_ERROR,
-                    msg: props.language.msg_invalid_public_key_size,
-                    timeout: 1000
+                        props.wallet_public_key({
 
-                } as NOTIFY_MESSAGE);
+                            origin: WALLET_FROM.FROM_PUBLIC_KEY,
+                            public_key: (extracted_public_key_result as WALLET_TO_PUBLIC_KEY).public_key,
+                            wallet_number: 0,
+                            wallet: seed_value
 
-                return;
+                        });
 
-            }
+                        props.openAndSetTokenWindow({ 
 
-            my_nano_php_public_key_to_wallet(seed_value).then(
-                (public_key_to_wallet_res: any) => {
+                            showWindow: false,
+                            token: ""
+
+                        } as TOKENIZER);
+                    },
+                    (extracted_public_key_error: any) =>
+                        props.newNotification({
+                                
+                            notify_type: NOTIFY_TYPE.NOTIFY_TYPE_ERROR,
+                            msg: `${(extracted_public_key_error as MY_NANO_PHP_ERROR).error} ${(extracted_public_key_error as MY_NANO_PHP_ERROR).reason}`,
+                            timeout: 800
+
+                        } as NOTIFY_MESSAGE)
+                )
+            else {
+
+                if (seed_value.length!==64) {
 
                     props.newNotification({
-
-                        msg: props.language.msg_extracting_public_key,
-                        timeout: 400
-        
-                    } as NOTIFY_MESSAGE);
-
-                    props.wallet_public_key({
-
-                        origin: WALLET_FROM.FROM_PUBLIC_KEY,
-                        public_key: (public_key_to_wallet_res as PUBLIC_KEY_TO_WALLET_RESPONSE).public_key,
-                        wallet_number: 0,
-                        wallet: (public_key_to_wallet_res as PUBLIC_KEY_TO_WALLET_RESPONSE).wallet
-
-                    });
-
-                    props.openAndSetTokenWindow({ 
-
-                        showWindow: false,
-                        token: ""
-
-                     } as TOKENIZER);
-
-                },
-                (public_key_to_wallet_error: any) =>
-                    props.newNotification({
-                        
+    
                         notify_type: NOTIFY_TYPE.NOTIFY_TYPE_ERROR,
-                        msg: `${(public_key_to_wallet_error as MY_NANO_PHP_ERROR).error} ${(public_key_to_wallet_error as MY_NANO_PHP_ERROR).reason}`,
-                        timeout: 800
+                        msg: props.language.msg_invalid_public_key_size,
+                        timeout: 1000
+    
+                    } as NOTIFY_MESSAGE);
+    
+                    return;
+    
+                }
 
-                    } as NOTIFY_MESSAGE)
-            );
+                my_nano_php_public_key_to_wallet(seed_value).then(
+                    (public_key_to_wallet_res: any) => {
 
+                        props.newNotification({
+
+                            msg: props.language.msg_extracting_public_key,
+                            timeout: 400
+            
+                        } as NOTIFY_MESSAGE);
+
+                        props.wallet_public_key({
+
+                            origin: WALLET_FROM.FROM_PUBLIC_KEY,
+                            public_key: (public_key_to_wallet_res as PUBLIC_KEY_TO_WALLET_RESPONSE).public_key,
+                            wallet_number: 0,
+                            wallet: (public_key_to_wallet_res as PUBLIC_KEY_TO_WALLET_RESPONSE).wallet
+
+                        });
+
+                        props.openAndSetTokenWindow({ 
+
+                            showWindow: false,
+                            token: ""
+
+                        } as TOKENIZER);
+
+                    },
+                    (public_key_to_wallet_error: any) =>
+                        props.newNotification({
+                            
+                            notify_type: NOTIFY_TYPE.NOTIFY_TYPE_ERROR,
+                            msg: `${(public_key_to_wallet_error as MY_NANO_PHP_ERROR).error} ${(public_key_to_wallet_error as MY_NANO_PHP_ERROR).reason}`,
+                            timeout: 800
+
+                        } as NOTIFY_MESSAGE)
+                );
+            }
         } else {
 
             props.newNotification({

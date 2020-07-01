@@ -29,7 +29,8 @@ import {
     ENCRYPTED_STREAM_RESULT,
     SIGNATURE_VERIFY,
     SIGNED_MESSAGE,
-    OPEN_ENCRYPTED_SEED_RESPONSE
+    OPEN_ENCRYPTED_SEED_RESPONSE,
+    WALLET_TO_PUBLIC_KEY
 
 } from '../utils/wallet_interface';
 
@@ -258,6 +259,19 @@ export async function my_nano_php_sign_message(message: string, private_key: str
     let data: SIGNED_MESSAGE|MY_NANO_PHP_ERROR;
 
     data = await my_nano_php_api(`command=sign_message&private_key=${private_key}&message=${message}&type=${type}`, "my_nano_php_sign_message");
+
+    return new Promise((res, error) => {
+
+        return (data.error === "0")?res(data):error(data);
+
+    });
+}
+
+export async function my_nano_php_wallet_to_public_key(wallet: string)
+{
+    let data: WALLET_TO_PUBLIC_KEY|MY_NANO_PHP_ERROR;
+
+    data = await my_nano_php_api(`command=nano2pk&wallet=${wallet}`, "my_nano_php_wallet_to_public_key");
 
     return new Promise((res, error) => {
 
