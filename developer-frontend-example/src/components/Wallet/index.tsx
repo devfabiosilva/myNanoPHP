@@ -35,6 +35,8 @@ import {
   QR_CODE_BG_DARK,
   QR_CODE_FG_DARK,
   QR_CODE_FG_LIGHT,
+  NOTIFICATION_TIME,
+  NANO_RPC_ERROR_MSG,
 
 } from '../../utils';
 
@@ -59,7 +61,8 @@ import {
   my_wallet, 
   PENDING_AMOUNT_TO_POCKET, 
   NOTIFY_MESSAGE,
-  WALLET_FROM
+  WALLET_FROM,
+  MY_NANO_PHP_ERROR
 
 } from '../../utils/wallet_interface';
 
@@ -132,8 +135,10 @@ export function Wallet(props: any) {
           if (( amount_to_send_receive = obj_amount_to_send_receive.value.trim() ) === "") {
 
             props.newNotification({
+
               notify_type: NOTIFY_TYPE.NOTIFY_TYPE_ERROR,
               msg: props.language.msg_amount_is_empty
+
             } as NOTIFY_MESSAGE);
             props.dialogStatus();
             return;
@@ -159,18 +164,35 @@ export function Wallet(props: any) {
 
         my_nano_php_send_receive_money(props.state as my_wallet, dest_wallet, amount_to_send_receive, props.dialog_status).then(
           (transaction_result: any) => {
-            console.log("RESULTADO")
-            console.log(transaction_result);
             setWalletReady(false);
             props.closeDialog();
             props.dialogStatus();
+            props.newNotification({
+
+              msg: props.language.msg_transaction_success.replace(/%d/, transaction_result.hash),
+
+            } as NOTIFY_MESSAGE);
+
+            if (obj_amount_to_send_receive)
+              obj_amount_to_send_receive.value = "";
+            
+            if (obj_dest_wallet)
+              obj_dest_wallet.value = "";
+
           },
           (transaction_result_error: any) => {
-            console.log("ERRO");
-            console.log(transaction_result_error);
+
             setWalletReady(false);
             props.closeDialog();
             props.dialogStatus();
+            props.newNotification({
+
+              notify_type: NOTIFY_TYPE.NOTIFY_TYPE_ERROR,
+              msg: "Transaction error. Try again :(",
+              timeout: NOTIFICATION_TIME.TIME_VERY_SLOW
+
+            } as NOTIFY_MESSAGE);
+
           }
         );
 
@@ -223,7 +245,14 @@ export function Wallet(props: any) {
                           } as NOTIFY_MESSAGE
                         )
                       },
-                      (error: any) => console.log(error)
+                      (error: any) => 
+                        props.newNotification({
+
+                          notify_type: NOTIFY_TYPE.NOTIFY_TYPE_ERROR,
+                          msg: `${(error as MY_NANO_PHP_ERROR).error} ${(error as MY_NANO_PHP_ERROR).reason}`,
+                          timeout: NOTIFICATION_TIME.TIME_VERY_SLOW
+
+                        } as NOTIFY_MESSAGE)
                     );
                   },
                   (e: any) => {
@@ -243,14 +272,18 @@ export function Wallet(props: any) {
               }
             );
           },
-          (error) => {
-            console.log(error)
-          }
+          (error) => 
+          props.newNotification({
+
+            notify_type: NOTIFY_TYPE.NOTIFY_TYPE_ERROR,
+            msg: NANO_RPC_ERROR_MSG.replace(/%d/, error.error),
+            timeout: NOTIFICATION_TIME.TIME_VERY_SLOW
+
+          } as NOTIFY_MESSAGE)
         ).then(
           () => {
             nano_rpc_account_representative(props.state.wallet).then(
               (data: any) => {
-                console.log(data);
                 if (data) {
                   if (data.representative) {
                     props.setMyWallet({
@@ -335,7 +368,7 @@ export function Wallet(props: any) {
     let pending_value: any = (props.state as my_wallet).pending;
     let block: string;
     let amount: string;
-console.log("tic-tac")
+//console.log("tic-tac")
     if ( (pending_value !== '0.0') ) {
       props.disablePendingMonitor();
       nano_rpc_get_pending( (props.state as my_wallet).wallet as string ).then(
@@ -362,30 +395,84 @@ console.log("tic-tac")
                       }
 
                     } else
-                      console.log("Missing balance");
+                      props.newNotification({
 
-                    console.log(raw2real_res.real_balance);
-                    console.log(pending_res.block);
+                        notify_type: NOTIFY_TYPE.NOTIFY_TYPE_ERROR,
+                        msg: "Missing balance",
+
+                      } as NOTIFY_MESSAGE);
+
                   },
-                  (raw2real_err: any) => {
-                    console.log("my_nano_php_raw2real error");
-                  }
+                  (raw2real_err: any) => 
+                    props.newNotification({
+                    
+                      notify_type: NOTIFY_TYPE.NOTIFY_TYPE_ERROR,
+                      msg: `${(raw2real_err as MY_NANO_PHP_ERROR).error} ${(raw2real_err as MY_NANO_PHP_ERROR).reason}`,
+                      timeout: NOTIFICATION_TIME.TIME_VERY_SLOW
+
+                    } as NOTIFY_MESSAGE)
                 )
             else
-              console.log("Can't find block");
-          } else
-            console.log("Error big number amount raw not found");
-        },
-        (pending_err: any) => {
-          console.log(pending_err);
+              props.newNotification({
+              
+                notify_type: NOTIFY_TYPE.NOTIFY_TYPE_ERROR,
+                msg: "Can't find block",
+                timeout: NOTIFICATION_TIME.TIME_VERY_SLOW
 
-        }
+              } as NOTIFY_MESSAGE)
+          } else
+            props.newNotification({
+                
+              notify_type: NOTIFY_TYPE.NOTIFY_TYPE_ERROR,
+              msg: "Error big number amount raw not found",
+              timeout: NOTIFICATION_TIME.TIME_VERY_SLOW
+
+            } as NOTIFY_MESSAGE)
+        },
+        (pending_err: any) => 
+          props.newNotification({
+
+            notify_type: NOTIFY_TYPE.NOTIFY_TYPE_ERROR,
+            msg: NANO_RPC_ERROR_MSG.replace(/%d/, pending_err.error),
+            timeout: NOTIFICATION_TIME.TIME_VERY_SLOW
+
+          } as NOTIFY_MESSAGE)
       )
 
     }
   }
 
   function beginSendAmount() {
+
+    let destinationWallet: any = document.getElementById('destination-wallet-id');
+    let valueToSend: any = document.getElementById('value-to-send-id');
+
+    if (destinationWallet.value === "") {
+      props.newNotification({
+
+        notify_type: NOTIFY_TYPE.NOTIFY_TYPE_ALERT,
+        msg: props.language.msg_missing_dest_wallet,
+        timeout: NOTIFICATION_TIME.TIME_SLOW
+
+      } as NOTIFY_MESSAGE);
+
+      return;
+
+    }
+
+    if (valueToSend.value.trim() === "") {
+
+      props.newNotification({
+
+        notify_type: NOTIFY_TYPE.NOTIFY_TYPE_ALERT,
+        msg: props.language.msg_missing_amount_to_send,
+        timeout: NOTIFICATION_TIME.TIME_SLOW
+
+      } as NOTIFY_MESSAGE);
+
+      return;
+
+    }
 
     if (props.dialog_status === "") {
 

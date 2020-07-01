@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 
 import { 
@@ -27,20 +27,14 @@ import {
     SEND_COMMAND,
     OPEN_BLOCK_TO_RECEIVE,
     RECEIVE_COMMAND,
-    NOTIFY_TYPE
+    NOTIFY_TYPE,
+    NOTIFICATION_TIME
 
 } from '../../utils';
 
 import './style.css';
 
 function Dialog(props: any) {
-
-    useEffect(
-        () => {
-            console.log(props.nano_wallet);
-        },
-        [ props ]
-    )
 
     function closeDialog() {
 
@@ -112,16 +106,34 @@ function Dialog(props: any) {
 
                     } as my_wallet);
 
-                if ( props.transaction_command === OPEN_BLOCK_TO_RECEIVE )
+                if ( props.transaction_command === OPEN_BLOCK_TO_RECEIVE ) {
+
                     props.dialogStatus(RECEIVE_COMMAND);
-                else
+                    props.newNotification({
+
+                        msg: props.language.msg_opening_block,
+                        timeout: NOTIFICATION_TIME.TIME_VERY_SLOW
+
+                    } as NOTIFY_MESSAGE);
+
+                } else {
+
                     props.dialogStatus(SEND_COMMAND);
+                    props.newNotification({
+
+                        msg: props.language.msg_sending_amount,
+                        timeout: NOTIFICATION_TIME.TIME_VERY_SLOW
+
+                    } as NOTIFY_MESSAGE);
+
+                }
 
             },
             (encrypted_block_error: any) => {
                 props.newNotification(
                     {
-        
+                        
+                        notify_type: NOTIFY_TYPE.NOTIFY_TYPE_ERROR,
                         msg: `${(encrypted_block_error as MY_NANO_PHP_ERROR).error} ${(encrypted_block_error as MY_NANO_PHP_ERROR).reason}`,
                         timeout: 2000
         
@@ -141,25 +153,34 @@ function Dialog(props: any) {
                 <div className="dialog-password-container">
                     <input
 
+                        id="dialog-password-input-id"
                         type="password" 
                         className="dialog-password-input"
-                        id="dialog-password-input-id"
                         placeholder={ props.language.msg_title_password_token }
+                        disabled={(props.transaction_command === RECEIVE_COMMAND)||(props.transaction_command === SEND_COMMAND)}
 
                     />
                 </div>
                 <div className="dialog-button-container">
                     <button
+
+                        id = "dialog-button-cancel-id"
                         className = "dialog-button-cancel"
                         onClick = { closeDialog } 
                         placeholder={ props.language.cancel_button }
+                        disabled={(props.transaction_command === RECEIVE_COMMAND)||(props.transaction_command === SEND_COMMAND)}
+
                     >
                         { props.language.cancel_button }
                     </button>
                     <button 
+
+                        id = "dialog-button-ok-id"
                         className = "dialog-button-ok"
                         onClick = { () => extractPrivateKeyFromOrigin() }
                         placeholder="Ok"
+                        disabled={(props.transaction_command === RECEIVE_COMMAND)||(props.transaction_command === SEND_COMMAND)}
+
                     >
                         Ok
                     </button>

@@ -140,7 +140,12 @@ export const LANG_PT_BR = {
     msg_message_signed: "Mensagem assinada com sucesso",
     msg_missing_message: "Faltando: Hash do bloco/Mensagem para ser assinado(a)",
     msg_extracting_seed_from_brainwallet: "Extraindo a semente do Branwallet",
-    msg_encrypting_brainwallet_seed: "Encriptando a semente extraída da Brainwallet ..."
+    msg_encrypting_brainwallet_seed: "Encriptando a semente extraída da Brainwallet ...",
+    msg_missing_dest_wallet: "Faltando: Carteira de destino",
+    msg_missing_amount_to_send: "Faltando: Quantia para enviar",
+    msg_transaction_success: "Sucesso na transação HASH: %d",
+    msg_opening_block: "Abrindo o bloco ...",
+    msg_sending_amount: "Enviando quantia ..."
 
 }
 
@@ -282,7 +287,12 @@ export const LANG_EN_US = {
     msg_message_signed: "Message signed successfully",
     msg_missing_message: "Missing: Hash block/message to be signed",
     msg_extracting_seed_from_brainwallet: "Extracting seed from Brainwallet",
-    msg_encrypting_brainwallet_seed: "Encrypting Brainwallet extracted seed with token ..."
+    msg_encrypting_brainwallet_seed: "Encrypting Brainwallet extracted seed with token ...",
+    msg_missing_dest_wallet: "Missing: destination wallet",
+    msg_missing_amount_to_send: "Missing: Amount to send to",
+    msg_transaction_success: "Transaction SUCCESS HASH: %d",
+    msg_opening_block: "Opening block ...",
+    msg_sending_amount: "Sending amount ..."
 
 }
 

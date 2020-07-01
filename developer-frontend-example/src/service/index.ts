@@ -26,7 +26,8 @@ import {
     SIGNATURE_VERIFY,
     SIGNED_MESSAGE,
     OPEN_ENCRYPTED_SEED_RESPONSE,
-    WALLET_TO_PUBLIC_KEY
+    WALLET_TO_PUBLIC_KEY,
+    RAW2REAL_RESULT
 
 } from '../utils/wallet_interface';
 
@@ -84,7 +85,7 @@ export async function my_nano_php_nano2pk(wallet: string) {
 
 export async function my_nano_php_raw2real(balance: string) {
  
-    let data: any;
+    let data: RAW2REAL_RESULT|MY_NANO_PHP_ERROR;
 
     data = await my_nano_php_api(`command=raw2real&balance=${balance}`, "my_nano_php_raw2real");
 

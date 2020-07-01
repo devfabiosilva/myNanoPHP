@@ -38,8 +38,8 @@ import {
 } from '../../utils';
 
 import { FiSkipBack } from 'react-icons/fi';
-import './style.css';
 import { TOKENIZER } from '../../reducers/tokenizer';
+import './style.css';
 
 export function Brainwallet(props: any) {
 

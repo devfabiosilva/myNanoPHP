@@ -202,3 +202,12 @@ export interface WALLET_TO_PUBLIC_KEY {
     public_key?: string
 
 }
+
+export interface RAW2REAL_RESULT {
+
+    error?: string|number,
+    reason?: string,
+    balance?: string,
+    real_balance?: string
+
+}
