@@ -11,70 +11,62 @@
     top: 0px;
     width: 100%;
     height: 100%;
-    background-color: rgba(0,0,0,0.2);
+    background-color: var(--background-locked);
 
 }
 
 .dialog-window {
 
-    border-radius: 4px;
+    width: 480px;
+    height: 297px;
+    padding: 15px;
+    border-radius: 15px;
     background-color: var(--background);
-    width: 711px;
-    height: 440px;
 
 }
 
-/* TO BE IMPLEMENTED */
-/*
+.dialog-password-box-title {
+
+    width: 95%;
+    text-align: center;
+    margin: 15px auto 0 auto;
+    font-size: 25px;
+    font-weight: 700;
+
+}
+
+.dialog-password-container,
 .dialog-button-container {
 
+    margin: 15px auto 0 auto;
+    width: 95%;
+
 }
 
-.dialog-button-cancel {
+.dialog-password-container {
+
+    height: 45%;
 
 }
 
+.dialog-password-input {
+
+    width: 100%;
+    text-align: center;
+    font-style: italic;
+
+}
+
+.dialog-button-container {
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+}
+.dialog-button-cancel,
 .dialog-button-ok {
 
-}
-
-.origin-enc-file-password-container {
+    width: 180px;
 
 }
-
-.origin-seed-container {
-
-}
-
-.origin-number-value {
-
-}
-
-.origin-bip39-container {
-
-}
-
-.origin-bip39-value {
-
-}
-
-.origin-brainwallet-container {
-
-}
-
-.origin-brainwallet {
-
-}
-
-.origin-salt {
-
-}
-
-.origin-keypair-container {
-
-}
-
-.origin-keypair-value {
-
-}
-*/

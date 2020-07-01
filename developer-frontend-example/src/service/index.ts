@@ -1,10 +1,6 @@
 import axios from 'axios';
 
-import {
-
-    NANO_NODE_URL
-
-} from '../utils/secret';
+import { NANO_NODE_URL } from '../utils/secret';
 
 import {
 
@@ -469,7 +465,6 @@ export async function nano_rpc_get_pending(account: string) {
         source: "true"
     }).then(
         (d: any) => {
-            //console.log(d.data);
             if (d) {
                 if ( (tmp1 = d.data['blocks']) ) {
 

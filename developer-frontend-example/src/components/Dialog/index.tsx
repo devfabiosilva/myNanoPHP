@@ -135,12 +135,16 @@ function Dialog(props: any) {
     return ((props.dialogVisible)?(
         <div className="dialog-container">
             <div className="dialog-window">
+                <div className="dialog-password-box-title">
+                    { props.language.msg_title_password_token }
+                </div>
                 <div className="dialog-password-container">
                     <input
 
                         type="password" 
                         className="dialog-password-input"
                         id="dialog-password-input-id"
+                        placeholder={ props.language.msg_title_password_token }
 
                     />
                 </div>
@@ -148,12 +152,14 @@ function Dialog(props: any) {
                     <button
                         className = "dialog-button-cancel"
                         onClick = { closeDialog } 
+                        placeholder={ props.language.cancel_button }
                     >
                         { props.language.cancel_button }
                     </button>
                     <button 
                         className = "dialog-button-ok"
                         onClick = { () => extractPrivateKeyFromOrigin() }
+                        placeholder="Ok"
                     >
                         Ok
                     </button>
