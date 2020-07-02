@@ -891,7 +891,7 @@ if ($_SERVER['REQUEST_METHOD']==='POST') {
 
         try {
 
-            $ret=php_c_convert_balance($balance, HEX_TO_REAL);
+            $ret=php_c_convert_balance($balance, HEX_TO_RAW);
 
             echo json_encode(array(
                 "error"=>"0",

@@ -3188,6 +3188,14 @@ PHP_FUNCTION(php_c_convert_balance)
 
    }
 
+   if (!balance_len) {
+
+      zend_throw_exception(f_exception_ce, "Internal error in C function 'php_c_convert_balance' 15350. Empty balance", (zend_long)15350);
+
+      return;
+
+   }
+
    switch (type) {
 
       case REAL_TO_RAW:
@@ -3281,7 +3289,9 @@ PHP_FUNCTION(php_c_convert_balance)
 
          }
 
-         if ((err=f_str_to_hex((uint8_t *)msg+F_BUFFER_ADJUST, memcpy(msg+tmp+/*128*/256, balance, balance_len)))) {
+         memcpy(msg+tmp+/*128*/256, balance, balance_len);
+
+         if ((err=f_str_to_hex((uint8_t *)msg+F_BUFFER_ADJUST, msg+256))) {
 
             sprintf(msg, "Internal error in C function 'f_str_to_hex' %d. Balance '%s' with length size %lu. Can't parse string to hex", err,
                balance, (unsigned long int)balance_len);
