@@ -265,7 +265,7 @@ export const LANG_EN_US = {
     title_wallet_number: "Wallet number",
     password_msg: "Password",
     title_close: "Close",
-    title_change: "Mudar",
+    title_change: "Change",
     msg_empty_wallet_number: "Wallet number cannot be empty",
     msg_wallet_num_is_nan: "Error: Wallet NUMBER is not a Number",
     sign_verify_message_title: "Sign/verify message or hash",
