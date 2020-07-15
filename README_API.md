@@ -219,7 +219,7 @@ fabc002e59bc46aad8cf08c9287e32d12f7f3102d20a399d0f77fd2653b0ba68
 }
 ```
 
-### COMMAND: php_c_block_to_p2pow
+### COMMAND: block_to_p2pow
 
 - Description:
 
@@ -227,7 +227,7 @@ Creates a P2PoW block given a Nano block and Fee amount and Worker Wallet
 
 command|type|required
 -------|----|-------|
-php_c_block_to_p2pow|command|yes
+block_to_p2pow|command|yes
 block|Nano block|yes
 wallet|Worker wallet|yes
 worker_representative|Worker representative|no (If omitted then user wallet representative is used)
@@ -322,6 +322,152 @@ e7e0f5dd644f61b55d7d898f56f2ad76e07762a9fa244f01a00a1d0e475c3d21
 04
 0000000000000000"
 }
+```
+/////////////////////////////////////////////////////////////
+
+### COMMAND: brainwallet
+
+- Description:
+
+Extract Nano Seed and Bip39 from a phrase/text
+
+command|type|required
+-------|----|-------|
+brainwallet|command|yes
+text|Text|yes
+salt|Salt|yes
+
+**Example**
+
+Extract Bip39 and Nano Seed from text: **Let the future tell the truth, and evaluate each one according to his work and accomplishments. The present is theirs; the future, for which I have really worked, is mine (Nikola Tesla - 10 July 1856 - 7 January 1943)**
+
+and salt: **YourEmailHereYourSaltHere**
+
+```sh
+curl --request POST \
+  --url http://localhost/template.php \
+  --header 'content-type: application/x-www-form-urlencoded' \
+  --data command=brainwallet \
+  --data 'text=Let the future tell the truth, and evaluate each one according to his work and accomplishments. The present is theirs; the future, for which I have really worked, is mine (Nikola Tesla - 10 July 1856 - 7 January 1943)' \
+  --data salt=YourEmailHereYourSaltHere
+```
+
+**Return value**
+
+```sh
+{
+  "error": "0",
+  "reason": "Success",
+  "text": "Let the future tell the truth, and evaluate each one according to his work and accomplishments. The present is theirs; the future, for which I have really worked, is mine (Nikola Tesla - 10 July 1856 - 7 January 1943)",
+  "salt": "YourEmailHereYourSaltHere",
+  "extracted": {
+    "result": {
+      "seed": "8A492E10D7E71D145A19D5901D7B79BAA0228A8878A74AFC21FF74A5410B353B",
+      "bip39": "medal enact loud quit impact mechanic half deny mosquito type taxi inspire acquire earn capable belt enough three lemon true favorite machine stay gossip"
+    },
+    "warning_msg": "[Perfect!] 3.34x10^53 Years to crack"
+  },
+  "warning": "It is recommended to extract your brainwallet from your own hardware. Keep your brainwallet, seed, bip39 and salt safe."
+}
+```
+
+### COMMAND: calculate_work_from_block
+
+- Description:
+
+Calculates work given a Nano block
+
+command|type|required
+-------|----|-------|
+calculate_work_from_block|command|yes
+block|Hex string block|yes
+n_thr|Number of CPU threads|yes
+
+**Example**
+
+Calculate the Proof of Work of the Nano Block below using 4 CPU threads:
+
+```sh
+0000000000000000000000000000000000000000000000000000000000000006
+1be0ede8eccb11888d818ab956e43ac69f93e3d861d80501a1badd52c60641aa
+79640f38102a3728efc9d2a190cdcac87011b6eb2bff9bcd10f12405ec76d8c6
+22f2c23d07f7eb43ebdb470e35493ebbadfdc447bd4b983623703767728974b6
+000004b80cf49e72c25b9bdf19b00000
+79640f38102a3728efc9d2a190cdcac87011b6eb2bff9bcd10f12405ec76d8c1
+cc229c54ab496f6580715d53a4214ccd0fb17a9666f9c59030bb843213ed1088bdfbb1ad5e878a8097af38c8e0827ab0c729b7e108633e183b4e5665e567040d
+00
+0000000000000000
+
+# Human readable (JSON Equivalent)
+# {
+#   "error": "0",
+#   "reason": "Success",
+#   "block": {
+#     "action": "process",
+#     "json_block": "true",
+#     "block": {
+#       "type": "state",
+#       "account": "nano_18z1xqngskrjj48r54oscuk5ojnzkhjxirgr1n1t5gpxcd51eifctzbfq3ti",
+#       "previous": "79640F38102A3728EFC9D2A190CDCAC87011B6EB2BFF9BCD10F12405EC76D8C6",
+#       "representative": "nano_1aqkrayihxzdahoxpjrg8o6mxgxfzq46hhcdm1u48w3qexsakx7pzzhjn3fc",
+#       "balance": "95711629863500000000000000000000",
+#       "link": "79640F38102A3728EFC9D2A190CDCAC87011B6EB2BFF9BCD10F12405EC76D8C1",
+#       "link_as_account": "nano_1yd63ww31cjq75qwmno3k58wok5i48ugpczzmh8j3wb61qp9fp835zfzanwe",
+#       "signature": "CC229C54AB496F6580715D53A4214CCD0FB17A9666F9C59030BB843213ED1088BDFBB1AD5E878A8097AF38C8E0827AB0C729B7E108633E183B4E5665E567040D",
+#       "work": "0000000000000000"
+#     }
+#   }
+# }
+```
+
+```sh
+curl --request POST \
+  --url http://localhost/template.php \
+  --header 'content-type: application/x-www-form-urlencoded' \
+  --data command=calculate_work_from_block \
+  --data block=00000000000000000000000000000000000000000000000000000000000000061be0ede8eccb11888d818ab956e43ac69f93e3d861d80501a1badd52c60641aa79640f38102a3728efc9d2a190cdcac87011b6eb2bff9bcd10f12405ec76d8c622f2c23d07f7eb43ebdb470e35493ebbadfdc447bd4b983623703767728974b6000004b80cf49e72c25b9bdf19b0000079640f38102a3728efc9d2a190cdcac87011b6eb2bff9bcd10f12405ec76d8c1cc229c54ab496f6580715d53a4214ccd0fb17a9666f9c59030bb843213ed1088bdfbb1ad5e878a8097af38c8e0827ab0c729b7e108633e183b4e5665e567040d000000000000000000 \
+  --data n_thr=4
+```
+
+**Return value**
+
+```sh
+
+{
+  "error": "0",
+  "reason": "Success",
+  "block": "0000000000000000000000000000000000000000000000000000000000000006
+1be0ede8eccb11888d818ab956e43ac69f93e3d861d80501a1badd52c60641aa
+79640f38102a3728efc9d2a190cdcac87011b6eb2bff9bcd10f12405ec76d8c6
+22f2c23d07f7eb43ebdb470e35493ebbadfdc447bd4b983623703767728974b6
+000004b80cf49e72c25b9bdf19b00000
+79640f38102a3728efc9d2a190cdcac87011b6eb2bff9bcd10f12405ec76d8c1
+cc229c54ab496f6580715d53a4214ccd0fb17a9666f9c59030bb843213ed1088bdfbb1ad5e878a8097af38c8e0827ab0c729b7e108633e183b4e5665e567040d
+00
+2cb275b1910cc89b"
+}
+
+
+# Human readable result (JSON Equivalent)
+# {
+#   "error": "0",
+#   "reason": "Success",
+#   "block": {
+#     "action": "process",
+#     "json_block": "true",
+#     "block": {
+#       "type": "state",
+#       "account": "nano_18z1xqngskrjj48r54oscuk5ojnzkhjxirgr1n1t5gpxcd51eifctzbfq3ti",
+#       "previous": "79640F38102A3728EFC9D2A190CDCAC87011B6EB2BFF9BCD10F12405EC76D8C6",
+#       "representative": "nano_1aqkrayihxzdahoxpjrg8o6mxgxfzq46hhcdm1u48w3qexsakx7pzzhjn3fc",
+#       "balance": "95711629863500000000000000000000",
+#       "link": "79640F38102A3728EFC9D2A190CDCAC87011B6EB2BFF9BCD10F12405EC76D8C1",
+#       "link_as_account": "nano_1yd63ww31cjq75qwmno3k58wok5i48ugpczzmh8j3wb61qp9fp835zfzanwe",
+#       "signature": "CC229C54AB496F6580715D53A4214CCD0FB17A9666F9C59030BB843213ED1088BDFBB1AD5E878A8097AF38C8E0827AB0C729B7E108633E183B4E5665E567040D",
+#       "work": "9BC80C91B175B22C"
+#     }
+#   }
+# }
 ```
 
 In development ...
