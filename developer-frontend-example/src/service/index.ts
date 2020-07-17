@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import { NANO_NODE_URL } from '../utils/secret';
+import { NANO_NODE_URL } from '../utils/nodes';
 
 import {
 

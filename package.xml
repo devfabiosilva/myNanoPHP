@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="0.1.0" encoding="UTF-8"?>
 <package packagerversion="1.10.9" version="2.1" xmlns="http://pear.php.net/dtd/package-2.1" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0     http://pear.php.net/dtd/tasks-1.0.xsd     http://pear.php.net/dtd/package-2.1     http://pear.php.net/dtd/package-2.1.xsd">
  <name>mynanoembedded</name>
  <channel>pecl.php.net</channel>
@@ -13,8 +13,8 @@
  <date>2019-09-07</date>
  <time>08:16:30</time>
  <version>
-  <release>2.0.22</release>
-  <api>2.0.22</api>
+  <release>0.1.0</release>
+  <api>0.1.0</api>
  </version>
  <stability>
   <release>stable</release>
