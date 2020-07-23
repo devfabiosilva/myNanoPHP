@@ -470,6 +470,124 @@ cc229c54ab496f6580715d53a4214ccd0fb17a9666f9c59030bb843213ed1088bdfbb1ad5e878a80
 # }
 ```
 
+### COMMAND: compare
+
+- Description:
+
+Compare two Nano big numbers
+
+command|type|required
+-------|----|-------|
+compare|command|yes
+valuea|A value|yes
+valueb|B value|yes
+compare|compare modes (See compare modes table below)|yes
+typea|A value type. See A/B value type options below.|yes
+typeb|B value type. See A/B value type options below.|yes
+
+compare|description
+-------|-----------
+eq|A is EQUAL B
+lt|A is LESS THAN B
+gt|A is GREATER THAN B
+geq|A is GREATER or EQUAL B
+leq|A is LESSER THAN B
+
+typea/b|description
+-------|-----------
+real|Nano big number A/B input is real type
+raw|Nano big number A/B input is raw type
+hex|Nano big number A/B input is hex string type
+
+**Return value**
+
+_result_ = 1 - for TRUE
+_result_ = 0 - for FALSE
+
+**Example 1**
+
+Compare if A = '5.261762' (real) is greater than B = '3' (real);
+
+```sh
+curl --request POST \
+  --url http://localhost/template.php \
+  --header 'content-type: application/x-www-form-urlencoded' \
+  --data command=compare \
+  --data valuea=5.261762 \
+  --data valueb=3 \
+  --data compare=gt \
+  --data typeb=real \
+  --data typea=real
+```
+
+**Return value**
+
+```sh
+{
+  "error": "0",
+  "reason": "Success",
+  "value_a": "5.261762",
+  "value_b": "3",
+  "result": "1"
+}
+```
+
+**Example 2**
+
+Compare if A = '621762.182721827846' (real) is EQUAL than B = '621762182721827846000000000000000000' (raw);
+
+```sh
+curl --request POST \
+  --url http://localhost/template.php \
+  --header 'content-type: application/x-www-form-urlencoded' \
+  --data command=compare \
+  --data valuea=621762.182721827846 \
+  --data valueb=621762182721827846000000000000000000 \
+  --data compare=eq \
+  --data typeb=raw \
+  --data typea=real
+```
+
+**Return value**
+
+```sh
+{
+  "error": "0",
+  "reason": "Success",
+  "value_a": "5.261762",
+  "value_b": "3",
+  "result": "1" // True
+}
+```
+
+**Example 3**
+
+Compare if A = '00009d632382e95f9ed7ce322c800000' (hex) is LESS THAN than B = '681190192881000000000000000000000' (raw);
+
+```sh
+curl --request POST \
+  --url http://localhost/template.php \
+  --header 'content-type: application/x-www-form-urlencoded' \
+  --data command=compare \
+  --data valuea=00009d632382e95f9ed7ce322c800000 \
+  --data valueb=681190192881000000000000000000000 \
+  --data compare=lt \
+  --data typeb=raw \
+  --data typea=hex
+```
+
+**Return value**
+
+```sh
+{
+  "error": "0",
+  "reason": "Success",
+  "value_a": "00009d632382e95f9ed7ce322c800000",  // Human readable real value 3192.1928861
+  "value_b": "681190192881000000000000000000000", // Human readable real value 681.190192881
+  "result": "0" // (3192.1928861 <= 681.190192881) = FALSE
+}
+```
+
 In development ...
 ## License
 MIT

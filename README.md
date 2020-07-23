@@ -14,13 +14,40 @@
 # myNanoPHP
 myNanoPHP is a C library that integrates Nano Cryptocurrency tools to PHP
 
-## Details
+## Features
 
-In development ...
+- Integrated Proof of Work with multithread CPU support
+- Self entropy verifier to ensure excelent TRNG or PRNG entropy
+- Bip39
+- Brainwallet support
+- P2PoW support
+- Sign a block using Blake2b hash with Ed25519 algorithm
+- Optmized for size and speed
+- Integration with IoT protocol devices (in development)
+- Bitcoin support (In development)
+- Creates a encrypted stream by password to protect your SEED
+- Written in C
+- Libsodium and mbedTLS libraries integrated
+- Only 560 KB in your server disk space
 
 ## Installing
 
-In Development ...
+### Pre-compiled
+
+#### Ubuntu
+(in development)
+#### Windows
+(in development)
+#### Mac
+(in development)
+### Source code:
+(in development)
+#### Ubuntu
+(in development)
+#### Windows
+(in development)
+#### Mac
+
 
 ## Hello World Demo API
 

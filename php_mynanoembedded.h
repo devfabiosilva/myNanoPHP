@@ -78,7 +78,7 @@ PHP_FUNCTION(php_c_bip39_to_nano_seed);
 
 #define LIBRARY_MODULE_NAME "mynanoembedded"
 #define LIBRARY_NAME "myNanoEmbedded C library for PHP"
-#define LIBRARY_VERSION_STR "0.1.0"
+#define LIBRARY_VERSION_STR "0.2.0"
 
 #define FENIX_SUPPORT_DESC "Fenix-IoT protocol support"
 #define FENIX_SUPPORT_STATUS "disabled"
@@ -102,7 +102,7 @@ PHP_FUNCTION(php_c_bip39_to_nano_seed);
 #define MULTI_THREAD_SUPPORT_STATUS "yes"
 
 #define VERSION_STR "Version"
-#define VERSION_VALUE_STR "0.1.0"
+#define VERSION_VALUE_STR "0.2.0"
 
 #define CONTACT_STR_DESC "Contact"
 #define CONTACT_STR_STATUS "fabioegel@protonmail.com"
