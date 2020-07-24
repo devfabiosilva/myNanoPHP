@@ -29,6 +29,7 @@ myNanoPHP is a C library that integrates Nano Cryptocurrency tools to PHP
 - Written in C
 - Libsodium and mbedTLS libraries integrated
 - Only 560 KB in your server disk space
+- Build with [myNanoEmbedded](https://devfabiosilva.github.io/myNanoEmbedded/) library
 
 ## Installing
 

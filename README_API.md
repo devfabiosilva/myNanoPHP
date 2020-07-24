@@ -554,8 +554,8 @@ curl --request POST \
 {
   "error": "0",
   "reason": "Success",
-  "value_a": "5.261762",
-  "value_b": "3",
+  "value_a": "621762.182721827846",
+  "value_b": "621762182721827846000000000000000000", // Human readable real value 621762.182721827846
   "result": "1" // True
 }
 ```
@@ -585,6 +585,59 @@ curl --request POST \
   "value_a": "00009d632382e95f9ed7ce322c800000",  // Human readable real value 3192.1928861
   "value_b": "681190192881000000000000000000000", // Human readable real value 681.190192881
   "result": "0" // (3192.1928861 <= 681.190192881) = FALSE
+}
+```
+
+### COMMAND: from_multiplier
+
+- Description:
+
+Calculates a relative _difficulty_ given a multiplier
+
+command|type|required
+-------|----|-------|
+from_multiplier|command|yes
+multiplier|Multiplier value|yes
+base_difficulty|Base difficulty|Optional. If ommited then base difficulty = 0xffffffc000000000
+
+**Example 1**
+
+```sh
+curl --request POST \
+  --url http://localhost/chksig.php \
+  --header 'content-type: application/x-www-form-urlencoded' \
+  --data command=from_multiplier \
+  --data multiplier=4.0
+```
+
+**Return value**
+
+```sh
+{
+  "difficulty": "0xfffffff000000000",
+  "multiplier": "4.0",
+  "base_difficulty": "0xffffffc000000000"
+}
+```
+
+**Example 2**
+
+```sh
+curl --request POST \
+  --url http://localhost/template.php \
+  --header 'content-type: application/x-www-form-urlencoded' \
+  --data command=from_multiplier \
+  --data multiplier=4.0 \
+  --data base_difficulty=0xfffffee000000000
+```
+
+**Return value**
+
+```sh
+{
+  "difficulty": "0xffffffb800000000",
+  "multiplier": "4.0",
+  "base_difficulty": "0xfffffee000000000"
 }
 ```
 
