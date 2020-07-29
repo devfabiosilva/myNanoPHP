@@ -641,6 +641,170 @@ curl --request POST \
 }
 ```
 
+### COMMAND: gen_seed_to_encrypted_stream
+
+- Description:
+
+Generates a SEED given a selected entropy and encrypt it in a stream with password
+
+command|type|required
+-------|----|-------|
+gen_seed_to_encrypted_stream|command|yes
+entropy|Entropy type|yes. See entropy type.
+password|Password|yes
+
+Entropy type:
+
+- _paranoic_ (Very slow but strongly recommended)
+- _excelent_ (Slow and very strong)
+- _good_ (Good entropy)
+- _not_enough_ (Fast but not enough entropy. You can use it to generate temporary seeds)
+- _not_recommended_ (Very fast but not recommended. You can use it to generate temporary seeds as well)
+
+
+**Example**
+
+```sh
+curl --request POST \
+  --url http://localhost/template.php \
+  --header 'content-type: application/x-www-form-urlencoded' \
+  --data command=gen_seed_to_encrypted_stream \
+  --data password=MyPasswordHere@1 \
+  --data entropy=good
+```
+
+**Return value**
+
+```sh
+{
+  "error": "0",
+  "reason": "Success",
+  "encrypted_seed": "5f6e616e6f77616c6c657466696c655f000001004e414e4f205365656420456e637279707465642066696c652f73747265616d2e204b65657020697420736166
+6520616e64206261636b75702069742e20546869732066696c652069732070726f7465637465642062792070617373776f72642e2042555920424954434f494e
+20616e64204e414e4f2021212100a79e1b4a4a2b04e5a48d1290afed50768b7fe414b4eaab0d3bd4f7549f36c662bdf51b1362cedfb2c5bd51431ebd5f6d117e
+6706f035147ad7bf9180760d55d6ca64f077d9f8304b15e08756ee3b2aa0d34b5a3741e1202bf08a91e8de9c5f328db10d044fed0e39e3e37d6f2a56dcbe2308
+d02ee90ec3603f6fc36eaeb084edf3aa257654599d0d936ec93386ab6adb037d0f3ec454483708e64d27083de0ec2efcc896d779198f5d10ff350fa47b37e139
+8b6289c7317632cb29ac58aee636d771cab1533d29da48d79593c0e7de743810"
+}
+```
+
+### COMMAND: create_block
+
+- Description:
+
+Creates a Nano block with transaction parameters
+
+command|type|required
+-------|----|-------|
+create_block|command|yes
+account|Nano owner account or Public key|yes. 
+previous|Previous block in Nano blockchain|No. If ommited then genesis block will be parsed to block
+representative|Representative of the owner account|Yes. You can use Nano representative wallet or representative public key
+balance|Current balance of the owner account|yes
+balance_type|Balance type|No. If ommited then real value is asumed. See Nano big number types below
+val_send_rec|Value to send/receive|Yes
+val_send_rec_type|Value to send/receive type|No. If ommited real value is asumed. See Nano big number types below
+link|Link or destination wallet|Yes. Destination wallet or destination public key or link
+direction|Direction (send/receive)|Yes. Use _send_ to send amount or _receive_ to receive amount
+
+Nano big number|description
+---------------|-----------
+real|Real value
+raw|Raw value
+hex|Hex value
+
+**Example 1**
+
+Create a block given:
+
+**account**: _nano_18z1xqngskrjj48r54oscuk5ojnzkhjxirgr1n1t5gpxcd51eifctzbfq3ti_
+**previous**: _79640F38102A3728EFC9D2A190CDCAC87011B6EB2BFF9BCD10F12405EC76D8C6_
+**representative**: _nano_1aqkrayihxzdahoxpjrg8o6mxgxfzq46hhcdm1u48w3qexsakx7pzzhjn3fc_
+**balance**: _129.8918198635_
+**val_send_rec**: _34.18019_
+**link**: _CC2D7D29B41D2C00D6B09212D4F9D9404100F8F45131270CEF54E878D19AE1B7_
+**direction**: _receive_
+
+
+```sh
+curl --request POST \
+  --url http://localhost/template.php \
+  --header 'content-type: application/x-www-form-urlencoded' \
+  --data command=create_block \
+  --data account=nano_18z1xqngskrjj48r54oscuk5ojnzkhjxirgr1n1t5gpxcd51eifctzbfq3ti \
+  --data previous=79640F38102A3728EFC9D2A190CDCAC87011B6EB2BFF9BCD10F12405EC76D8C6 \
+  --data representative=nano_1aqkrayihxzdahoxpjrg8o6mxgxfzq46hhcdm1u48w3qexsakx7pzzhjn3fc \
+  --data balance=129.8918198635 \
+  --data val_send_rec=34.18019 \
+  --data link=CC2D7D29B41D2C00D6B09212D4F9D9404100F8F45131270CEF54E878D19AE1B7 \
+  --data direction=receive
+```
+
+**Return value**
+
+```sh
+{
+  "error": "0",
+  "reason": "Success",
+  "block": "0000000000000000000000000000000000000000000000000000000000000006
+1be0ede8eccb11888d818ab956e43ac69f93e3d861d80501a1badd52c60641aa
+79640f38102a3728efc9d2a190cdcac87011b6eb2bff9bcd10f12405ec76d8c6
+22f2c23d07f7eb43ebdb470e35493ebbadfdc447bd4b983623703767728974b6
+00000816e1419f277d97547955b00000
+cc2d7d29b41d2c00d6b09212d4f9d9404100f8f45131270cef54e878d19ae1b7
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+00
+0000000000000000"
+}
+```
+
+**Example 2**
+
+Create a block given:
+
+**account**: _nano_3k514btezr5b1ibocrwosod9n4b7y3h65nkgznem4bpipe9o79n4urew5z9u_
+**previous**: _C08247A3E3F57A49D53FD18A7AC15713AE5228BB4C05AFD7DEB1701227C6FA2E_
+**representative**: _xrb_3dz7tajxro7q7s85zniiekqggepb411qfsfdbes79b9g7r7khwzg115muyqt_
+**balance**: _12910192800000000000000000000000000_
+**balance_type**: _raw_
+**val_send_rec**: _127.1900000000002182951_
+**link**: _nano_37wpu4enfqkosw98ogxwi433kr75754sf7uhfqfwwm5kn5hzzfqh167h8us8_
+**direction**: _send_
+
+
+```sh
+curl --request POST \
+  --url http://localhost/template.php \
+  --header 'content-type: application/x-www-form-urlencoded' \
+  --data command=create_block \
+  --data account=nano_3k514btezr5b1ibocrwosod9n4b7y3h65nkgznem4bpipe9o79n4urew5z9u \
+  --data previous=C08247A3E3F57A49D53FD18A7AC15713AE5228BB4C05AFD7DEB1701227C6FA2E \
+  --data representative=xrb_3dz7tajxro7q7s85zniiekqggepb411qfsfdbes79b9g7r7khwzg115muyqt \
+  --data balance=12910192800000000000000000000000000 \
+  --data val_send_rec=127.1900000000002182951 \
+  --data link=nano_37wpu4enfqkosw98ogxwi433kr75754sf7uhfqfwwm5kn5hzzfqh167h8us8 \
+  --data direction=send \
+  --data balance_type=raw
+```
+
+**Return value**
+
+```sh
+{
+  "error": "0",
+  "reason": "Success",
+  "block": "0000000000000000000000000000000000000000000000000000000000000006
+c8601274cfe0690413556395cd567a0925f05e41d24efd193126d0b30f529e82
+c08247a3e3f57a49d53fd18a7ac15713ae5228bb4c05afd7deb1701227c6fa2e
+afe5d223dc54b72e4c3fd21064aee732c9100176e5ab4b3253a4ee2e0b27f3ee
+000276402db65efe4b8dd0c60c4aa800
+9796d89946de55cf0e6abbbc80821960a328c596976f6ddbce4c72a0dfffb6ef
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+04
+0000000000000000"
+}
+```
+
 In development ...
 ## License
 MIT
