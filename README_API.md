@@ -763,12 +763,19 @@ cc2d7d29b41d2c00d6b09212d4f9d9404100f8f45131270cef54e878d19ae1b7
 Create a block given:
 
 **account**: _nano_3k514btezr5b1ibocrwosod9n4b7y3h65nkgznem4bpipe9o79n4urew5z9u_
+
 **previous**: _C08247A3E3F57A49D53FD18A7AC15713AE5228BB4C05AFD7DEB1701227C6FA2E_
+
 **representative**: _xrb_3dz7tajxro7q7s85zniiekqggepb411qfsfdbes79b9g7r7khwzg115muyqt_
+
 **balance**: _12910192800000000000000000000000000_
+
 **balance_type**: _raw_
+
 **val_send_rec**: _127.1900000000002182951_
+
 **link**: _nano_37wpu4enfqkosw98ogxwi433kr75754sf7uhfqfwwm5kn5hzzfqh167h8us8_
+
 **direction**: _send_
 
 
@@ -804,6 +811,86 @@ afe5d223dc54b72e4c3fd21064aee732c9100176e5ab4b3253a4ee2e0b27f3ee
 0000000000000000"
 }
 ```
+
+### COMMAND: gen_seed
+
+- Description:
+
+Generates Nano SEED given a entropy
+
+command|type|required
+-------|----|-------|
+gen_seed|command|yes
+entropy|Entropy type|yes. See entropy type.
+
+Entropy type:
+
+- _paranoic_ (Very slow but strongly recommended)
+- _excelent_ (Slow and very strong)
+- _good_ (Good entropy)
+- _not_enough_ (Fast but not enough entropy. You can use it to generate temporary seeds)
+- _not_recommended_ (Very fast but not recommended. You can use it to generate temporary seeds as well)
+
+**Example**
+
+```sh
+curl --request POST \
+  --url http://localhost/template.php \
+  --header 'content-type: application/x-www-form-urlencoded' \
+  --data command=gen_seed \
+  --data entropy=excelent
+```
+
+**Return value**
+
+```sh
+{
+  "error": "0",
+  "reason": "Success",
+  "c_iternal_entropy_name": "F_ENTROPY_TYPE_EXCELENT",
+  "seed_and_bip39": {
+    "seed": "A3790A86C7817CFDBB22C7C9E8165CD76A7D099EACEEBF436BDC7723B3B80694",
+    "bip39": "pet sign payment monitor blind learn uncle flight size doll now put pond luggage kingdom oven satisfy brave warfare unusual depth swing bottom oil"
+  },
+  "warning": "It is not recommended to generate seed outside your hardware. Try to generate seed in your own hardware. Keep your SEED and Bip39 safe!"
+}
+```
+
+### COMMAND: generate_token
+
+- Description:
+
+Generates a non deterministic hash token using Blake2b algorithm
+
+command|type|required
+-------|----|-------|
+generate_token|command|yes
+passwd|Password for hash token|yes
+text|Input text|yes
+
+**Example**
+
+```sh
+curl --request POST \
+  --url http://localhost/template.php \
+  --header 'content-type: application/x-www-form-urlencoded' \
+  --data command=generate_token \
+  --data text=MyTextHere \
+  --data passwd=myPassWordHere123@456
+```
+
+**Return value**
+
+```sh
+{
+  "error": "0",
+  "reason": "Success",
+  "text": "MyTextHere",
+  "token": "f1f8a35055bd38c63208661e0086f223"
+}
+```
+
+See _verify_token_ command
 
 In development ...
 ## License
