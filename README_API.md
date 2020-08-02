@@ -892,6 +892,59 @@ curl --request POST \
 
 See _verify_token_ command
 
+### COMMAND: get_account_from_block
+
+- Description:
+
+Gets account from block
+
+command|type|required
+-------|----|-------|
+get_account_from_block|command|yes
+block|Nano block|yes
+type|Type|No. If ommited _wallet_ is used. Options are _raw_ for public key or _wallet_
+prefix|Prefix|No. If ommited and _type_ = _wallet_ then _nano__ prefix is used
+
+**Example 1**
+
+```sh
+curl --request POST \
+  --url http://localhost/template.php \
+  --header 'content-type: application/x-www-form-urlencoded' \
+  --data command=get_account_from_block \
+  --data block=0000000000000000000000000000000000000000000000000000000000000006918105963ce5d61ad9d74d294164fac36a077b5e2b53d219e619d5ee3e64e1b0f9252d13ec4103ccc6b1f1712c617413adc741d16a465452ca90c504d9f2c27822f2c23d07f7eb43ebdb470e35493ebbadfdc447bd4b983623703767728974b600001b9dd181a316c69b1feb73b30000f9640ff8804a3720efc9d2a190cdcac87011b6eb2bff9bcda6e15400ec76d8b084daaa49ccf95d10353b93711c24e605aa2219dac2e5020996619f7184bb8733ee733d2a2e033481aa5bf82652aa201b63a58f6ef4cd43a8468f6112d4ad8d07003551a54e5f0f25d0 \
+  --data type=wallet \
+  --data prefix=xrb_
+```
+
+**Return value**
+
+```sh
+{
+  "wallet": "xrb_36e31pd5ssgp5dexgmbba7khoiuc1xxowctmtaeye8goxrz8brfi48iexshm"
+}
+```
+
+**Example 2**
+
+```sh
+curl --request POST \
+  --url http://localhost/template.php \
+  --header 'content-type: application/x-www-form-urlencoded' \
+  --data command=get_account_from_block \
+  --data block=0000000000000000000000000000000000000000000000000000000000000006918105963ce5d61ad9d74d294164fac36a077b5e2b53d219e619d5ee3e64e1b0f9252d13ec4103ccc6b1f1712c617413adc741d16a465452ca90c504d9f2c27822f2c23d07f7eb43ebdb470e35493ebbadfdc447bd4b983623703767728974b600001b9dd181a316c69b1feb73b30000f9640ff8804a3720efc9d2a190cdcac87011b6eb2bff9bcda6e15400ec76d8b084daaa49ccf95d10353b93711c24e605aa2219dac2e5020996619f7184bb8733ee733d2a2e033481aa5bf82652aa201b63a58f6ef4cd43a8468f6112d4ad8d07003551a54e5f0f25d0 \
+  --data type=raw
+```
+
+**Return value**
+
+```sh
+{
+  "public_key": "918105963CE5D61AD9D74D294164FAC36A077B5E2B53D219E619D5EE3E64E1B0"
+}
+```
+
+
 In development ...
 ## License
 MIT
