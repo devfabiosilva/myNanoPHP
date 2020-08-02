@@ -944,6 +944,103 @@ curl --request POST \
 }
 ```
 
+### COMMAND: get_balance_from_block
+
+- Description:
+
+Extracts balance from a Nano Block
+
+command|type|required
+-------|----|-------|
+get_balance_from_block|command|yes
+block|Nano block|yes
+type|Balance type|No. If ommited real type is used. Available types are: _raw_, _real_, _hex_
+
+**Example 1**
+
+```sh
+curl --request POST \
+  --url http://localhost/template.php \
+  --header 'content-type: application/x-www-form-urlencoded' \
+  --data command=get_balance_from_block \
+  --data block=0000000000000000000000000000000000000000000000000000000000000006095b645b6c0cccb52dd65218de613ce13cea58a850a80c3f704291b698a50417de0c84215a6b7429d3d2836f54b6b917c9301103134904457a928c56580cf5a4c798cff4f1131204f65c4d22c3e6316f26f380ee0616aadbabea1268fd75fb050000057ce450710233bcf19bf8000000f45b8087702b867f9736ae82628708e57780b1eb004e123cf2822a5cb935af1700000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000 \
+  --data type=raw
+```
+
+**Return value**
+
+```sh
+{
+  "balance": "111307000000000000000000000000000"
+}
+```
+
+**Example 2**
+
+```sh
+curl --request POST \
+  --url http://localhost/template.php \
+  --header 'content-type: application/x-www-form-urlencoded' \
+  --data command=get_balance_from_block \
+  --data block=0000000000000000000000000000000000000000000000000000000000000006095b645b6c0cccb52dd65218de613ce13cea58a850a80c3f704291b698a50417de0c84215a6b7429d3d2836f54b6b917c9301103134904457a928c56580cf5a4c798cff4f1131204f65c4d22c3e6316f26f380ee0616aadbabea1268fd75fb050000057ce450710233bcf19bf8000000f45b8087702b867f9736ae82628708e57780b1eb004e123cf2822a5cb935af1700000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000 \
+  --data type=hex
+```
+
+**Return value**
+
+```sh
+{
+  "balance": "0000057ce450710233bcf19bf8000000"
+}
+```
+
+**Example 3**
+
+```sh
+curl --request POST \
+  --url http://localhost/template.php \
+  --header 'content-type: application/x-www-form-urlencoded' \
+  --data command=get_balance_from_block \
+  --data block=0000000000000000000000000000000000000000000000000000000000000006095b645b6c0cccb52dd65218de613ce13cea58a850a80c3f704291b698a50417de0c84215a6b7429d3d2836f54b6b917c9301103134904457a928c56580cf5a4c798cff4f1131204f65c4d22c3e6316f26f380ee0616aadbabea1268fd75fb050000057ce450710233bcf19bf8000000f45b8087702b867f9736ae82628708e57780b1eb004e123cf2822a5cb935af1700000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+```
+
+**Return value**
+
+```sh
+{
+  "balance": "111.307"
+}
+```
+
+### COMMAND: get_block_hash
+
+- Description:
+
+Calculates and extracts Blake2b hash of the valid Nano block
+
+command|type|required
+-------|----|-------|
+get_block_hash|command|yes
+block|Nano block|yes
+
+**Example**
+
+```sh
+curl --request POST \
+  --url http://localhost/template.php \
+  --header 'content-type: application/x-www-form-urlencoded' \
+  --data command=get_block_hash \
+  --data block=000000000000000000000000000000000000000000000000000000000000000697a886ecb1ee8ba6b0e455d1419fbeba367986810cb3220ae0b9f9a585c86779f9252d12ec2103cad6b2e7212c617413adc741d16a465452ca90c504d9f2c27822f2c23d07f7eb43ebdb470e35493ebbadfdc447bd4b983623703767728974b6000000e9a44e168ac332b4814c50000079640f38102a3728efc9d2a190cdcac87011b6eb2bff9bcd10f12405ec76d8c1db7e03af6b43484cb51bedad49a76029dcd265600f3b3c98622960219d825b35cc1e3219a600898aba00f2b90eb4439dd3cbcb9d7c3fee6d544d483ea2039e0b000000000000000000 \
+  --data =
+```
+
+**Return value**
+
+```sh
+{
+  "hash": "2FC9637C3B2681D03F9167173641869A54F2B2A326CD41F05C82B68F05E69F7F"
+}
+```
 
 In development ...
 ## License
