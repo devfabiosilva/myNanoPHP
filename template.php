@@ -681,6 +681,11 @@ if ($_SERVER['REQUEST_METHOD']==='POST') {
                 if (!isset($prefix))
                     $prefix=NANO_PREFIX;
 
+            } else {
+               http_response_code(404);
+               header($MIME_TYPE);
+               echo '{"error":"189","reason":"Missing link type"}';
+               exit(0);
             }
 
         } else {

@@ -1030,8 +1030,7 @@ curl --request POST \
   --url http://localhost/template.php \
   --header 'content-type: application/x-www-form-urlencoded' \
   --data command=get_block_hash \
-  --data block=000000000000000000000000000000000000000000000000000000000000000697a886ecb1ee8ba6b0e455d1419fbeba367986810cb3220ae0b9f9a585c86779f9252d12ec2103cad6b2e7212c617413adc741d16a465452ca90c504d9f2c27822f2c23d07f7eb43ebdb470e35493ebbadfdc447bd4b983623703767728974b6000000e9a44e168ac332b4814c50000079640f38102a3728efc9d2a190cdcac87011b6eb2bff9bcd10f12405ec76d8c1db7e03af6b43484cb51bedad49a76029dcd265600f3b3c98622960219d825b35cc1e3219a600898aba00f2b90eb4439dd3cbcb9d7c3fee6d544d483ea2039e0b000000000000000000 \
-  --data =
+  --data block=000000000000000000000000000000000000000000000000000000000000000697a886ecb1ee8ba6b0e455d1419fbeba367986810cb3220ae0b9f9a585c86779f9252d12ec2103cad6b2e7212c617413adc741d16a465452ca90c504d9f2c27822f2c23d07f7eb43ebdb470e35493ebbadfdc447bd4b983623703767728974b6000000e9a44e168ac332b4814c50000079640f38102a3728efc9d2a190cdcac87011b6eb2bff9bcd10f12405ec76d8c1db7e03af6b43484cb51bedad49a76029dcd265600f3b3c98622960219d825b35cc1e3219a600898aba00f2b90eb4439dd3cbcb9d7c3fee6d544d483ea2039e0b000000000000000000
 ```
 
 **Return value**
@@ -1039,6 +1038,98 @@ curl --request POST \
 ```sh
 {
   "hash": "2FC9637C3B2681D03F9167173641869A54F2B2A326CD41F05C82B68F05E69F7F"
+}
+```
+
+### COMMAND: get_difficulty
+
+- Description:
+
+Calculates a difficulty and verifies if work is valid given work, threshold and hash
+
+command|type|required
+-------|----|-------|
+get_difficulty|command|yes
+hash|Nano block hash|yes
+work|Given work|yes
+threshold|Threshold|No. Optional. If ommited then default Nano threshold is used
+
+**Example**
+
+```sh
+curl --request POST \
+  --url http://localhost/template.php \
+  --header 'content-type: application/x-www-form-urlencoded' \
+  --data command=get_difficulty \
+  --data hash=b0cbcbe1b522fbac1ba1b1880dcea19afdae31008a242b7d9c6165982559fe53 \
+  --data work=0xa5422ca8ae8ca022 \
+  --data threshold=18446743901642424320
+```
+
+**Return value**
+
+```sh
+{
+  "hash": "b0cbcbe1b522fbac1ba1b1880dcea19afdae31008a242b7d9c6165982559fe53",
+  "work": "0xa5422ca8ae8ca022",
+  "difficulty": "0xfffffff23e8131c1",
+  "base_difficulty": "0xffffffd7f0000000",
+  "multiplier": "2.91239914457107",
+  "valid": "1"
+}
+# valid: "1" if VALID
+# valid: "0" if INVALID
+```
+
+### COMMAND: get_link_from_block
+
+- Description:
+
+Gets a link or destination wallet from Nano block;
+
+command|type|required
+-------|----|-------|
+get_link_from_block|command|yes
+block|Nano block|yes
+type|Nano link type: Address or destination public key or link|No. If ommited wallet with _nano__ prefix is returned
+prefix|Nano prefix|No. If type = wallet then wallet is returned with given prefix (_nano__ or _xrb__)
+
+**Example 1**
+
+```sh
+curl --request POST \
+  --url http://localhost/template.php \
+  --header 'content-type: application/x-www-form-urlencoded' \
+  --data command=get_link_from_block \
+  --data block=0000000000000000000000000000000000000000000000000000000000000006095b645b6c0cccb52dd65218de613ce13cea58a850a80c3f704291b698a50417de0c84215a6b7429d3d2836f54b6b917c9301103134904457a928c56580cf5a4c798cff4f1131204f65c4d22c3e6316f26f380ee0616aadbabea1268fd75fb050000057ce450710233bcf19bf8000000f45b8087702b867f9736ae82628708e57780b1eb004e123cf2822a5cb935af1700000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000 \
+  --data type=wallet \
+  --data prefix=xrb_
+```
+
+**Return value**
+
+```sh
+{
+  "wallet": "xrb_3x4ui45q1cw8hydmfdn4ec5ijsdqi4ryp14g4ayh71jcdkwmddrq7ca9xzn9"
+}
+```
+
+**Example 2**
+
+```sh
+curl --request POST \
+  --url http://localhost/template.php \
+  --header 'content-type: application/x-www-form-urlencoded' \
+  --data command=get_link_from_block \
+  --data block=0000000000000000000000000000000000000000000000000000000000000006095b645b6c0cccb52dd65218de613ce13cea58a850a80c3f704291b698a50417de0c84215a6b7429d3d2836f54b6b917c9301103134904457a928c56580cf5a4c798cff4f1131204f65c4d22c3e6316f26f380ee0616aadbabea1268fd75fb050000057ce450710233bcf19bf8000000f45b8087702b867f9736ae82628708e57780b1eb004e123cf2822a5cb935af1700000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000 \
+  --data type=raw
+```
+
+**Return value**
+
+```sh
+{
+  "public_key": "F45B8087702B867F9736AE82628708E57780B1EB004E123CF2822A5CB935AF17"
 }
 ```
 
