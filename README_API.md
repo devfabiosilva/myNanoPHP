@@ -1133,6 +1133,116 @@ curl --request POST \
 }
 ```
 
+### COMMAND: get_prefixes_from_block
+
+- Description:
+
+Gets prefixes from block
+
+command|type|required
+-------|----|-------|
+get_prefixes_from_block|command|yes
+block|Nano block|yes
+
+**Example**
+
+```sh
+curl --request POST \
+  --url http://localhost/template.php \
+  --header 'content-type: application/x-www-form-urlencoded' \
+  --data command=get_prefixes_from_block \
+  --data block=0000000000000000000000000000000000000000000000000000000000000006095b645b6c0cccb52dd65218de613ce13cea58a850a80c3f704291b698a50417de0c84215a6b7429d3d2836f54b6b917c9301103134904457a928c56580cf5a4c798cff4f1131204f65c4d22c3e6316f26f380ee0616aadbabea1268fd75fb050000057ce450710233bcf19bf8000000f45b8087702b867f9736ae82628708e57780b1eb004e123cf2822a5cb935af1700000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000020000000000000000
+```
+
+**Return value**
+
+```sh
+{
+  "prefixes": "2"
+}
+```
+
+### COMMAND: get_previous_from_block
+
+- Description:
+
+Gets previous hash from given block
+
+command|type|required
+-------|----|-------|
+get_previous_from_block|command|yes
+block|Nano block|yes
+
+**Example**
+
+```sh
+curl --request POST \
+  --url http://localhost/template.php \
+  --header 'content-type: application/x-www-form-urlencoded' \
+  --data command=get_previous_from_block \
+  --data block=0000000000000000000000000000000000000000000000000000000000000006918105963ce5d61ad9d74d294164fac36a077b5e2b53d219e619d5ee3e64e1b0f9252d13ec4103ccc6b1f1712c617413adc741d16a465452ca90c504d9f2c27822f2c23d07f7eb43ebdb470e35493ebbadfdc447bd4b983623703767728974b600001b9dd181a316c69b1feb73b30000f9640ff8804a3720efc9d2a190cdcac87011b6eb2bff9bcda6e15400ec76d8b084daaa49ccf95d10353b93711c24e605aa2219dac2e5020996619f7184bb8733ee733d2a2e033481aa5bf82652aa201b63a58f6ef4cd43a8468f6112d4ad8d07007865287ae2880e4a
+```
+
+**Return value**
+
+```sh
+{
+  "previous": "F9252D13EC4103CCC6B1F1712C617413ADC741D16A465452CA90C504D9F2C278"
+}
+```
+
+### COMMAND: get_representative_from_block
+
+- Description:
+
+Gets a representative public key or representative wallet from Nano block;
+
+command|type|required
+-------|----|-------|
+get_representative_from_block|command|yes
+block|Nano block|yes
+type|Nano link type: Representative public key or representative wallet|No. If ommited wallet with _nano__ prefix is returned
+prefix|Nano prefix|No. If type = wallet then wallet is returned with given prefix (_nano__ or _xrb__)
+
+**Example 1**
+
+```sh
+curl --request POST \
+  --url http://localhost/template.php \
+  --header 'content-type: application/x-www-form-urlencoded' \
+  --data command=get_representative_from_block \
+  --data block=0000000000000000000000000000000000000000000000000000000000000006095b645b6c0cccb52dd65218de613ce13cea58a850a80c3f704291b698a50417de0c84215a6b7429d3d2836f54b6b917c9301103134904457a928c56580cf5a4c798cff4f1131204f65c4d22c3e6316f26f380ee0616aadbabea1268fd75fb050000057ce450710233bcf19bf8000000f45b8087702b867f9736ae82628708e57780b1eb004e123cf2822a5cb935af1700000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000 \
+  --data type=raw
+```
+
+**Return value**
+
+```sh
+{
+  "public_key": "C798CFF4F1131204F65C4D22C3E6316F26F380EE0616AADBABEA1268FD75FB05"
+}
+```
+
+**Example 2**
+
+```sh
+curl --request POST \
+  --url http://localhost/template.php \
+  --header 'content-type: application/x-www-form-urlencoded' \
+  --data command=get_representative_from_block \
+  --data block=0000000000000000000000000000000000000000000000000000000000000006095b645b6c0cccb52dd65218de613ce13cea58a850a80c3f704291b698a50417de0c84215a6b7429d3d2836f54b6b917c9301103134904457a928c56580cf5a4c798cff4f1131204f65c4d22c3e6316f26f380ee0616aadbabea1268fd75fb050000057ce450710233bcf19bf8000000f45b8087702b867f9736ae82628708e57780b1eb004e123cf2822a5cb935af1700000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000 \
+  --data type=wallet \
+  --data prefix=xrb_
+```
+
+**Return value**
+
+```sh
+{
+  "wallet": "xrb_3jwrszth46rk1mu7rmb4rhm54us8yg1gw3ipodftqtikf5yqdyr7471nsg1k"
+}
+```
+
 In development ...
 ## License
 MIT
