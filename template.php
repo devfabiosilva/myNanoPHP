@@ -3044,7 +3044,7 @@ if ($_SERVER['REQUEST_METHOD']==='POST') {
             $block_hex=bin2hex($block_bin);
 
             header($MIME_TYPE);
-            echo '{"error:"0","reason":"Success","block":"'.$block_hex.'"}';
+            echo '{"error":"0","reason":"Success","block":"'.$block_hex.'"}';
 
         } catch (Exception $e) {
 
