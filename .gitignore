@@ -6,8 +6,6 @@ mbedtls
 sodium
 POC
 node_modules
-secret.ts
-nodes.ts
 RELEASES
 
 # Object files
