@@ -1195,7 +1195,7 @@ curl --request POST \
 
 - Description:
 
-Gets a representative public key or representative wallet from Nano block;
+Gets a representative public key or representative wallet from Nano block
 
 command|type|required
 -------|----|-------|
@@ -1242,6 +1242,110 @@ curl --request POST \
   "wallet": "xrb_3jwrszth46rk1mu7rmb4rhm54us8yg1gw3ipodftqtikf5yqdyr7471nsg1k"
 }
 ```
+
+### COMMAND: get_signature_from_block
+
+- Description:
+
+Gets a signature from Nano block
+
+command|type|required
+-------|----|-------|
+get_signature_from_block|command|yes
+block|Nano block|yes
+
+**Example**
+
+```sh
+curl --request POST \
+  --url http://localhost/template.php \
+  --header 'content-type: application/x-www-form-urlencoded' \
+  --data command=get_signature_from_block \
+  --data block=0000000000000000000000000000000000000000000000000000000000000006918105963ce5d61ad9d74d294164fac36a077b5e2b53d219e619d5ee3e64e1b0f9252d13ec4103ccc6b1f1712c617413adc741d16a465452ca90c504d9f2c27822f2c23d07f7eb43ebdb470e35493ebbadfdc447bd4b983623703767728974b600001b9dd181a316c69b1feb73b30000f9640ff8804a3720efc9d2a190cdcac87011b6eb2bff9bcda6e15400ec76d8b084daaa49ccf95d10353b93711c24e605aa2219dac2e5020996619f7184bb8733ee733d2a2e033481aa5bf82652aa201b63a58f6ef4cd43a8468f6112d4ad8d07003551a54e5f0f25d0
+```
+
+**Return value**
+
+```sh
+{
+  "signature": "84DAAA49CCF95D10353B93711C24E605AA2219DAC2E5020996619F7184BB8733EE733D2A2E033481AA5BF82652AA201B63A58F6EF4CD43A8468F6112D4AD8D07"
+}
+```
+
+### COMMAND: get_work_from_block
+
+- Description:
+
+Gets work from Nano block
+
+command|type|required
+-------|----|-------|
+get_work_from_block|command|yes
+block|Nano block|yes
+
+**Example**
+
+```sh
+curl --request POST \
+  --url http://localhost/template.php \
+  --header 'content-type: application/x-www-form-urlencoded' \
+  --data command=get_work_from_block \
+  --data block=0000000000000000000000000000000000000000000000000000000000000006918105963ce5d61ad9d74d294164fac36a077b5e2b53d219e619d5ee3e64e1b0f9252d13ec4103ccc6b1f1712c617413adc741d16a465452ca90c504d9f2c27822f2c23d07f7eb43ebdb470e35493ebbadfdc447bd4b983623703767728974b600001b9dd181a316c69b1feb73b30000f9640ff8804a3720efc9d2a190cdcac87011b6eb2bff9bcda6e15400ec76d8b084daaa49ccf95d10353b93711c24e605aa2219dac2e5020996619f7184bb8733ee733d2a2e033481aa5bf82652aa201b63a58f6ef4cd43a8468f6112d4ad8d07007865287ae2880e4a
+```
+
+**Return value**
+
+```sh
+{
+  "work": "0x4a0e88e27a286578"
+}
+```
+
+### COMMAND: library_info
+
+- Description:
+
+Gets information about myNanoPHP library
+
+command|type|required
+-------|----|-------|
+library_info|command|yes
+
+**Example**
+
+```sh
+curl --request POST \
+  --url http://localhost/template.php \
+  --header 'content-type: application/x-www-form-urlencoded' \
+  --data command=library_info
+```
+
+**Return value**
+
+```sh
+{
+  "name": "myNanoEmbedded C library for PHP",
+  "version": "0.1.0",
+  "fenix_protocol_support": "disabled",
+  "bip39_support": "yes",
+  "brain_wallet_support": "yes",
+  "proof_of_work": "yes",
+  "dpow_support": "yes",
+  "p2pow_support": "yes",
+  "multithread_support": "yes",
+  "license": "MIT",
+}
+```
+
+### COMMAND: license
+
+- Description:
+
+Gets license
+
+command|type|required
+-------|----|-------|
+license|command|yes
 
 In development ...
 ## License
