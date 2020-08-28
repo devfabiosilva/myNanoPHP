@@ -1347,6 +1347,69 @@ command|type|required
 -------|----|-------|
 license|command|yes
 
+### COMMAND: verify_sig
+
+- Description:
+
+Verifies if hash has valid signature.
+
+command|type|required
+-------|----|-------|
+verify_sig|command|yes
+sig|signature|yes
+hash|Blake2b hash|yes
+pk|Public key or Nano wallet|yes
+
+**Example 1**
+
+```sh
+curl --request POST \
+  --data command=verify_sig \
+  --url 'http://localhost/template.php?=' \
+  --header 'content-type: application/x-www-form-urlencoded' \
+  --data pk=nano_1qgkdadcbwn65sp95gr144fuc99tm5tn6gx9y8ow9bgaam6r5ixgtx19tw93 \
+  --data hash=ED7A841AA594E6637CCD94C024379E795B1F392393C18057ACC7A9F714887553 \
+  --data sig=A30618E073A9266BD4087A6D5BB141C7A7A4A4281B0171BE0027678408368E9DE33D91B2AB7406B9876315DDFC33EFB2C2FB795597A40EEE717D520BEBC63A07
+```
+
+**Return value**
+
+```sh
+{
+  "error": "0",
+  "reason": "Success",
+  "hash": "ED7A841AA594E6637CCD94C024379E795B1F392393C18057ACC7A9F714887553",
+  "signature": "A30618E073A9266BD4087A6D5BB141C7A7A4A4281B0171BE0027678408368E9DE33D91B2AB7406B9876315DDFC33EFB2C2FB795597A40EEE717D520BEBC63A07",
+  "publicKey": "nano_1qgkdadcbwn65sp95gr144fuc99tm5tn6gx9y8ow9bgaam6r5ixgtx19tw93",
+  "validSignature": true
+}
+```
+
+**Example 2**
+
+```sh
+curl --request POST \
+  --url 'http://localhost/template.php?=' \
+  --header 'content-type: application/x-www-form-urlencoded' \
+  --data pk=5DD25A16A4F2841E6C71BB00109BB51CFA98F5423BA7F1ABC3A5C844C981C3AE \
+  --data hash=ED7A841AA594E6637CCD94C024379E795B1F392393C18057ACC7A9F714887553 \
+  --data sig=A30618E073A9266BD4087A6D5BB141C7A7A4A4281B0171BE0027678408368E9DE33D91B2AB7406B9876315DDFC33EFB2C2FB795597A40EEE717D520BEBC63A07 \
+  --data command=verify_sig
+```
+
+**Return value**
+
+```sh
+{
+  "error": "0",
+  "reason": "Success",
+  "hash": "ED7A841AA594E6637CCD94C024379E795B1F392393C18057ACC7A9F714887553",
+  "signature": "A30618E073A9266BD4087A6D5BB141C7A7A4A4281B0171BE0027678408368E9DE33D91B2AB7406B9876315DDFC33EFB2C2FB795597A40EEE717D520BEBC63A07",
+  "publicKey": "5DD25A16A4F2841E6C71BB00109BB51CFA98F5423BA7F1ABC3A5C844C981C3AE",
+  "validSignature": true
+}
+```
+
 In development ...
 ## License
 MIT
