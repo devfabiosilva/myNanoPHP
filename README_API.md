@@ -1410,6 +1410,104 @@ curl --request POST \
 }
 ```
 
+### COMMAND: calculate_pow
+
+- Description:
+
+Calculates work from a hash
+
+command|type|required
+-------|----|-------|
+calculate_pow|command|yes
+hash|Hash|yes
+num_threads|Number of threads|yes
+threshold|Threshold|(Optional default threshold)
+
+**Example 1**
+
+```sh
+curl --request POST \
+  --url http://localhost/template.php \
+  --header 'content-type: application/x-www-form-urlencoded' \
+  --data command=calculate_pow \
+  --data hash=9d15f6100d0a20ce2bcf1468eb2b6b4e4de58b68d9e4631f18d399d14956bd53 \
+  --data num_threads=4
+```
+
+**Return value**
+
+```sh
+{
+  "error": "0",
+  "reason": "Success",
+  "hash": "9d15f6100d0a20ce2bcf1468eb2b6b4e4de58b68d9e4631f18d399d14956bd53",
+  "result": {
+    "pow": "0x5f90b492ab132b1d",
+    "threshold": "0xffffffc000000000",
+    "multiplier": "1.000000000000000"
+  }
+}
+```
+
+**Example 2**
+
+```sh
+curl --request POST \
+  --url http://localhost/template.php \
+  --header 'content-type: application/x-www-form-urlencoded' \
+  --data command=calculate_pow \
+  --data hash=9d15f6100d0a20ce2bcf1468eb2b6b4e4de58b68d9e4631f18d399d14956bd53 \
+  --data num_threads=4 \
+  --data threshold=0xffffffe000000000
+```
+
+```sh
+{
+  "error": "0",
+  "reason": "Success",
+  "hash": "9d15f6100d0a20ce2bcf1468eb2b6b4e4de58b68d9e4631f18d399d14956bd53",
+  "result": {
+    "pow": "0x53b4f7e28b345d3d",
+    "threshold": "0xffffffe000000000",
+    "multiplier": "2.000000000000000"
+  }
+}
+```
+
+### COMMAND: seed2bip39
+
+:warning: WARNING: Sensible data -> Bip39 and private key.
+
+- Description:
+
+Extracts Bip39 from Seed
+
+command|type|required
+-------|----|-------|
+seed2bip39|command|yes
+seed|SEED|yes
+
+**Example**
+
+```sh
+curl --request POST \
+  --url 'http://localhost/template.php?=' \
+  --header 'content-type: application/x-www-form-urlencoded' \
+  --data seed=DA1963B0D8398ACBE0002DD5ABA4A4768B35DDC9E2F86D0E9C8094FD05431833 \
+  --data command=seed2bip39
+```
+
+**Return value**
+
+```sh
+{
+  "error": "0",
+  "reason": "Success",
+  "seed": "DA1963B0D8398ACBE0002DD5ABA4A4768B35DDC9E2F86D0E9C8094FD05431833",
+  "bip39": "sure slam umbrella race obvious grass length aisle stick frog cinnamon unfair rebuild upon chest gallery home insane cage clarify space pave general head"
+}
+```
+
 In development ...
 ## License
 MIT
