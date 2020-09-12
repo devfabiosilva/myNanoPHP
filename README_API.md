@@ -1508,6 +1508,174 @@ curl --request POST \
 }
 ```
 
+### COMMAND: verify_work
+
+- Description:
+
+Verifies if a Work is valid given a threshold
+
+command|type|required
+-------|----|-------|
+verify_work|command|yes
+hash|Hash to be verified|yes
+work|Work|yes
+threshold|Threshold|Optional. If ommited default threshold is **0xffffffc000000000**
+
+
+Returns _error: 0_ if work is valid, else returns non zero
+
+**Example**
+
+```sh
+curl --request POST \
+  --url 'http://localhost/template.php?=' \
+  --header 'content-type: application/x-www-form-urlencoded' \
+  --data hash=81b13962a2e0f2b61a49ff0bb9a90c0ba6fb5bb1e99569c98659bb5b77c91772 \
+  --data work=0x88d703c9a7d78883 \
+  --data command=verify_work
+```
+
+**Return value**
+
+```sh
+{
+  "error": "0",
+  "reason": "Success",
+  "hash": "81b13962a2e0f2b61a49ff0bb9a90c0ba6fb5bb1e99569c98659bb5b77c91772",
+  "work": "0x88d703c9a7d78883",
+  "threshold": "0xffffffc000000000"
+}
+```
+
+### COMMAND: nano2pk
+
+- Description:
+
+Parses __nano_ or __xrb_ wallet to public key
+
+command|type|required
+-------|----|-------|
+nano2pk|command|yes
+wallet|Nano wallet|yes
+
+**Example**
+
+```sh
+curl --request POST \
+  --url 'http://localhost/template.php?=' \
+  --header 'content-type: application/x-www-form-urlencoded' \
+  --data wallet=nano_1qgkdadcbwn65sp95gr144fuc99tm5tn6gx9y8ow9bgaam6r5ixgtx19tw93 \
+  --data command=nano2pk
+```
+
+**Return value**
+
+```sh
+{
+  "error": "0",
+  "reason": "Success",
+  "wallet": "nano_1qgkdadcbwn65sp95gr144fuc99tm5tn6gx9y8ow9bgaam6r5ixgtx19tw93",
+  "public_key": "5DD25A16A4F2841E6C71BB00109BB51CFA98F5423BA7F1ABC3A5C844C981C3AE"
+}
+```
+
+### COMMAND: p2pow_to_json
+
+- Description:
+
+Parses _P2PoW_ block to JSON
+
+command|type|required
+-------|----|-------|
+p2pow_to_json|command|yes
+block|P2PoW block|yes
+
+**Example**
+
+```sh
+curl --request POST \
+  --url http://localhost/template.php \
+  --header 'content-type: application/x-www-form-urlencoded' \
+  --data command=p2pow_to_json \
+  --data block=000000000000000000000000000000000000000000000000000000000000000677871ed613ae5e89cab6534bbc60bc50bcb61302e29aadf4bf0f48684ba8f5db7d77fabe00d9b6737d82d50a14d8f304cff88e92c93fb4ef87a63ef6b8bfa0b6d9e7850c949e424f9910daf274a14e3394c717589152cc25d622d6bf1fb77146000066b0fd855d5252a716a1c0cca260aee2460d734e1b6e1aa0bc759eb396b0b966acb26fe86d82758e30bad65fb9f221612873f05eed303d91926f861ee9cf4d87eec3c4864c4b6e39f87ca24833c534a4f3cb68d474725fdffc39352c49eaca58f7351892de4ad5e6fd03bbafdf03030000000000000000000000000000000000000000000000000000000000000000000000000000000677871ed613ae5e89cab6534bbc60bc50bcb61302e29aadf4bf0f48684ba8f5db0c453e8dd551635d0b5d36a83e88eb5aec2c783e08224fac338ff2f057863450d9e7850c949e424f9910daf274a14e3394c717589152cc25d622d6bf1fb77146000066b0f57169bac31dd6097ccca260bafc0f621906cb5274543a48e762f8f3aa8cb6432d4c463067b4ec294ea13654cd376ddbce5fcc2a9cf1978f720da004bd3ad06bbb9ff9097a048e1c801d099999ca034a717218c9750e3876fa0c5b791e8db0b88eb1a8f1854cea951a32bc09020000000000000000 
+```
+
+**Return value**
+
+```sh
+{
+  "error": "0",
+  "reason": "Success",
+  "block": {
+    "user_transaction": {
+      "block_type": "state",
+      "account": "xrb_1xw95ud39dkyj97dentdqjidrn7wprbi7rntoqtdy5taf37tjxgu3ds1reop",
+      "previous": "7D77FABE00D9B6737D82D50A14D8F304CFF88E92C93FB4EF87A63EF6B8BFA0B6",
+      "representative": "nano_3ph9in8bb9k4byej3pqkgkinwewnrwdoj6cksikxeappqwhugwc8ebrf7y8p",
+      "balance": "2082828397110298387381988361020000",
+      "link": "AEE2460D734E1B6E1AA0BC759EB396B0B966ACB26FE86D82758E30BAD65FB9F2",
+      "link_as_account": "xrb_3dq4ar8q8miufrfc3h5omtssfe7setpd6uzafp39d5jiqdd7zghktgqjhqde",
+      "signature": "21612873F05EED303D91926F861EE9CF4D87EEC3C4864C4B6E39F87CA24833C534A4F3CB68D474725FDFFC39352C49EACA58F7351892DE4AD5E6FD03BBAFDF03"
+    },
+    "worker_transaction": {
+      "block_type": "state",
+      "account": "xrb_1xw95ud39dkyj97dentdqjidrn7wprbi7rntoqtdy5taf37tjxgu3ds1reop",
+      "previous": "0C453E8DD551635D0B5D36A83E88EB5AEC2C783E08224FAC338FF2F057863450",
+      "representative": "nano_3ph9in8bb9k4byej3pqkgkinwewnrwdoj6cksikxeappqwhugwc8ebrf7y8p",
+      "balance": "2082825897110298387381988361020000",
+      "link": "BAFC0F621906CB5274543A48E762F8F3AA8CB6432D4C463067B4EC294EA13654",
+      "link_as_account": "nano_3gqw3xj3k3pdcbt7agkawxjhjwxcjku68dcearr8hf9e779c4fkncabcxbdd",
+      "signature": "CD376DDBCE5FCC2A9CF1978F720DA004BD3AD06BBB9FF9097A048E1C801D099999CA034A717218C9750E3876FA0C5B791E8DB0B88EB1A8F1854CEA951A32BC09"
+    }
+  }
+}
+```
+
+### COMMAND: block_to_json
+
+- Description:
+
+Parses Nano Block to JSON
+
+command|type|required
+-------|----|-------|
+block_to_json|command|yes
+block|Nano Block|yes
+
+**Example**
+
+```sh
+curl --request POST \
+  --url http://localhost/template.php \
+  --header 'content-type: application/x-www-form-urlencoded' \
+  --data command=block_to_json \
+  --data block=00000000000000000000000000000000000000000000000000000000000000061be0ede8eccb11888d818ab956e43ac69f93e3d861d80501a1badd52c60641aa79640f38102a3728efc9d2a190cdcac87011b6eb2bff9bcd10f12405ec76d8c622f2c23d07f7eb43ebdb470e35493ebbadfdc447bd4b983623703767728974b6000004b80cf49e72c25b9bdf19b0000079640f38102a3728efc9d2a190cdcac87011b6eb2bff9bcd10f12405ec76d8c1cc229c54ab496f6580715d53a4214ccd0fb17a9666f9c59030bb843213ed1088bdfbb1ad5e878a8097af38c8e0827ab0c729b7e108633e183b4e5665e567040d002cb275b1910cc89b
+```
+
+**Return value**
+
+```sh
+{
+  "error": "0",
+  "reason": "Success",
+  "block": {
+    "action": "process",
+    "json_block": "true",
+    "block": {
+      "type": "state",
+      "account": "nano_18z1xqngskrjj48r54oscuk5ojnzkhjxirgr1n1t5gpxcd51eifctzbfq3ti",
+      "previous": "79640F38102A3728EFC9D2A190CDCAC87011B6EB2BFF9BCD10F12405EC76D8C6",
+      "representative": "nano_1aqkrayihxzdahoxpjrg8o6mxgxfzq46hhcdm1u48w3qexsakx7pzzhjn3fc",
+      "balance": "95711629863500000000000000000000",
+      "link": "79640F38102A3728EFC9D2A190CDCAC87011B6EB2BFF9BCD10F12405EC76D8C1",
+      "link_as_account": "nano_1yd63ww31cjq75qwmno3k58wok5i48ugpczzmh8j3wb61qp9fp835zfzanwe",
+      "signature": "CC229C54AB496F6580715D53A4214CCD0FB17A9666F9C59030BB843213ED1088BDFBB1AD5E878A8097AF38C8E0827AB0C729B7E108633E183B4E5665E567040D",
+      "work": "9BC80C91B175B22C"
+    }
+  }
+}
+```
+
 In development ...
 ## License
 MIT
