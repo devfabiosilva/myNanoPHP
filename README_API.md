@@ -1676,6 +1676,111 @@ curl --request POST \
 }
 ```
 
+### COMMAND: pk2nano
+
+- Description:
+
+Parses a public key to Nano wallet address
+
+command|type|required
+-------|----|-------|
+pk2nano|command|yes
+pk|Public key|yes
+prefix|Public key prefix _xrb__ or _nano__|no
+
+**Example**
+
+```sh
+curl --request POST \
+  --url 'http://localhost/template.php?=' \
+  --header 'content-type: application/x-www-form-urlencoded' \
+  --data pk=5DD25A16A4F2841E6C71BB00109BB51CFA98F5423BA7F1ABC3A5C844C981C3AE \
+  --data command=pk2nano
+```
+
+**Return value**
+
+```sh
+{
+  "error": "0",
+  "reason": "Success",
+  "wallet": "nano_1qgkdadcbwn65sp95gr144fuc99tm5tn6gx9y8ow9bgaam6r5ixgtx19tw93",
+  "public_key": "5DD25A16A4F2841E6C71BB00109BB51CFA98F5423BA7F1ABC3A5C844C981C3AE"
+}
+```
+
+### COMMAND: seed2key_pair
+
+:warning: WARNING: Sensible data -> Bip39 and private key.
+
+- Description:
+
+Extracts Nano wallet number given a Nano SEED
+
+command|type|required
+-------|----|-------|
+seed2key_pair|command|yes
+seed|Nano SEED|yes
+wallet_number|Wallet number|yes
+prefix|Public key prefix _xrb__ or _nano__|no
+
+**Example**
+
+```sh
+curl --request POST \
+  --url 'http://localhost/template.php?=' \
+  --header 'content-type: application/x-www-form-urlencoded' \
+  --data seed=86A4EBE059446FF84F8C4FAC7C56EF97D16DA7369845051414A0A6DA5EB99FCD \
+  --data command=seed2key_pair \
+  --data wallet_number=171210
+```
+
+**Return value**
+
+```sh
+{
+  "error": "0",
+  "reason": "Success",
+  "key_pair": {
+    "private_key": "1890553EECBF9B6607AB2881C06A5D82BFF16878504AB94FE9B6732356416F1B",
+    "public_key": "CC2D7D29B41D2C00D6B09212D4F9D9404100F8F45131270CEF54E878D19AE1B7",
+    "wallet_number": "171210",
+    "wallet": "nano_3m3fhnnua9be15dd36iktmwxki4315whanbj6w8gyo9ah5asorfq7p561g6i"
+  }
+}
+```
+
+### COMMAND: set_account_to_block
+
+- Description:
+
+Set Nano account to Nano block
+
+command|type|required
+-------|----|-------|
+set_account_to_block|command|yes
+block|Nano Block|yes
+account|Nano account or public key|yes
+
+**Example**
+
+```sh
+curl --request POST \
+  --url http://localhost/chksig.php \
+  --header 'content-type: application/x-www-form-urlencoded' \
+  --data command=set_account_to_block \
+  --data block=0000000000000000000000000000000000000000000000000000000000000006095b645b6c0cccb52dd65218de613ce13cea58a850a80c3f704291b698a50417ae0c84815a6b7449d3df836f5ab6b917c9301103134904457a928c56580cf5a4c798cff4f1131204f65c4d22c3e6316f26f380ee0616aadbabea1268fd75fb050001ed09beae30fbda03614787b00000f45b8087702b867f9736ae82628708e57780b1eb004e123cf2822a5cb935af1700000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000070000000000000000 \
+  --data account=xrb_19tjx95wwxz13b7km6xyhdomiyynrucw5g1foa7xjmf6d1jf8gg5yh6sngo4
+```
+
+**Return value**
+
+```sh
+{
+  "block": "00000000000000000000000000000000000000000000000000000000000000061f51e9c7ce77e00a4b2993be7aeb387bd4c6d5c1b80daa0bd8cda45822d339c3ae0c84815a6b7449d3df836f5ab6b917c9301103134904457a928c56580cf5a4c798cff4f1131204f65c4d22c3e6316f26f380ee0616aadbabea1268fd75fb050001ed09beae30fbda03614787b00000f45b8087702b867f9736ae82628708e57780b1eb004e123cf2822a5cb935af1700000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000070000000000000000"
+}
+```
+
 In development ...
 ## License
 MIT
