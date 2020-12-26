@@ -6,7 +6,8 @@
 */
 
 #include <stdint.h>
-#include "f_util.h"
+#include <f_util.h>
+#include <f_bitcoin.h>
 
 #ifndef F_DOC_SKIP
 
@@ -283,6 +284,9 @@ typedef struct f_block_transfer_t {
    /** Internal use for this API */
    uint64_t work;
 } __attribute__((packed)) F_BLOCK_TRANSFER;
+
+#define F_BLOCK_TRANSFER_SIZE (size_t)sizeof(F_BLOCK_TRANSFER)
+#define F_P2POW_BLOCK_TRANSFER_SIZE 2*F_BLOCK_TRANSFER_SIZE
 
 #ifndef F_DOC_SKIP
  #define F_BLOCK_TRANSFER_SIGNABLE_SZ (size_t)(sizeof(F_BLOCK_TRANSFER)-64-sizeof(uint64_t)-sizeof(uint8_t))
@@ -592,6 +596,41 @@ typedef enum f_file_info_err_t {
  #define F_NANO_COMPARE_GT (uint32_t)(1<<18) // Greater
  #define F_NANO_COMPARE_GEQ (F_NANO_COMPARE_GT|F_NANO_COMPARE_EQ) // Greater or equal
  #define DEFAULT_MAX_FEE "0.001"
+
+#endif
+
+#ifndef F_ESP32
+typedef enum f_nano_create_block_dyn_err_t {
+   NANO_CREATE_BLK_DYN_OK = 0,
+   NANO_CREATE_BLK_DYN_BLOCK_NULL = 8000,
+   NANO_CREATE_BLK_DYN_ACCOUNT_NULL,
+//   NANO_CREATE_BLK_DYN_PREV_NULL,
+   NANO_CREATE_BLK_DYN_COMPARE_BALANCE,
+   NANO_CREATE_BLK_DYN_GENESIS_WITH_NON_EMPTY_BALANCE,
+   NANO_CREATE_BLK_DYN_CANT_SEND_IN_GENESIS_BLOCK,
+   NANO_CREATE_BLK_DYN_REP_NULL,
+   NANO_CREATE_BLK_DYN_BALANCE_NULL,
+   NANO_CREATE_BLK_DYN_SEND_RECEIVE_NULL,
+   NANO_CREATE_BLK_DYN_LINK_NULL,
+   NANO_CREATE_BLK_DYN_BUF_MALLOC,
+   NANO_CREATE_BLK_DYN_MALLOC,
+   NANO_CREATE_BLK_DYN_WRONG_PREVIOUS_SZ,
+   NANO_CREATE_BLK_DYN_WRONG_PREVIOUS_STR_SZ,
+   NANO_CREATE_BLK_DYN_PARSE_STR_HEX_ERR,
+   NANO_CREATE_BLK_DYN_FORBIDDEN_AMOUNT_TYPE,
+   NANO_CREATE_BLK_DYN_COMPARE,
+   NANO_CREATE_BLK_DYN_EMPTY_VAL_TO_SEND_OR_REC,
+   NANO_CREATE_BLK_DYN_INVALID_DIRECTION_OPTION
+} F_NANO_CREATE_BLOCK_DYN_ERR;
+
+typedef enum f_nano_p2pow_block_dyn_err_t {
+   NANO_P2POW_CREATE_BLOCK_OK = 0,
+   NANO_P2POW_CREATE_BLOCK_INVALID_USER_BLOCK = 8400,
+   NANO_P2POW_CREATE_BLOCK_MALLOC,
+   NANO_P2POW_CREATE_BLOCK_NULL,
+   NANO_P2POW_CREATE_OUTPUT,
+   NANO_P2POW_CREATE_OUTPUT_MALLOC
+} F_NANO_P2POW_BLOCK_DYN_ERR;
 
 #endif
 
@@ -1023,11 +1062,9 @@ F_FILE_INFO_ERR f_set_nano_file_info(F_NANO_WALLET_INFO *, int);
  *     - <i>F_NANO_B_RAW_STRING</i> if <i>valB</i> is big number raw string type
  *     - <i>F_NANO_B_REAL_STRING</i> if <i>valB</i> is real number string type
  *     <br/><br/>Output type:
- *     - <i>F_NANO_COMPARE_EQ</i> If <i>valA</i> is greater than <i>valB</i>
+ *     - <i>F_NANO_COMPARE_EQ</i> If <i>valA</i> is equal <i>valB</i>
  *     - <i>F_NANO_COMPARE_LT</i> if <i>valA</i> is lesser than <i>valB</i>
- *     - <i>F_NANO_COMPARE_LEQ</i> if <i>valA</i> is lesser or equal than <i>valB</i>
  *     - <i>F_NANO_COMPARE_GT</i> if <i>valA</i> is greater than <i>valB</i>
- *     - <i>F_NANO_COMPARE_GEQ</i> If <i>valA</i> is greater or equal than <i>valB</i>
  *
  * @retval NANO_ERR_OK: If Success, otherwise f_nano_err_t enum type error
  * @see f_nano_err_t for f_nano_err enum error type
@@ -1392,11 +1429,56 @@ int f_sign_data(
  *
  * @see f_sign_data()
  */
-int f_verify_signed_data( const unsigned char *signature, const unsigned char *message, size_t message_len, const void *public_key, uint32_t pk_type);
+int f_verify_signed_data( const unsigned char *, const unsigned char *, size_t, const void *, uint32_t);
 
-int f_is_valid_nano_seed_encrypted(void *stream, size_t stream_len, int read_from);
+/**
+ * @fn int f_is_valid_nano_seed_encrypted(void *stream, size_t stream_len, int read_from)
+ * @brief Verifies if ecrypted Nano SEED is valid
+ * @param [in] stream Encrypted binary data block coming from memory or file
+ * @param [in] stream_len size of <i>stream</i> data
+ * @param [in] read_from Source <i>READ_SEED_FROM_STREAM</i> if encrypted binary data is in memory or <i>READ_SEED_FROM_FILE</i> is in a file.
+ *
+ * @retval 0: If invalid, greater than zero if is valid or error if less than zero.
+ */
+int f_is_valid_nano_seed_encrypted(void *, size_t, int);
 
 #ifndef F_ESP32
+
+#define F_BALANCE_RAW_128 F_NANO_A_RAW_128
+#define F_BALANCE_REAL_STRING F_NANO_A_REAL_STRING
+#define F_BALANCE_RAW_STRING F_NANO_A_RAW_STRING
+#define F_VALUE_SEND_RECEIVE_RAW_128 F_NANO_B_RAW_128
+#define F_VALUE_SEND_RECEIVE_REAL_STRING F_NANO_B_REAL_STRING
+#define F_VALUE_SEND_RECEIVE_RAW_STRING F_NANO_B_RAW_STRING
+#define F_VALUE_TO_SEND (int)(1<<0)
+#define F_VALUE_TO_RECEIVE (int)(1<<1)
+
+int nano_create_block_dynamic(
+   F_BLOCK_TRANSFER **,
+   const void *,
+   size_t,
+   const void *,
+   size_t,
+   const void *,
+   size_t,
+   const void *,
+   const void *,
+   uint32_t,
+   const void *,
+   size_t,
+   int
+);
+
+int nano_create_p2pow_block_dynamic(
+   F_BLOCK_TRANSFER **,
+   F_BLOCK_TRANSFER *,
+   const void *,
+   size_t,
+   const void *,
+   uint32_t,
+   const void *,
+   size_t
+);
 
 /**
  * @fn int f_nano_pow(uint64_t *PoW_res, unsigned char *hash, const uint64_t threshold, int n_thr)
