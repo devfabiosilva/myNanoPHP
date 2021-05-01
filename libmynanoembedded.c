@@ -348,7 +348,7 @@ static zend_object *f_exception_create_object(zend_class_entry *ce) {
     zval obj_zv, rv, *trace;
 
     ZVAL_OBJ(&obj_zv, obj);
-    trace=zend_read_property(zend_ce_exception, &obj_zv, "trace", sizeof("trace")-1, 0, &rv);
+    trace=zend_read_property(zend_ce_exception, (zend_object *)&obj_zv, "trace", sizeof("trace")-1, 0, &rv);
     if (trace&&Z_TYPE_P(trace)==IS_ARRAY) {
         zval *frame=NULL;
         ZEND_HASH_FOREACH_VAL(Z_ARRVAL_P(trace), frame) {
@@ -3801,8 +3801,9 @@ PHP_FUNCTION(php_c_get_difficulty)
 
    }
 
-   RETURN_STR(strpprintf(384, "{\"hash\":\"%s\",\"work\":\"0x%016llx\",\"difficulty\":\"0x%016llx\",\"base_difficulty\":\"0x%016llx\",\"multiplier\":\
-\"%0.014f\",\"valid\":\"%d\"}", (const char *)hash, *(unsigned long int *)(msg+64), *(unsigned long long int *)(msg+256), *(unsigned long long int *)(msg+128), 
+   RETURN_STR(strpprintf(384, 
+      "{\"hash\":\"%s\",\"work\":\"0x%016llx\",\"difficulty\":\"0x%016llx\",\"base_difficulty\":\"0x%016llx\",\"multiplier\":\"%0.014f\",\"valid\":\"%d\"}",
+      (const char *)hash, *(unsigned long long int *)(msg+64), *(unsigned long long int *)(msg+256), *(unsigned long long int *)(msg+128), 
       to_multiplier(*(uint64_t *)(msg+256), *(uint64_t *)(msg+128)), err));
 
 }
@@ -4361,7 +4362,7 @@ PHP_FUNCTION(php_c_check_message_sig)
 
    if (err) {
 
-      sprintf(err_msg, "Internal error in C function 'php_c_check_message_sig' %d. Can't verify message or hash %d", err);
+      sprintf(err_msg, "Internal error in C function 'php_c_check_message_sig' %d. Can't verify message or hash", err);
       zend_throw_exception(f_exception_ce, err_msg, (zend_long)err);
       return;
 
