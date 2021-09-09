@@ -11,7 +11,7 @@
     "@types/react": "^16.9.35",
     "@types/react-dom": "^16.9.0",
     "@types/styled-components": "^5.1.0",
-    "axios": "^0.21.1",
+    "axios": "^0.21.2",
     "feather-icons": "^4.28.0",
     "lorem-ipsum": "^2.0.3",
     "qrcode.react": "^1.0.0",
